@@ -565,3 +565,10 @@ html { scroll-padding-top: 64px; }
   font-size: var(--fs-meta);
   color: var(--muted);
 }
+
+/* Explainer readouts: hairline cell borders, 2×n on phones, one row from md. */
+.readouts > * + * { border-left: 1px solid var(--border); }
+@media (max-width: 767px) {
+  .readouts > :nth-child(odd) { border-left: 0; }
+  .readouts > :nth-child(n + 3) { border-top: 1px solid var(--border); }
+}

@@ -1,8 +1,8 @@
 // §5: the learning path, the wash-sale explainer model, and the numbers its prose quotes.
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { TERM_EXPLAINER, accountsExplainer, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
-import { addDays, costBasis, firstSafeRebuyAfter } from "@/lib/engine";
+import { TERM_EXPLAINER, WASH_SCENARIOS, accountsExplainer, washOutcome, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
+import { addDays, costBasis, daysBetween, firstSafeRebuyAfter } from "@/lib/engine";
 import { longDate, money } from "@/lib/format";
 import { EXPLAINERS, neighbours, readingMinutes } from "@/lib/learn";
 
@@ -136,5 +136,29 @@ describe("across-accounts", () => {
     const mdx = proseChecks("across-accounts", 500, [money(d.disallowed, { whole: true })]);
     expect(mdx).toContain(`${d.daysBefore} days earlier`);
     expect(mdx).toContain("on October 3");
+  });
+});
+
+describe("the-ira-trap", () => {
+  const S = WASH_SCENARIOS.iraTrap;
+  it("INTC sold Sep 28 at $21.20 (paid $27.40): a $620 loss", () => {
+    expect(S.saleDate).toBe("2026-09-28");
+    expect(washOutcome(S, S.defaultDate).loss).toBe(-620);
+  });
+  it("bought back in the Roth IRA 8 days later: disallowed for good, no basis added (matches the convergence)", () => {
+    const s = washOutcome(S, S.defaultDate, "roth-ira");
+    expect(daysBetween(S.saleDate, S.defaultDate)).toBe(8);
+    expect(s).toMatchObject({ where: "gone", permanent: true, disallowed: 620, deductible: 0, newBasis: 2190 });
+  });
+  it("bought back in Brokerage One: an ordinary wash sale, basis up by $620", () => {
+    expect(washOutcome(S, S.defaultDate, "brokerage-one")).toMatchObject({ where: "lot", permanent: false, newBasis: 2810 });
+  });
+  it("outside the window, in either account, the loss is deductible", () => {
+    for (const a of S.accounts) expect(washOutcome(S, addDays(S.saleDate, 31), a)).toMatchObject({ where: "deductible", deductible: -620 });
+  });
+  it("prose quotes only those numbers", () => {
+    const mdx = proseChecks("the-ira-trap", 500, [money(S.price), money(S.lot.costPerShare), money(620, { whole: true })]);
+    expect(mdx).toContain(`${daysBetween(S.saleDate, S.defaultDate)} days later`);
+    expect(mdx).toContain(`sold ${S.qty} ${S.lot.symbol}`);
   });
 });

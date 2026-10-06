@@ -25,7 +25,8 @@ interface SegmentedProps<T extends string> {
 }
 
 /**
- * A radio group drawn as a segmented control. Roving tabindex; arrows, Home and End move and
+ * A radio group drawn as a segmented control: a pill track with a hairline ring; the active
+ * segment is a raised plate with its own ring. Roving tabindex; arrows, Home and End move and
  * select. The selection plate slides on the paper spring (transform only, via layoutId).
  */
 export function Segmented<T extends string>({ label, options, value, onChange, disabled, stretch, className, "data-force": force }: SegmentedProps<T>) {
@@ -58,7 +59,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, d
       aria-label={label}
       aria-disabled={disabled || undefined}
       onKeyDown={disabled ? undefined : onKeyDown}
-      className={cn("max-w-full rounded-md border border-ctx-line p-[3px]", stretch ? "flex w-full sm:inline-flex sm:w-auto" : "inline-flex", disabled && "opacity-40", className)}
+      className={cn("ring-hairline max-w-full rounded-pill p-[3px]", stretch ? "flex w-full sm:inline-flex sm:w-auto" : "inline-flex", disabled && "opacity-40", className)}
     >
       {options.map((o, i) => {
         const selected = i === selectedIndex;
@@ -77,8 +78,8 @@ export function Segmented<T extends string>({ label, options, value, onChange, d
             data-force={pinned}
             onClick={() => onChange(o.value)}
             className={cn(
-              "group relative isolate h-8 rounded-sm whitespace-nowrap",
-              stretch ? "min-w-0 flex-1 px-1 text-[13px] sm:flex-none sm:px-3 sm:text-[14px]" : "shrink-0 px-3 text-[14px]",
+              "group relative isolate h-8 rounded-pill whitespace-nowrap",
+              stretch ? "min-w-0 flex-auto px-1 text-[13px] sm:flex-none sm:px-3 sm:text-[14px]" : "shrink-0 px-3 text-[14px]",
               "transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.97] disabled:cursor-not-allowed",
               "text-ctx-muted",
             )}
@@ -88,7 +89,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, d
                 aria-hidden
                 layoutId={`${groupId}-plate`}
                 transition={spring.paper}
-                className="absolute inset-0 -z-10 rounded-[inherit] border border-ctx-line bg-ctx-raised shadow-[0_1px_0_var(--ctx-rule-strong)]"
+                className="absolute inset-0 -z-10 rounded-[inherit] bg-ctx-raised shadow-[0_0_0_1px_var(--ctx-hairline-strong)]"
               />
             )}
             {!selected && (

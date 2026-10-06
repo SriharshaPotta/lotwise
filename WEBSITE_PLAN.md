@@ -266,7 +266,7 @@ Speed ≈ 30px/s, pauses on hover/touch, static (wrapping) under reduced motion.
 
 **h2:** *Every trade, checked before it happens.*
 
-A 2×2 bento grid (one wide card on top on desktop; stacked on mobile). Each card has a small looping visual built from real components (no videos), title, and one sentence.
+Not a grid of identical cards: three rows on the 12-column grid. **A** simulator: text cols 1–4 (serif h3, two-tone sentence, plain mono list: "Live tax estimate", "Wash-sale check", "Better alternatives"), visual cols 5–12 in a Surface, bottom-cropped with the fade. **B** harvesting: mirrored (visual 1–8, text 9–12). **C** countdown + Section 1256 as two shorter Surfaces side by side (visual on top, hairline, title + one sentence inside). Each visual is a small loop built from real components (no videos). Stacked on mobile.
 
 | Card | Visual | Copy |
 |---|---|---|
@@ -275,7 +275,7 @@ A 2×2 bento grid (one wide card on top on desktop; stacked on mobile). Each car
 | **Long-term countdown** | A violet ring filling toward "9 days" | *Some trades get much cheaper if you wait. We tell you which, and by how much.* |
 | **Section 1256** | Two bars (SPY vs XSP) re-stacking into 60/40 | *The same trade on a different ticker can be taxed very differently.* |
 
-Card hover: border brightens one step, visual plays at 1.5× speed. Visuals only animate while in view.
+Hovering a visual plays it at 1.5× speed. Visuals only animate while in view.
 
 ### 4.6 "Runs entirely in your browser"
 

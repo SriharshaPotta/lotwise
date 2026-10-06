@@ -183,10 +183,10 @@ function Buckets({ d, state, shown }: { d: Derived; state: WashState; shown: Was
   const lotAccount = d.S.accounts.length > 1 ? ` · ${account(state.account).name}` : "";
 
   return (
-    <div ref={boxRef} className="relative grid gap-6 border-t border-border px-5 py-8 sm:px-8 md:grid-cols-12 md:gap-8">
+    <div ref={boxRef} className="relative grid gap-6 border-t border-hairline px-5 py-8 sm:px-8 md:grid-cols-12 md:gap-8">
       <div className={d.hasIra ? "md:col-span-3" : "md:col-span-4"}>
         <BucketLabel>Deductible this year</BucketLabel>
-        <div className="mt-2 flex h-24 items-center justify-center rounded-md border border-border bg-bg">
+        <div className="mt-2 flex h-24 items-center justify-center ring-hairline rounded-[8px] bg-bg">
           <div ref={dedRef} className="grid h-7 w-36 place-items-center rounded-pill border border-dashed border-border">
             <span className={cn("num text-[12px] text-muted transition-opacity duration-(--motion-fast)", state.where !== "deductible" ? "opacity-100" : "opacity-0")}>
               nothing this year
@@ -200,7 +200,7 @@ function Buckets({ d, state, shown }: { d: Derived; state: WashState; shown: Was
           New lot · {d.S.purchase.what}
           {lotAccount} · {shortDate(state.rebuyDate)}
         </BucketLabel>
-        <div className="mt-2 rounded-md border border-border bg-bg px-4 py-4">
+        <div className="mt-2 ring-hairline rounded-[8px] bg-bg px-4 py-4">
           <div className="flex items-center gap-4">
             <span className="num w-20 shrink-0 text-meta text-muted">basis</span>
             <LotBar d={d} added={shown.where === "lot" ? shown.disallowed : 0} />

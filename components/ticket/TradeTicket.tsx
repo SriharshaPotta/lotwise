@@ -2,6 +2,7 @@
 
 import { Segmented } from "@/components/ui/Segmented";
 import { Slider } from "@/components/ui/Slider";
+import { Surface } from "@/components/ui/Surface";
 import { Toggle } from "@/components/ui/Toggle";
 import { MoneyTween } from "@/components/viz/MoneyTween";
 import { ACCOUNTS, type AccountId, type Position } from "@/lib/demo";
@@ -19,13 +20,13 @@ interface TradeTicketProps {
 }
 
 /**
- * The trade ticket (§4.2): a dark control panel with the account switch, the position, the shares
+ * The trade ticket (§4.2): a Surface holding the account switch, the position, the shares
  * slider and the buy-back toggle. The thin slot along its bottom edge is where the receipt prints.
  */
 export function TradeTicket({ position: p, onAccount, shares, onShares, buyBack, onBuyBack }: TradeTicketProps) {
   const { lot } = p;
   return (
-    <div className="relative z-20 rounded-md border border-border bg-surface">
+    <Surface className="z-20">
       <div className="space-y-5 p-5">
         <Segmented label="Account" options={ACCOUNT_OPTIONS} value={p.account.id} onChange={onAccount} stretch />
 
@@ -47,7 +48,6 @@ export function TradeTicket({ position: p, onAccount, shares, onShares, buyBack,
           value={shares}
           max={lot.qty}
           onChange={onShares}
-          tickEvery={lot.qty >= 50 ? 10 : 3}
         />
 
         <Toggle checked={buyBack} onChange={onBuyBack} label="Buy back next week" />
@@ -57,6 +57,6 @@ export function TradeTicket({ position: p, onAccount, shares, onShares, buyBack,
       <div aria-hidden className="relative h-3">
         <div className="absolute top-0 right-0 left-0 mx-auto h-[3px] w-[min(100%-1rem,26.5rem)] rounded-full bg-bg shadow-[0_1px_0_var(--rule-strong)] xl:mx-0 xl:ml-5" />
       </div>
-    </div>
+    </Surface>
   );
 }

@@ -69,7 +69,7 @@ export function ShortVsLongTermExplainer() {
         )}
       </DayScrubber>
 
-      <div className="border-t border-border px-5 py-8 sm:px-8">
+      <div className="border-t border-hairline px-5 py-8 sm:px-8">
         <div className="num flex h-8 items-center justify-between text-meta">
           <span className="text-muted">Estimated tax</span>
           <span className={cn("transition-opacity duration-(--motion-fast)", long ? "text-fg opacity-100" : "opacity-0")}>

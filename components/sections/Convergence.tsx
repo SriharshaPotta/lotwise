@@ -11,6 +11,7 @@ import { Chip } from "@/components/ui/Chip";
 import { Lead } from "@/components/ui/Lead";
 import { Marker } from "@/components/ui/Marker";
 import { Segmented } from "@/components/ui/Segmented";
+import { Surface } from "@/components/ui/Surface";
 import { FlyingChip } from "@/components/viz/FlyingChip";
 import { WashWindow } from "@/components/viz/WashWindow";
 import { cn } from "@/lib/cn";
@@ -24,6 +25,10 @@ const CAPTION = { strong: "lotwise checks across all of them,", rest: "before yo
 const WASH_BADGE = `1 wash sale · ${money(data.disallowed, { whole: true })} disallowed`;
 const IRA_BADGE = "1 IRA trap · loss permanently lost";
 const WINDOW_LABEL = `${shortDate(data.window.start)} – ${shortDate(data.window.end)}`;
+const TRADES = data.entries.filter((e) => !e.proposed).length;
+/** Phones have no room for the account column in the merged view; a short tag plus a key instead. */
+const SHORT_ACCOUNT: Record<string, string> = { "brokerage-one": "B1", "brokerage-two": "B2", "roth-ira": "IRA" };
+const PROPOSED = data.entries.length - TRADES;
 
 function Heading() {
   return (
@@ -58,10 +63,13 @@ const CARD_W = (STAGE_W - 2 * GAP) / 3;
 const CARD_H = HEAD + 5 * ROW + 64;
 const ROW_X = 40;
 const ROW_W = 340;
-const ACCT_X = ROW_X + ROW_W;
-const MERGED_W = 600;
+/** The merged ledger spans the whole stage: timeline in the first 8 columns, summary in the last 4. */
+const MERGED_W = STAGE_W;
+const SPLIT_X = Math.round(((STAGE_W + GAP) * 8) / 12 - GAP / 2);
+/** Window label and travelling chip sit just right of the rows. */
+const NOTE_X = 600;
 const ROWS = data.entries.length;
-const MERGED_H = HEAD + ROWS * ROW + 96;
+const MERGED_H = HEAD + ROWS * ROW + 32;
 /** Step 1: the three pages sit centred on the merged ledger's height, then rise into it. */
 const CARD_Y = Math.round((MERGED_H - CARD_H) / 2 / ROW) * ROW;
 
@@ -188,23 +196,34 @@ function Stage({ p }: { p: MotionValue<number> }) {
   const top = rowY(data.window.firstRank) + 4;
   const bottom = rowY(data.window.lastRank) + ROW + 12;
   const saleCenter = rowY(data.sale.rank) + ROW / 2;
-  const chipX = MERGED_W + 4;
+  const chipX = NOTE_X + 4;
 
   return (
     <div aria-hidden className="relative size-full">
       {/* Merged ledger frame (fades in as the broker pages dissolve into it). */}
       <m.div className="absolute top-0 left-0" style={{ opacity: mergedOpacity, width: MERGED_W, height: MERGED_H }}>
         <LedgerPage title="All accounts · by date" className="size-full" />
-        <m.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 18, opacity: okBadge }}>
-          <Badge tone="gain">No issues found</Badge>
-        </m.div>
-        <m.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 18, opacity: washBadge }}>
-          <Badge tone="wash">{WASH_BADGE}</Badge>
-        </m.div>
-        <m.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 54, opacity: iraBadge }}>
-          <Badge tone="loss">{IRA_BADGE}</Badge>
-        </m.div>
-        <StampOnThreshold p={p} />
+        <div className="absolute inset-y-0 w-px bg-hairline" style={{ left: SPLIT_X }} />
+        <div className="absolute inset-y-0 right-0 flex flex-col p-8" style={{ left: SPLIT_X + 1 }}>
+          <SummaryStats />
+          <div className="mt-6 h-12">
+            <StampOnThreshold p={p} />
+          </div>
+          <div className="mt-6 grid [&>*]:[grid-area:1/1]">
+            <m.div style={{ opacity: okBadge }}>
+              <Badge tone="gain">No issues found</Badge>
+            </m.div>
+            <m.div style={{ opacity: washBadge }}>
+              <Badge tone="wash">{WASH_BADGE}</Badge>
+            </m.div>
+          </div>
+          <m.div className="mt-3" style={{ opacity: iraBadge }}>
+            <Badge tone="loss">{IRA_BADGE}</Badge>
+          </m.div>
+          <m.div className="mt-auto" style={{ opacity: windowLabel }}>
+            <WindowFacts />
+          </m.div>
+        </div>
       </m.div>
 
       {LEDGER_ACCOUNTS.map((a) => (
@@ -218,7 +237,7 @@ function Stage({ p }: { p: MotionValue<number> }) {
       >
         <WashWindow className="h-full" />
       </m.div>
-      <m.div className="num absolute text-meta leading-5" style={{ left: MERGED_W + 24, top, opacity: windowLabel }}>
+      <m.div className="num absolute text-meta leading-5" style={{ left: NOTE_X + 24, top, opacity: windowLabel }}>
         <p className="text-fg">61-day window</p>
         <p className="text-muted">{WINDOW_LABEL}</p>
       </m.div>
@@ -292,6 +311,44 @@ function StageRow({ p, entry }: { p: MotionValue<number>; entry: LedgerEntry }) 
   );
 }
 
+/** The window and the trade that falls in it, as plain facts under the summary. */
+function WindowFacts() {
+  const facts = [
+    ["Wash window", WINDOW_LABEL],
+    ["Replacement", `${data.replacement.label} · ${shortDate(data.replacement.date)}`],
+    ["Bought in", data.replacementAccount.name],
+  ] as const;
+  return (
+    <dl className="num space-y-2 pt-6 text-meta shadow-[0_-1px_0_var(--hairline)]">
+      {facts.map(([k, v]) => (
+        <div key={k} className="flex justify-between gap-4">
+          <dt className="text-muted">{k}</dt>
+          <dd className="truncate text-fg">{v}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
+/** What the merged ledger adds up to: how many accounts and trades it read. */
+function SummaryStats() {
+  const stats = [
+    [LEDGER_ACCOUNTS.length, "accounts"],
+    [TRADES, "trades"],
+    [PROPOSED, "to sell"],
+  ] as const;
+  return (
+    <dl className="num grid grid-cols-3 gap-4">
+      {stats.map(([n, label]) => (
+        <div key={label} className="flex flex-col-reverse justify-end">
+          <dt className="mt-1.5 text-meta text-muted">{label}</dt>
+          <dd className="text-[28px] leading-none text-fg">{n}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 /** The stamp is a thunk, not a scrub: crossing the threshold plays it; scrolling back lifts it. */
 function StampOnThreshold({ p }: { p: MotionValue<number> }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -308,7 +365,7 @@ function StampOnThreshold({ p }: { p: MotionValue<number> }) {
   useEffect(() => sync(p.get()));
 
   return (
-    <div className="absolute top-3 right-6">
+    <div className="-ml-1 inline-block">
       <m.div ref={ref} initial={stampIn.initial} className="origin-center">
         <Stamp entrance={false}>WASH SALE</Stamp>
       </m.div>
@@ -391,24 +448,10 @@ function MergedStatic() {
   const top = data.window.firstRank * ROW + 4;
   const bottom = (data.window.lastRank + 1) * ROW + 12;
   return (
-    <div className="max-w-[40rem]">
-      <LedgerPage
-        title={
-          <span className="flex w-full items-center justify-between">
-            All accounts · by date
-            <span className="-mr-1 -rotate-[8deg]">
-              <Stamp entrance={false}>WASH SALE</Stamp>
-            </span>
-          </span>
-        }
-        footer={
-          <>
-            <Badge tone="wash">{WASH_BADGE}</Badge>
-            <Badge tone="loss">{IRA_BADGE}</Badge>
-          </>
-        }
-      >
-        <div className="relative min-w-0 pr-4 pl-10">
+    <Surface className="grid overflow-hidden md:grid-cols-12">
+      <div className="min-w-0 md:col-span-8">
+        <div className="num flex h-16 items-center px-5 text-meta text-muted">All accounts · by date</div>
+        <div className="relative min-w-0 pr-10 pb-4 pl-10 sm:pr-5">
           <WashWindow className="absolute left-[15px]" style={{ top, height: bottom - top } as CSSProperties} />
           {sorted.map((e) => {
             const isReplacement = e.id === data.replacement.id;
@@ -420,18 +463,39 @@ function MergedStatic() {
                 )}
                 <LedgerRow entry={e} proposedRealized={e.proposed ? data.saleRealized : undefined} className="relative min-w-0" />
                 <span className="relative flex shrink-0 items-center gap-2">
-                  {isReplacement && <Chip tone="wash">{money(data.disallowed, { whole: true })}</Chip>}
+                  {/* Phones: no room beside the trade; the wash badge below carries the amount. */}
+                  {isReplacement && (
+                    <Chip tone="wash" className="hidden sm:inline-flex">
+                      {money(data.disallowed, { whole: true })}
+                    </Chip>
+                  )}
                   {isTrap && <Marker tone="loss" />}
                   <AccountTag entry={e} className="hidden sm:inline" />
+                  <span className="num text-[12px] text-muted sm:hidden">{SHORT_ACCOUNT[e.account]}</span>
                 </span>
               </div>
             );
           })}
         </div>
-      </LedgerPage>
-      <p className="num mt-4 text-meta text-muted">
-        <span className="text-fg">61-day window</span> · {WINDOW_LABEL}
-      </p>
-    </div>
+        <p className="num px-5 pb-5 text-meta text-muted">
+          <span className="text-fg">61-day window</span> · {WINDOW_LABEL}
+        </p>
+        <p className="num px-5 pb-5 text-[12px] text-muted sm:hidden">
+          {LEDGER_ACCOUNTS.map((a) => `${SHORT_ACCOUNT[a.id]} ${a.name}`).join(" · ")}
+        </p>
+      </div>
+      <div className="relative p-5 shadow-[0_-1px_0_var(--hairline)] md:col-span-4 md:p-8 md:shadow-[-1px_0_0_var(--hairline)]">
+        <SummaryStats />
+        <div className="mt-6">
+          <span className="inline-block -rotate-[8deg]">
+            <Stamp entrance={false}>WASH SALE</Stamp>
+          </span>
+        </div>
+        <div className="mt-6 flex flex-col items-start gap-3">
+          <Badge tone="wash">{WASH_BADGE}</Badge>
+          <Badge tone="loss">{IRA_BADGE}</Badge>
+        </div>
+      </div>
+    </Surface>
   );
 }

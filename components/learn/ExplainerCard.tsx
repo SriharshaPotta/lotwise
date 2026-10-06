@@ -1,46 +1,38 @@
 import Link from "next/link";
-import { HandUnderline } from "@/components/annotate/HandUnderline";
-import { LedgerRules } from "@/components/ledger/LedgerRules";
+import { surfaceClass } from "@/components/ui/Surface";
 import { cn } from "@/lib/cn";
 import type { Explainer } from "@/lib/learn";
 import { PREVIEWS } from "./Previews";
 
 /**
- * A numbered stop on the learning path with a static preview of its interactive. Explainers that
- * aren't written yet render as a plain card marked "Coming soon" rather than a dead link.
+ * A stop on the learning path, as a Surface: the explainer's preview fills the top edge to edge,
+ * then a hairline, the serif title and "Explore →". Explainers that aren't written yet render as a
+ * plain card marked "Coming soon" rather than a dead link.
  */
 export function ExplainerCard({ e, summary = false }: { e: Explainer; summary?: boolean }) {
   const body = (
     <>
-      <LedgerRules margin={false} />
-      {e.ready && (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute inset-0 rounded-[inherit] border border-[color-mix(in_oklch,var(--fg)_20%,transparent)] opacity-0 transition-opacity duration-(--motion-fast) ease-ui group-is-hover:opacity-100 group-is-focus:opacity-100"
-        />
-      )}
-      <div className="relative">
-        <span className="num block text-meta leading-8 text-muted">{e.n}</span>
-        <h3 className="mt-1 text-[26px] leading-[1.15] tracking-[-0.01em]">{e.title}</h3>
-        {summary && <p className="mt-3 text-muted">{e.summary}</p>}
-        <div aria-hidden className={cn("mt-8 h-[calc(var(--ledger-row)*4)]", !e.ready && "opacity-60")}>
-          {PREVIEWS[e.slug]}
-        </div>
+      <div aria-hidden className={cn("h-[200px] bg-bg/40 px-6 py-8", !e.ready && "opacity-60")}>
+        {PREVIEWS[e.slug]}
+      </div>
+      <div aria-hidden className="h-px bg-hairline" />
+      <div className="flex flex-1 flex-col px-6 pt-5 pb-6">
+        <h3 className="text-[24px] leading-[1.15] tracking-[-0.01em]">{e.title}</h3>
+        {summary && <p className="mt-2 text-small text-muted">{e.summary}</p>}
         {e.ready ? (
-          <span className="relative mt-8 inline-block leading-8 text-fg">
-            Explore →
-            <HandUnderline />
+          <span className="mt-auto pt-6 text-small text-fg">
+            Explore{" "}
+            <span aria-hidden className="inline-block transition-transform duration-150 ease-ui group-hover:translate-x-[2px] group-focus-visible:translate-x-[2px]">
+              →
+            </span>
           </span>
         ) : (
-          <span className="num mt-8 block text-meta leading-8 text-muted">Coming soon</span>
+          <span className="mt-auto pt-6 text-small text-muted">Coming soon</span>
         )}
       </div>
     </>
   );
-  const classes = cn(
-    "group relative block h-full overflow-hidden rounded-md border border-border bg-surface px-6 py-8 lg:px-8",
-    e.ready && "transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.99]",
-  );
+  const classes = surfaceClass({ interactive: e.ready }, "group flex h-full flex-col overflow-hidden");
   return e.ready ? (
     <Link href={`/learn/${e.slug}`} className={classes}>
       {body}

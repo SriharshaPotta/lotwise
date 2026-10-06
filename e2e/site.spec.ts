@@ -1,5 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { countdown } from "../lib/demo";
 
 const EXPLAINER_SLUGS = [
   "the-wash-sale",
@@ -36,6 +37,37 @@ test.describe("hero showcase", () => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/");
     await expect(page.locator("#showcase").getByText("WASH SALE", { exact: true })).toBeVisible({ timeout: 5_000 });
+  });
+});
+
+test.describe("features", () => {
+  const CD = countdown();
+
+  test("countdown ring and held days come from one value, and rest at the real numbers", async ({ page }) => {
+    await page.goto("/");
+    const days = page.getByTestId("countdown-days");
+    const held = page.getByTestId("countdown-held");
+    await days.scrollIntoViewIfNeeded();
+    // While the ring fills, every frame's pair must add up to the full holding period.
+    for (let i = 0; i < 12; i++) {
+      const [d, h] = await page.evaluate(() =>
+        ["countdown-days", "countdown-held"].map((id) => Number(document.querySelector(`[data-testid="${id}"]`)!.textContent!.match(/\d+/)![0])),
+      );
+      expect(d + h).toBe(CD.total);
+      await page.waitForTimeout(120);
+    }
+    // Resting state.
+    await expect(days).toHaveText(String(CD.daysAway), { timeout: 8_000 });
+    await expect(held).toHaveText(`held ${CD.held} days`);
+  });
+
+  test("under reduced motion the countdown shows its resting state", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.goto("/");
+    await page.getByTestId("countdown-days").scrollIntoViewIfNeeded();
+    // The server renders the loop at t=0; the poster state lands once the page hydrates.
+    await expect(page.getByTestId("countdown-days")).toHaveText(String(CD.daysAway), { timeout: 10_000 });
+    await expect(page.getByTestId("countdown-held")).toHaveText(`held ${CD.held} days`);
   });
 });
 

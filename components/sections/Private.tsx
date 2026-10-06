@@ -1,29 +1,25 @@
 "use client";
 
-import { animate, m, useInView, useReducedMotion } from "motion/react";
-import { useEffect, useRef, type CSSProperties } from "react";
-import { Chip } from "@/components/ui/Chip";
+import { m, useInView, useReducedMotion } from "motion/react";
+import { useRef, type ReactNode } from "react";
 import { Lead } from "@/components/ui/Lead";
-import { ease, reveal, spring } from "@/lib/motion";
+import { Surface } from "@/components/ui/Surface";
+import { LEDGER_ACCOUNTS, convergence } from "@/lib/demo";
+import { print, reveal } from "@/lib/motion";
 
 const COPY = {
   strong: "The tax engine runs on your device.",
   rest: "It’s written in Rust and compiled to WebAssembly. There is no backend to send your trades to.",
 };
 
-/** Data dots circling the engine: [orbit radius px, seconds per turn, direction, dot angles°]. */
-const ORBITS = [
-  { r: 72, period: 26, dir: 1, dots: [20, 150, 260] },
-  { r: 106, period: 38, dir: -1, dots: [70, 200, 320] },
-  { r: 132, period: 52, dir: 1, dots: [110, 235] },
-] as const;
-
-/** Dots that try to leave: start offsets from the window centre (px). */
-const ESCAPEES = [
-  { x: 54, y: -34, delay: 0 },
-  { x: 86, y: 22, delay: 0.18 },
-  { x: 30, y: 58, delay: 0.34 },
-] as const;
+const data = convergence();
+/** What the engine just did, on this device. Same demo portfolio as the convergence section. */
+const LINES: [string, string][] = [
+  ["Accounts read", String(LEDGER_ACCOUNTS.length)],
+  ["Trades checked", String(data.entries.length)],
+  ["Wash sales found", "1"],
+  ["Sent to a server", "0 bytes"],
+];
 
 /** §4.6. */
 export function Private() {
@@ -45,84 +41,50 @@ export function Private() {
   );
 }
 
+/**
+ * The browser: a Surface with a small receipt printing inside it, line items typing in, once, when
+ * it comes into view. Beside it, the dashed box for our servers, where nothing arrives.
+ */
 function Sandbox() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLDivElement>(null);
-  const dotRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const inView = useInView(rootRef, { amount: 0.4 });
-  const reduce = useReducedMotion();
-
-  // Each time the section comes into view, a few dots drift for the window's edge (toward our
-  // servers) and spring back. The edge is measured, so the drift fits any width.
-  useEffect(() => {
-    const inner = innerRef.current;
-    if (!inView || reduce || !inner) return;
-    const sideways = window.matchMedia("(min-width: 1024px)").matches;
-    const box = inner.getBoundingClientRect();
-    const runs = dotRefs.current.map((el, i) => {
-      if (!el) return null;
-      const d = el.getBoundingClientRect();
-      const to = sideways ? { x: box.right - d.right - 4, y: 0 } : { x: 0, y: box.bottom - d.bottom - 4 };
-      const delay = 0.25 + ESCAPEES[i].delay;
-      const run: { out: ReturnType<typeof animate>; back?: ReturnType<typeof animate> } = {
-        out: animate(el, to, { duration: 1.1, ease: ease.settle, delay }),
-      };
-      run.out.then(() => {
-        run.back = animate(el, { x: 0, y: 0 }, spring.paper);
-      });
-      return run;
-    });
-    return () => runs.forEach((r) => {
-      r?.out.stop();
-      r?.back?.stop();
-    });
-  }, [inView, reduce]);
+  const inView = useInView(rootRef, { once: true, amount: 0.4 });
+  const reduce = useReducedMotion() ?? false;
+  const printing = inView || reduce;
 
   return (
     <div ref={rootRef} aria-hidden className="flex flex-col items-stretch gap-8 lg:flex-row lg:items-center">
-      {/* The browser: a hairline window, no chrome beyond a label strip. */}
-      <div className="relative h-80 min-w-0 flex-1 overflow-hidden rounded-lg border border-[color-mix(in_oklch,var(--fg)_22%,transparent)] bg-bg">
-        <div className="num flex h-8 items-center justify-between border-b border-border px-4 text-meta text-muted">
+      <Surface className="h-80 min-w-0 flex-1 overflow-hidden">
+        <div className="num flex h-10 items-center justify-between px-4 text-meta text-muted shadow-[0_1px_0_var(--hairline)]">
           <span>your browser</span>
           <span>on this device</span>
         </div>
-        <div ref={innerRef} className="relative h-72 overflow-hidden">
-          {ORBITS.map((o, i) => (
-            <div
-              key={i}
-              className="absolute top-1/2 left-1/2 rounded-full border border-rule"
-              style={{ width: o.r * 2, height: o.r * 2, marginLeft: -o.r, marginTop: -o.r }}
+        <div className="relative flex h-[calc(100%-2.5rem)] justify-center px-6 pt-8">
+          {/* the slot the receipt feeds out of */}
+          <span className="absolute inset-x-[max(1.5rem,calc(50%-11rem))] top-8 h-px rounded-full bg-rule-strong" />
+          <div className="relative w-full max-w-[20rem] overflow-hidden">
+            <m.div
+              initial={{ y: reduce ? "0%" : "-100%" }}
+              animate={printing ? (reduce ? { y: "0%" } : { y: [...print.feedY] }) : undefined}
+              transition={reduce ? { duration: 0 } : { duration: print.feedDuration, times: [...print.feedTimes], ease: "linear" }}
+              className="paper-shadow-sm px-1 pb-4"
             >
-              <div
-                className="orbit absolute inset-0"
-                data-paused={inView ? undefined : ""}
-                style={{ "--orbit-dur": `${o.period}s`, "--orbit-dir": o.dir === 1 ? "normal" : "reverse" } as CSSProperties}
-              >
-                {o.dots.map((a) => (
-                  <span
-                    key={a}
-                    className="absolute top-1/2 left-1/2 -mt-[2.5px] -ml-[2.5px] size-[5px] rounded-full bg-[color-mix(in_oklch,var(--fg)_70%,transparent)]"
-                    style={{ transform: `rotate(${a}deg) translateX(${o.r}px)` }}
-                  />
+              <div className="paper paper-fiber perforated num px-4 py-4 text-[12px] leading-6 text-ink">
+                <Line i={0} shown={printing} instant={reduce} className="receipt-caps flex justify-between text-[11px] text-ink-muted">
+                  <span>lotwise · engine</span>
+                  <span>wasm</span>
+                </Line>
+                {LINES.map(([label, value], i) => (
+                  <Line key={label} i={i + 1} shown={printing} instant={reduce} className="flex items-end gap-1.5">
+                    <span className="receipt-caps whitespace-nowrap">{label}</span>
+                    <span className="receipt-leader min-w-4 flex-1 self-stretch" />
+                    <span className="receipt-caps whitespace-nowrap">{value}</span>
+                  </Line>
                 ))}
               </div>
-            </div>
-          ))}
-          {ESCAPEES.map((e, i) => (
-            <span
-              key={i}
-              ref={(el) => {
-                dotRefs.current[i] = el;
-              }}
-              className="absolute top-1/2 left-1/2 -mt-[2.5px] -ml-[2.5px] size-[5px] rounded-full bg-[color-mix(in_oklch,var(--fg)_70%,transparent)]"
-              style={{ translate: `${e.x}px ${e.y}px` }}
-            />
-          ))}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Chip tone="neutral" className="h-8 bg-surface px-4">Rust → WebAssembly</Chip>
+            </m.div>
           </div>
         </div>
-      </div>
+      </Surface>
 
       {/* Our servers: nothing arrives. */}
       <div className="num flex h-40 shrink-0 flex-col justify-center rounded-lg border border-dashed border-border px-6 lg:w-52">
@@ -131,5 +93,19 @@ function Sandbox() {
         <span className="mt-2 text-meta text-muted">bytes received</span>
       </div>
     </div>
+  );
+}
+
+/** One receipt line: fades in after the feed, 40ms after the one before (§2.6.2). */
+function Line({ i, shown, instant, className, children }: { i: number; shown: boolean; instant: boolean; className?: string; children: ReactNode }) {
+  return (
+    <m.div
+      initial={{ opacity: instant ? 1 : 0 }}
+      animate={{ opacity: shown ? 1 : 0 }}
+      transition={instant ? { duration: 0 } : { duration: print.lineFade, delay: print.feedDuration + i * print.lineGap }}
+      className={className}
+    >
+      {children}
+    </m.div>
   );
 }

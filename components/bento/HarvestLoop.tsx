@@ -41,17 +41,8 @@ export function HarvestLoop({ time }: { time: MotionValue<number> }) {
   const washNote = useTransform(t, (u) => keyframes(u, [[flipAt(WASH.order) + FLIP * 0.6, 0], [flipAt(WASH.order) + FLIP + 0.2, 1], [RESET[0], 1], [RESET[0] + 0.3, 0]]));
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="grid w-max gap-2" style={{ gridTemplateColumns: `repeat(${HARVEST_COLS}, 24px)` }}>
-        {CELLS.map((c, i) =>
-          c.kind === "hold" ? (
-            <span key={i} className="size-6 rounded-[4px] border border-border bg-surface-2" />
-          ) : (
-            <Flip key={i} cell={c} t={t} />
-          ),
-        )}
-      </div>
-      <div className="mt-auto">
+    <div className="flex flex-col md:flex-row md:items-start md:justify-between md:gap-8">
+      <div className="shrink-0">
         <div className="num flex h-8 items-baseline gap-3">
           <m.span className="inline-block w-[7ch] text-[22px] text-accent">{saved}</m.span>
           <span className="text-meta text-muted">saved this year</span>
@@ -60,6 +51,23 @@ export function HarvestLoop({ time }: { time: MotionValue<number> }) {
           <span className="hatch-wash inline-block h-2.5 w-4 rounded-[2px]" />
           {WASH.symbol} skipped: it would wash
         </m.div>
+        {/* The key to the grid (md+, where the counter has a column of its own). */}
+        <ul className="num mt-8 hidden space-y-3 text-meta text-muted md:block">
+          <li className="flex items-center gap-2.5"><span className="size-3 rounded-[3px] bg-loss" />loss, not yet taken</li>
+          <li className="flex items-center gap-2.5"><span className="size-3 rounded-[3px] bg-accent" />harvested</li>
+          <li className="flex items-center gap-2.5"><span className="hatch-wash size-3 rounded-[3px]" />would wash: skipped</li>
+          <li className="flex items-center gap-2.5"><span className="ring-hairline size-3 rounded-[3px] bg-surface-2" />gain: held</li>
+        </ul>
+      </div>
+      {/* Cells scale with the card (up to 48px); the last row runs into the Surface's fade. */}
+      <div className="mt-6 grid w-full max-w-[500px] gap-2 sm:gap-3 md:mt-0" style={{ gridTemplateColumns: `repeat(${HARVEST_COLS}, minmax(0, 1fr))` }}>
+        {CELLS.map((c, i) =>
+          c.kind === "hold" ? (
+            <span key={i} className="ring-hairline aspect-square rounded-[6px] bg-surface-2" />
+          ) : (
+            <Flip key={i} cell={c} t={t} />
+          ),
+        )}
       </div>
     </div>
   );
@@ -69,14 +77,14 @@ function Flip({ cell, t }: { cell: LossCell; t: MotionValue<number> }) {
   const start = flipAt(cell.order);
   const rotateY = useTransform(t, (u) => keyframes(u, [[start, 0], [start + FLIP, 180], [RESET[0], 180], [RESET[1], 360]], inOut));
   return (
-    <span className="relative size-6 [perspective:240px]">
+    <span className="relative aspect-square [perspective:240px]">
       <m.span className="absolute inset-0 [transform-style:preserve-3d]" style={{ rotateY }}>
-        <span className="absolute inset-0 rounded-[4px] bg-loss [backface-visibility:hidden]" />
+        <span className="absolute inset-0 rounded-[6px] bg-loss [backface-visibility:hidden]" />
         <span
           className={
             cell.kind === "wash"
-              ? "hatch-wash absolute inset-0 rounded-[4px] border border-wash [backface-visibility:hidden] [transform:rotateY(180deg)]"
-              : "absolute inset-0 rounded-[4px] bg-accent [backface-visibility:hidden] [transform:rotateY(180deg)]"
+              ? "hatch-wash absolute inset-0 rounded-[6px] border border-wash [backface-visibility:hidden] [transform:rotateY(180deg)]"
+              : "absolute inset-0 rounded-[6px] bg-accent [backface-visibility:hidden] [transform:rotateY(180deg)]"
           }
         />
       </m.span>

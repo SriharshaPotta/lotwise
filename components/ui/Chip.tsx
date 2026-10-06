@@ -18,13 +18,13 @@ export function Chip({ tone = "neutral", children, selected, className, style, .
   const color = toneColor(tone);
   const interactive = selected !== undefined;
   const classes = cn(
-    "group num relative isolate inline-flex h-7 items-center gap-2 rounded-pill border px-3 text-meta text-ctx-fg whitespace-nowrap",
+    "group num relative isolate inline-flex h-7 items-center gap-2 rounded-pill px-3 text-meta text-ctx-fg whitespace-nowrap",
     interactive && "cursor-pointer transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-40",
     className,
   );
   const fill = `color-mix(in oklch, ${color} ${tone === "neutral" ? 8 : 14}%, transparent)`;
   const chipStyle = {
-    borderColor: selected ? color : `color-mix(in oklch, ${color} 38%, transparent)`,
+    boxShadow: `inset 0 0 0 1px ${selected ? color : `color-mix(in oklch, ${color} 38%, transparent)`}`,
     backgroundColor: fill,
     ...style,
   };

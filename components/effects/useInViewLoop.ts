@@ -24,9 +24,11 @@ interface InViewLoop<T extends Element> {
  */
 export function useInViewLoop<T extends Element>({ poster = 0 }: { poster?: number } = {}): InViewLoop<T> {
   const ref = useRef<T>(null);
-  const time = useMotionValue(0);
-  const speed = useRef({ current: 1, target: 1 });
   const reduce = useReducedMotion() ?? false;
+  // Under reduced motion the clock starts parked at the poster, so derived values never depend on
+  // a later change event reaching them (the server renders t=0; these visuals mount client-side).
+  const time = useMotionValue(reduce ? poster : 0);
+  const speed = useRef({ current: 1, target: 1 });
   const [inView, setInView] = useState(false);
 
   useEffect(() => {

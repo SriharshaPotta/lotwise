@@ -14,6 +14,8 @@
   --border:    oklch(30%   0.018 160);
   --rule:      color-mix(in oklch, var(--fg) 6%, transparent);   /* ledger lines */
   --rule-strong: color-mix(in oklch, var(--fg) 12%, transparent);
+  --hairline:        oklch(100% 0 0 / .09);   /* the one outline: a 1px box-shadow ring */
+  --hairline-strong: oklch(100% 0 0 / .16);
 
   /* 2.2 paper (receipts, coupons, explainer cards) */
   --paper:      oklch(95%  0.020 95);
@@ -78,8 +80,9 @@
   --ctx-accent-hover: var(--accent-hover);
   --ctx-on-accent: var(--on-accent);
   --ctx-focus: var(--accent);
-  /* Controls (toggle track) stay off saturated emerald: one emerald moment per screen. */
-  --ctx-control: var(--accent-deep);
+  --ctx-hairline: var(--hairline);
+  --ctx-hairline-strong: var(--hairline-strong);
+  /* What sits on an emerald control (switch thumb). */
   --ctx-on-control: var(--fg);
   --ctx-gain: var(--gain);
   --ctx-loss: var(--loss);
@@ -100,7 +103,8 @@
   --ctx-accent-hover: color-mix(in oklch, var(--accent-deep), var(--ink) 25%);
   --ctx-on-accent: var(--paper);
   --ctx-focus: var(--accent-deep);
-  --ctx-control: var(--accent-deep);
+  --ctx-hairline: oklch(0% 0 0 / .1);
+  --ctx-hairline-strong: oklch(0% 0 0 / .18);
   --ctx-on-control: var(--paper);
   --ctx-gain: var(--gain-ink);
   --ctx-loss: var(--loss-ink);
@@ -172,7 +176,10 @@
   --color-ctx-accent-hover: var(--ctx-accent-hover);
   --color-ctx-on-accent: var(--ctx-on-accent);
   --color-ctx-focus: var(--ctx-focus);
-  --color-ctx-control: var(--ctx-control);
+  --color-ctx-hairline: var(--ctx-hairline);
+  --color-ctx-hairline-strong: var(--ctx-hairline-strong);
+  --color-hairline: var(--hairline);
+  --color-hairline-strong: var(--hairline-strong);
   --color-ctx-on-control: var(--ctx-on-control);
   --color-ctx-gain: var(--ctx-gain);
   --color-ctx-loss: var(--ctx-loss);
@@ -325,6 +332,43 @@
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
+   Surface (§2.4): an opaque card whose outline is a 1px box-shadow ring, never a border.
+   The ledger ruling never shows inside one. `.surface-fade` crops content off the bottom
+   edge behind a mask on the content layer, so the ring itself stays crisp.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+  .surface {
+    position: relative;
+    background-color: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 0 0 1px var(--hairline), 0 1px 2px rgb(0 0 0 / .35);
+  }
+  .surface[data-size="control"] { border-radius: 8px; }
+  .surface-fade { overflow: hidden; }
+  .surface-fade > .surface-content {
+    height: 100%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent);
+    mask-image: linear-gradient(to bottom, #000 70%, transparent);
+  }
+  .surface-interactive {
+    transition:
+      box-shadow 150ms var(--ease-ui),
+      background-color 150ms var(--ease-ui);
+  }
+  @media (hover: hover) {
+    .surface-interactive:hover { background-color: var(--surface-2); box-shadow: 0 0 0 1px var(--hairline-strong), 0 1px 2px rgb(0 0 0 / .35); }
+  }
+  .surface-interactive:focus-visible,
+  .surface-interactive[data-force~="hover"] {
+    background-color: var(--surface-2);
+    box-shadow: 0 0 0 1px var(--hairline-strong), 0 1px 2px rgb(0 0 0 / .35);
+  }
+  /* The one hairline, for anything smaller than a Surface (mini ticket, ring-only chips). */
+  .ring-hairline { box-shadow: 0 0 0 1px var(--ctx-hairline); }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
    Slider (native range input, restyled; the fill is a scaled sibling element)
    ─────────────────────────────────────────────────────────────────────────── */
 
@@ -339,19 +383,20 @@
 .lw-range[data-force~="focus"] { outline: none; }
 .lw-range::-webkit-slider-runnable-track { height: 100%; background: transparent; }
 .lw-range::-moz-range-track { background: transparent; }
+/* 16px thumb: --fg (ink on paper) with a 1px ring and a soft shadow. */
 .lw-range::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 18px; height: 18px; margin-top: 7px;
+  width: 16px; height: 16px; margin-top: 8px;
   border-radius: 999px;
   background: var(--ctx-fg);
-  box-shadow: 0 0 0 3px var(--ctx-bg);
+  box-shadow: 0 0 0 1px var(--ctx-hairline-strong), 0 1px 3px rgb(0 0 0 / .4);
   transition: transform var(--motion-fast) var(--ease-ui);
 }
 .lw-range::-moz-range-thumb {
-  width: 18px; height: 18px; border: 0;
+  width: 16px; height: 16px; border: 0;
   border-radius: 999px;
   background: var(--ctx-fg);
-  box-shadow: 0 0 0 3px var(--ctx-bg);
+  box-shadow: 0 0 0 1px var(--ctx-hairline-strong), 0 1px 3px rgb(0 0 0 / .4);
   transition: transform var(--motion-fast) var(--ease-ui);
 }
 @media (hover: hover) {
@@ -516,12 +561,6 @@
   }
 }
 
-/* Private section (§4.6): data dots orbiting the engine. Paused offscreen. */
-@keyframes lw-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: no-preference) {
-  .orbit { animation: lw-spin var(--orbit-dur, 30s) linear infinite var(--orbit-dir, normal); }
-  .orbit[data-paused] { animation-play-state: paused; }
-}
 
 /* Anchor jumps stop below the fixed nav (NAV_HEIGHT), with Lenis or without. */
 html { scroll-padding-top: 64px; }
@@ -579,10 +618,10 @@ html { scroll-padding-top: 64px; }
 }
 
 /* Explainer readouts: hairline cell borders, 2×n on phones, one row from md. */
-.readouts > * + * { border-left: 1px solid var(--border); }
+.readouts > * + * { border-left: 1px solid var(--hairline); }
 @media (max-width: 767px) {
   .readouts > :nth-child(odd) { border-left: 0; }
-  .readouts > :nth-child(n + 3) { border-top: 1px solid var(--border); }
+  .readouts > :nth-child(n + 3) { border-top: 1px solid var(--hairline); }
 }
 
 /* Paper-fiber texture (receipts and coupons only): a static tile at ~4%, under the ink, clipped by

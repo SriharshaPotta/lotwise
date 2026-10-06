@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import { LedgerRules } from "@/components/ledger/LedgerRules";
+import { Surface } from "@/components/ui/Surface";
 import { cn } from "@/lib/cn";
 
 /**
@@ -28,8 +28,7 @@ export function ExplainerFrame({
 }) {
   return (
     <figure className="breakout not-prose my-16" aria-label={label}>
-      <div className="relative overflow-hidden rounded-md border border-border bg-surface">
-        <LedgerRules margin={false} />
+      <Surface className="overflow-hidden">
         <div className="relative">
           <header className="num flex min-h-16 flex-wrap items-center justify-between gap-x-6 gap-y-1 px-5 py-4 text-meta sm:px-8">
             <span className="text-fg">{title}</span>
@@ -38,7 +37,7 @@ export function ExplainerFrame({
           {controls && <div className="flex flex-wrap items-center gap-x-6 gap-y-4 px-5 pb-4 sm:px-8">{controls}</div>}
           {children}
         </div>
-      </div>
+      </Surface>
       <p className="sr-only" aria-live="polite">
         {spoken}
       </p>
@@ -61,7 +60,7 @@ export function Readouts({ children, cols = 4 }: { children: ReactNode; cols?: 2
   return (
     <dl
       className={cn(
-        "readouts grid grid-cols-2 border-t border-border",
+        "readouts grid grid-cols-2 border-t border-hairline",
         cols === 4 && "md:grid-cols-4",
         cols === 3 && "md:grid-cols-3",
       )}

@@ -14,12 +14,12 @@ export function Badge({ tone = "neutral", children, className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "num inline-flex h-7 items-center gap-2 rounded-sm border px-2.5 text-meta whitespace-nowrap",
+        "num inline-flex h-7 items-center gap-2 rounded-sm px-2.5 text-meta whitespace-nowrap",
         tone === "neutral" ? "text-ctx-muted" : "text-ctx-fg",
         className,
       )}
       style={{
-        borderColor: `color-mix(in oklch, ${color} ${tone === "neutral" ? 45 : 40}%, transparent)`,
+        boxShadow: `inset 0 0 0 1px color-mix(in oklch, ${color} ${tone === "neutral" ? 45 : 40}%, transparent)`,
         backgroundColor: tone === "neutral" ? "transparent" : `color-mix(in oklch, ${color} 10%, transparent)`,
       }}
     >

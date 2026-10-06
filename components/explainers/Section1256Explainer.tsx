@@ -39,7 +39,7 @@ export function Section1256Explainer() {
       hint="Use the slider and switch, or the keyboard"
       spoken={spoken}
     >
-      <div className="grid gap-x-8 gap-y-6 border-b border-border px-5 pt-2 pb-6 sm:px-8 md:grid-cols-12 md:items-end">
+      <div className="grid gap-x-8 gap-y-6 border-b border-hairline px-5 pt-2 pb-6 sm:px-8 md:grid-cols-12 md:items-end">
         <Slider
           label="Gain on the trade"
           value={gain}
@@ -47,7 +47,6 @@ export function Section1256Explainer() {
           min={X.min}
           max={X.max}
           step={X.step}
-          tickEvery={1500}
           format={(v) => money(v, { whole: true })}
           className="md:col-span-7"
         />

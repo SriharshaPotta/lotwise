@@ -24,17 +24,21 @@ export const sec1256Summary = `The same ${money(S.gain, { whole: true })} short-
 export function Sec1256Loop({ time }: { time: MotionValue<number> }) {
   const split = useTransform(time, (v) => keyframes(wrap(v, PERIOD), [[0, 0], [1.0, 0], [2.4, 1], [6.0, 1], [7.0, 0]], inOut));
   const xspTax = useTransform(split, (p) => money(S.spyTax + (S.xspTax - S.spyTax) * p, { whole: true }));
-  const fade = useTransform(split, (p) => 1 - p);
+  // The two split labels hand over in sequence (out, then in), never overlapping mid-fade.
+  const fade = useTransform(split, (p) => Math.max(0, 1 - p * 2));
+  const splitLabel = useTransform(split, (p) => Math.max(0, p * 2 - 1));
   const ltScale = useTransform(split, (p) => p);
 
+  // Six fixed 32px rows; every cell is one line that clips rather than wraps, so labels and bars
+  // can never collide at any width.
   return (
-    <div className="num flex h-full flex-col text-meta">
-      <div className="flex h-8 items-center text-muted">same call trade · gain {money(S.gain, { whole: true })}</div>
+    <div className="num grid h-full grid-rows-[repeat(6,32px)] content-center text-meta [&>*]:min-w-0 [&>*]:overflow-hidden [&>*]:whitespace-nowrap">
+      <div className="flex items-center text-muted">same call trade · gain {money(S.gain, { whole: true })}</div>
 
       <Row label="SPY" tax={<span>{money(S.spyTax, { whole: true })}</span>}>
         <span className="absolute inset-0 rounded-full bg-[color-mix(in_oklch,var(--muted)_45%,transparent)]" />
       </Row>
-      <div className="flex h-8 items-start pl-12 text-muted">100% short-term</div>
+      <div className="flex items-center pl-12 text-muted">100% short-term</div>
 
       <Row label="XSP" tax={<m.span>{xspTax}</m.span>}>
         <span className="absolute inset-0 rounded-full bg-[color-mix(in_oklch,var(--muted)_45%,transparent)]" />
@@ -47,12 +51,12 @@ export function Sec1256Loop({ time }: { time: MotionValue<number> }) {
           style={{ width: `calc(${(1 - LT_SHARE) * 100}% - 1px)`, opacity: split }}
         />
       </Row>
-      <div className="grid h-8 items-start pl-12 text-muted [&>*]:[grid-area:1/1]">
+      <div className="grid items-center pl-12 text-muted [&>*]:[grid-area:1/1]">
         <m.span style={{ opacity: fade }}>100% short-term</m.span>
-        <m.span style={{ opacity: split }}>60% long · 40% short</m.span>
+        <m.span style={{ opacity: splitLabel }}>60% long · 40% short</m.span>
       </div>
 
-      <m.div className="mt-auto flex h-8 items-center text-fg" style={{ opacity: split }}>
+      <m.div className="flex items-center text-fg" style={{ opacity: split }}>
         XSP saves {money(S.save, { whole: true })}
       </m.div>
     </div>
@@ -61,10 +65,10 @@ export function Sec1256Loop({ time }: { time: MotionValue<number> }) {
 
 function Row({ label, tax, children }: { label: string; tax: React.ReactNode; children: React.ReactNode }) {
   return (
-    <div className="flex h-8 items-center gap-3">
+    <div className="flex items-center gap-3">
       <span className="w-9 shrink-0 text-fg">{label}</span>
       <span className="relative h-2.5 min-w-0 flex-1 overflow-hidden rounded-full">{children}</span>
-      <span className="w-[6ch] shrink-0 text-right text-fg">{tax}</span>
+      <span className="w-[8ch] shrink-0 text-right text-fg">{tax}</span>
     </div>
   );
 }

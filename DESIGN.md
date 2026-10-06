@@ -10,7 +10,7 @@ The defining contrast: the page is dark ink, but the product's key artifact, **t
 
 Apple-level restraint still applies: one idea per screen, huge confident headlines, lots of space, and one saturated emerald moment per screen.
 
-**Never:** terminal/macOS window chrome, ASCII art, dithering, glassmorphism, purple-blue gradients, glows, emoji, stock illustrations, generic three-icon feature rows, centered-everything layouts.
+**Never:** terminal/macOS window chrome, ASCII art, dithering, glassmorphism, purple-blue gradients, glows, emoji, stock illustrations, generic three-icon feature rows, centered-everything layouts, ruled lines inside cards, grids of identical cards, mono labels that carry no data.
 
 ### 2.2 Color tokens (OKLCH)
 
@@ -25,6 +25,8 @@ Apple-level restraint still applies: one idea per screen, huge confident headlin
   --border:    oklch(30%   0.018 160);
   --rule:      color-mix(in oklch, var(--fg) 6%, transparent);   /* ledger lines */
   --rule-strong: color-mix(in oklch, var(--fg) 12%, transparent);
+  --hairline:        oklch(100% 0 0 / .09);  /* the one outline: a 1px box-shadow ring */
+  --hairline-strong: oklch(100% 0 0 / .16);  /* hover / focus */
 
   /* paper (receipts, coupons, explainer cards) */
   --paper:      oklch(95%  0.020 95);
@@ -92,7 +94,14 @@ Rules: semantic colors only ever carry their meaning. Wash amber is never used w
 
 - 12-column grid. Headlines are **left-aligned**, often spanning 9–10 columns; supporting copy sits in narrower columns. Asymmetry is good.
 - Big vertical gaps between sections (`--space-32` desktop, `--space-24` mobile).
-- Cards on ink use hairline `--border`, small radius. Paper objects have **no border**, a soft shadow (`0 1px 0 rgba(0,0,0,.06), 0 24px 48px -12px rgba(0,0,0,.55)`), and perforated edges.
+- **Surface** (`components/ui/Surface.tsx`) is the only card on ink: opaque `--surface`, **no border**; the outline is a box-shadow ring, `box-shadow: 0 0 0 1px var(--hairline), 0 1px 2px rgb(0 0 0 / .35)`. Radius 12px for frames, 8px for controls; ~20–32px padding.
+  - `fade`: the content is cropped off the bottom edge behind `mask-image: linear-gradient(to bottom, #000 70%, transparent)` (on the content layer, so the ring stays crisp). Keep the key numbers above the 70% line.
+  - `interactive`: on hover / focus-visible the ring becomes `--hairline-strong` and the background lifts to `--surface-2`, 150ms `--ease-ui`. No scale, no glow.
+  - The ledger ruling **never** shows inside a Surface.
+- One hairline style everywhere: rings use `--hairline` (`.ring-hairline` for small chrome), dividers are 1px `--hairline`. No gradients except the fade mask.
+- Explanatory text sits **outside** the card in a plain column: serif title, a two-tone `<Lead>` sentence, then a plain list (mono 13px, no icons). The card holds a cropped, realistic product visual.
+- Layouts alternate and are asymmetric (text 4 cols / visual 8, then mirrored, then a 5 + 7 pair of shorter cards). Never a grid of identical boxes.
+- Paper objects have **no border**, a soft shadow (`0 1px 0 rgba(0,0,0,.06), 0 24px 48px -12px rgba(0,0,0,.55)`), and perforated edges.
 
 ### 2.5 Motion: "paper physics"
 
@@ -115,7 +124,7 @@ Rules: semantic colors only ever carry their meaning. Wash amber is never used w
 
 ### 2.6 Signature elements (the identity)
 
-1. **Ledger ruling.** The page background carries faint horizontal rules every `--ledger-row` and a thin double vertical margin rule on the left (like accounting paper), drawn with CSS gradients (`--rule`). In the hero, the ruling is alive: an **emerald price line draws itself** across the rules (SVG, ink easing, ~1.6s), small lot bars fade in along it, and an amber hatched window settles around one dip. Afterward, the line keeps a very slow drift (one screen width per ~60s).
+1. **Ledger ruling.** Page background only, never inside a Surface. The page background carries faint horizontal rules every `--ledger-row` and a thin double vertical margin rule on the left (like accounting paper), drawn with CSS gradients (`--rule`). In the hero, the ruling is alive: an **emerald price line draws itself** across the rules (SVG, ink easing, ~1.6s), small lot bars fade in along it, and an amber hatched window settles around one dip. Afterward, the line keeps a very slow drift (one screen width per ~60s).
 2. **The tax receipt.** A light `--paper` card with **perforated zigzag top and bottom edges** (CSS `mask`), mono line items with **dotted leaders** (`Proceeds ……… $12,980.00`), a double rule above totals, and a footer barcode made of thin bars. It **prints**: it slides up out of a thin "slot" line with a short stepped feed (3 quick steps), then line items type in one by one (40ms apart).
 3. **The stamp.** Rubber-stamp marks in `--stamp` ink (e.g. `WASH SALE`, `LONG-TERM IN 9 DAYS`): a rounded rectangle border, uppercase mono, rotated −8°, slightly rough edges (SVG turbulence-free: use a hand-drawn SVG outline). It lands with a thunk: scale 1.35 → 1, opacity 0 → 1, 120ms, tiny 2px settle.
 4. **Coupons.** Better alternatives appear as **tear-off coupons** with a dashed border and a notched edge, sliding out from under the receipt.

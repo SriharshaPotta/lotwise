@@ -1,0 +1,238 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - navigation "Main" [ref=e5]:
+      - link "Lotwise home" [ref=e6] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]: Lotwise
+      - list [ref=e9]:
+        - listitem [ref=e10]:
+          - link "How it works" [ref=e11] [cursor=pointer]:
+            - /url: /#how-it-works
+            - text: How it works
+            - generic [aria-hidden] [ref=e12]: How it works
+        - listitem [ref=e13]:
+          - link "Learn" [ref=e14] [cursor=pointer]:
+            - /url: /learn
+            - text: Learn
+            - generic [aria-hidden] [ref=e15]: Learn
+        - listitem [ref=e16]:
+          - link "Agents" [ref=e17] [cursor=pointer]:
+            - /url: /#agents
+            - text: Agents
+            - generic [aria-hidden] [ref=e18]: Agents
+        - listitem [ref=e19]:
+          - link "GitHub" [ref=e20] [cursor=pointer]:
+            - /url: https://github.com/
+            - text: GitHub
+            - generic [aria-hidden] [ref=e21]: GitHub
+      - link "Open the demo" [ref=e23] [cursor=pointer]:
+        - /url: /demo
+  - main [ref=e25]:
+    - region [ref=e26]:
+      - generic [ref=e27]:
+        - heading "Know the tax bill before you click sell." [level=1] [ref=e28]:
+          - generic [ref=e29]: Know the tax bill
+          - generic [ref=e30]:
+            - emphasis [ref=e31]: before
+            - text: you click sell.
+        - generic [ref=e33]:
+          - paragraph [ref=e34]:
+            - text: Lotwise checks every account you own for wash sales and hands you the tax receipt for a trade
+            - emphasis [ref=e35]: before
+            - text: you place it. It runs entirely in your browser.
+          - generic [ref=e36]:
+            - link "Open the demo portfolio" [ref=e37] [cursor=pointer]:
+              - /url: /demo
+            - link "How it works ↓" [ref=e39] [cursor=pointer]:
+              - /url: "#how-it-works"
+          - list "Why it's safe to try" [ref=e40]:
+            - listitem [ref=e41]: Runs in your browser
+            - listitem [ref=e42]: No account needed
+            - listitem [ref=e43]: Open source
+        - generic [ref=e45]:
+          - generic [ref=e47]:
+            - radiogroup "Account" [ref=e48]:
+              - radio "Brokerage One" [checked] [ref=e49]
+              - radio "Brokerage Two" [ref=e51]
+              - radio "Roth IRA" [ref=e53]
+            - generic [ref=e55]:
+              - paragraph [ref=e56]: NVDA · 100 sh ·
+              - paragraph [ref=e57]: avg cost $148.20 · last $129.80
+              - paragraph [ref=e58]:
+                - generic [ref=e59]: Unrealized loss
+                - text: −$1,840.00
+            - generic [ref=e60]:
+              - generic [ref=e61]:
+                - generic [ref=e62]: Shares to sell
+                - status [aria-hidden] [ref=e63]: 0 sh
+              - slider "Shares to sell" [ref=e78] [cursor=pointer]: "0"
+            - generic [ref=e79] [cursor=pointer]:
+              - switch "Buy back next week" [ref=e80]
+              - generic [ref=e85]: Buy back next week
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - generic [ref=e96]: Lotwise · pre-trade receipt
+              - generic [ref=e97]: OCT 15 2026
+            - generic [ref=e100]: Sell 0 NVDA @ 129.80
+            - generic [ref=e102]:
+              - generic [ref=e103]: Proceeds
+              - generic [ref=e105]: $0.00
+            - generic [ref=e106]:
+              - generic [ref=e107]: Cost basis
+              - generic [ref=e109]: $0.00
+            - generic [ref=e110]:
+              - generic [ref=e111]: Realized
+              - generic [ref=e113]: $0.00
+            - generic [ref=e114]:
+              - generic [ref=e115]: Term
+              - generic [ref=e117]: —
+            - generic [ref=e120]:
+              - generic [ref=e121]: Deductible loss
+              - generic [ref=e123]: $0.00
+            - generic [ref=e124]:
+              - generic [ref=e125]: Disallowed (wash sale)
+              - generic [ref=e129]: $0.00
+            - generic [ref=e134]: "#00042"
+          - paragraph [ref=e182]
+    - region "Findings from the demo portfolio" [ref=e183]:
+      - generic [ref=e184]:
+        - paragraph [ref=e185]:
+          - generic [ref=e186]: From the demo portfolio
+        - generic [ref=e188]:
+          - list [ref=e189]:
+            - listitem [ref=e190]:
+              - generic [ref=e192]:
+                - text: Wash sale caught ·
+                - generic [ref=e193]: $1,840 kept
+            - listitem [ref=e194]:
+              - generic [ref=e196]:
+                - text: Goes long-term in 9 days ·
+                - generic [ref=e197]: save $410
+            - listitem [ref=e198]:
+              - generic [ref=e200]: IRA trap avoided · $620
+            - listitem [ref=e201]:
+              - generic [ref=e203]:
+                - text: HIFO instead of FIFO ·
+                - generic [ref=e204]: save $95
+            - listitem [ref=e205]:
+              - generic [ref=e207]:
+                - text: XSP instead of SPY ·
+                - generic [ref=e208]: save $388
+          - list [aria-hidden] [ref=e209]:
+            - listitem [ref=e210]:
+              - generic [ref=e212]:
+                - text: Wash sale caught ·
+                - generic [ref=e213]: $1,840 kept
+            - listitem [ref=e214]:
+              - generic [ref=e216]:
+                - text: Goes long-term in 9 days ·
+                - generic [ref=e217]: save $410
+            - listitem [ref=e218]:
+              - generic [ref=e220]: IRA trap avoided · $620
+            - listitem [ref=e221]:
+              - generic [ref=e223]:
+                - text: HIFO instead of FIFO ·
+                - generic [ref=e224]: save $95
+            - listitem [ref=e225]:
+              - generic [ref=e227]:
+                - text: XSP instead of SPY ·
+                - generic [ref=e228]: save $388
+    - region [ref=e230]:
+      - generic [ref=e232]:
+        - generic [ref=e233]:
+          - heading [level=2] [ref=e234]:
+            - text: Your broker sees one account. The IRS sees
+            - emphasis [ref=e235]: all
+            - text: of them.
+          - generic [ref=e236]:
+            - paragraph [ref=e237]: Each broker checks its own account. That’s all it’s required to do.
+            - paragraph [aria-hidden] [ref=e238]: lotwise checks across all of them, before you trade.
+        - generic [aria-hidden] [ref=e242]:
+          - generic [ref=e243]:
+            - generic [ref=e244]: All accounts · by date
+            - generic [ref=e246]: No issues found
+            - generic [ref=e250]: 1 wash sale · $1,840 disallowed
+            - generic [ref=e254]: 1 IRA trap · loss permanently lost
+            - generic [ref=e258]: WASH SALE
+          - generic [ref=e260]:
+            - paragraph [ref=e262]: Brokerage One
+            - generic [ref=e263]: No issues found
+          - generic [ref=e267]:
+            - paragraph [ref=e269]: Brokerage Two
+            - generic [ref=e270]: No issues found
+          - generic [ref=e274]:
+            - paragraph [ref=e276]: Roth IRA
+            - generic [ref=e277]: No issues found
+          - generic [ref=e281]:
+            - paragraph [ref=e282]: 61-day window
+            - paragraph [ref=e283]: Sep 15 – Nov 14
+          - generic [ref=e284]:
+            - generic [ref=e285]:
+              - generic [ref=e286]: Aug 14
+              - generic [ref=e287]: BUY 5 COST
+            - generic [ref=e288]: Brokerage One
+          - generic [ref=e290]:
+            - generic [ref=e291]:
+              - generic [ref=e292]: Sep 2
+              - generic [ref=e293]: SELL 20 TSLA
+            - generic [ref=e294]: Brokerage One
+          - generic [ref=e296]:
+            - generic [ref=e297]:
+              - generic [ref=e298]: Sep 28
+              - generic [ref=e299]: SELL 100 INTC
+            - generic [ref=e300]: Brokerage One
+          - generic [ref=e304]:
+            - generic [ref=e305]:
+              - generic [ref=e306]: Oct 9
+              - generic [ref=e307]: BUY 10 VTI
+            - generic [ref=e308]: Brokerage One
+          - generic [ref=e310]:
+            - generic [ref=e311]:
+              - generic [ref=e312]: Aug 21
+              - generic [ref=e313]: BUY 30 AMD
+            - generic [ref=e314]: Brokerage Two
+          - generic [ref=e316]:
+            - generic [ref=e317]:
+              - generic [ref=e318]: Sep 16
+              - generic [ref=e319]: SELL 8 META
+            - generic [ref=e320]: Brokerage Two
+          - generic [ref=e322]:
+            - generic [ref=e324]:
+              - generic [ref=e325]: Oct 3
+              - generic [ref=e326]: BUY 2 NVDA calls
+            - generic [ref=e327]: Brokerage Two
+          - generic [ref=e329]:
+            - generic [ref=e330]:
+              - generic [ref=e331]: Oct 8
+              - generic [ref=e332]: BUY 12 GOOGL
+            - generic [ref=e333]: Brokerage Two
+          - generic [ref=e335]:
+            - generic [ref=e336]:
+              - generic [ref=e337]: Aug 30
+              - generic [ref=e338]: BUY 40 SCHD
+            - generic [ref=e339]: Roth IRA
+          - generic [ref=e341]:
+            - generic [ref=e342]:
+              - generic [ref=e343]: Sep 19
+              - generic [ref=e344]: BUY 3 MSFT
+            - generic [ref=e345]: Roth IRA
+          - generic [ref=e347]:
+            - generic [ref=e348]:
+              - generic [ref=e349]: Oct 6
+              - generic [ref=e350]: BUY 100 INTC
+            - generic [ref=e351]: Roth IRA
+          - generic [ref=e355]:
+            - generic [ref=e356]:
+              - generic [ref=e357]: Oct 12
+              - generic [ref=e358]: SELL 4 SPY
+            - generic [ref=e359]: Roth IRA
+          - generic [ref=e361]:
+            - generic [ref=e362]:
+              - generic [ref=e363]: Oct 15
+              - generic [ref=e364]: SELL 100 NVDA
+              - generic [ref=e365]: −$1,840
+              - generic [ref=e366]: proposed
+            - generic [ref=e367]: Brokerage One
+          - generic [aria-hidden]:
+            - generic: $1,840
+        - paragraph [ref=e369]: "Three broker ledgers each report no issues. Merged by date, the proposed sale of SELL 100 NVDA on Oct 15 falls inside the 61-day window (Sep 15 – Nov 14) of the BUY 2 NVDA calls bought Oct 3 in Brokerage Two: 1 wash sale · $1,840 disallowed. 1 IRA trap · loss permanently lost."

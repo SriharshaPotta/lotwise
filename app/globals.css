@@ -1,0 +1,506 @@
+@import "tailwindcss";
+
+/* ───────────────────────────────────────────────────────────────────────────
+   DESIGN.md §2 tokens. Names match DESIGN.md exactly; do not rename.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* 2.2 ink (page): neutrals tinted toward green */
+  --bg:        oklch(16.5% 0.012 160);
+  --surface:   oklch(20%   0.014 160);
+  --surface-2: oklch(24%   0.016 160);
+  --fg:        oklch(94.5% 0.018 95);    /* warm paper-white text */
+  --muted:     oklch(70%   0.020 120);
+  --border:    oklch(30%   0.018 160);
+  --rule:      color-mix(in oklch, var(--fg) 6%, transparent);   /* ledger lines */
+  --rule-strong: color-mix(in oklch, var(--fg) 12%, transparent);
+
+  /* 2.2 paper (receipts, coupons, explainer cards) */
+  --paper:      oklch(95%  0.020 95);
+  --paper-2:    oklch(91%  0.024 92);
+  --ink:        oklch(22%  0.020 160);   /* text on paper */
+  --ink-muted:  oklch(45%  0.020 140);
+
+  /* 2.2 accent: emerald */
+  --accent:        oklch(76% 0.170 158);
+  --accent-hover:  oklch(82% 0.150 160);
+  --accent-deep:   oklch(42% 0.090 160);
+  --on-accent:     oklch(17% 0.030 160);
+  --accent-soft:   color-mix(in oklch, var(--accent) 14%, transparent);
+
+  /* 2.2 semantic (on ink) */
+  --gain:      var(--accent);
+  --loss:      oklch(68% 0.170 20);
+  --wash:      oklch(83% 0.130 88);      /* ALWAYS paired with diagonal hatching */
+  --longterm:  oklch(72% 0.130 300);
+  --sec1256:   oklch(74% 0.110 230);
+
+  /* 2.2 semantic (on paper): darker so they read on --paper */
+  --gain-ink:  oklch(48% 0.120 158);
+  --loss-ink:  oklch(52% 0.170 25);
+  --wash-ink:  oklch(58% 0.130 70);
+  --stamp:     oklch(60% 0.150 55);      /* receipt stamp ink */
+
+  /* 2.3 type scale */
+  --fs-display: clamp(44px, 6vw, 92px);
+  --fs-h2:      clamp(30px, 3.6vw, 52px);
+  --fs-lead:    clamp(17px, 1.3vw, 20px);
+  --fs-body:    16px;
+  --fs-meta:    13px;
+  --fs-receipt: clamp(12px, 0.95vw, 14px);
+
+  /* 2.4 space, layout */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-6: 24px;
+  --space-8: 32px; --space-12: 48px; --space-16: 64px; --space-24: 96px; --space-32: 144px;
+  --container: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+  --ledger-row: 32px;          /* baseline rhythm of the ruled background */
+
+  /* 2.4 paper objects */
+  --shadow-paper: 0 1px 0 rgba(0, 0, 0, .06), 0 24px 48px -12px rgba(0, 0, 0, .55);
+
+  /* 2.5 motion */
+  --motion-fast: 160ms;
+  --motion-reveal: 640ms;
+  --motion-tween: 420ms;
+
+  /* Context tokens: what components actually use. Ink by default; `.paper` remaps them
+     to the -ink variants so a primitive never needs to know where it sits (§2.2 rules). */
+  --ctx-bg: var(--bg);
+  --ctx-fg: var(--fg);
+  --ctx-muted: var(--muted);
+  --ctx-line: var(--border);
+  --ctx-rule: var(--rule);
+  --ctx-rule-strong: var(--rule-strong);
+  --ctx-raised: var(--surface-2);
+  --ctx-accent: var(--accent);
+  --ctx-accent-hover: var(--accent-hover);
+  --ctx-on-accent: var(--on-accent);
+  --ctx-focus: var(--accent);
+  /* Controls (toggle track) stay off saturated emerald: one emerald moment per screen. */
+  --ctx-control: var(--accent-deep);
+  --ctx-on-control: var(--fg);
+  --ctx-gain: var(--gain);
+  --ctx-loss: var(--loss);
+  --ctx-wash: var(--wash);
+  --ctx-longterm: var(--longterm);
+  --ctx-sec1256: var(--sec1256);
+}
+
+.paper {
+  --ctx-bg: var(--paper);
+  --ctx-fg: var(--ink);
+  --ctx-muted: var(--ink-muted);
+  --ctx-line: color-mix(in oklch, var(--ink) 22%, transparent);
+  --ctx-rule: color-mix(in oklch, var(--ink) 7%, transparent);
+  --ctx-rule-strong: color-mix(in oklch, var(--ink) 14%, transparent);
+  --ctx-raised: var(--paper-2);
+  --ctx-accent: var(--accent-deep);
+  --ctx-accent-hover: color-mix(in oklch, var(--accent-deep), var(--ink) 25%);
+  --ctx-on-accent: var(--paper);
+  --ctx-focus: var(--accent-deep);
+  --ctx-control: var(--accent-deep);
+  --ctx-on-control: var(--paper);
+  --ctx-gain: var(--gain-ink);
+  --ctx-loss: var(--loss-ink);
+  --ctx-wash: var(--wash-ink);
+  /* DESIGN.md defines no -ink variant for these two; darkened toward --ink for contrast on paper. */
+  --ctx-longterm: color-mix(in oklch, var(--longterm), var(--ink) 40%);
+  --ctx-sec1256: color-mix(in oklch, var(--sec1256), var(--ink) 40%);
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+/* Tokens that live in Tailwind namespaces are declared here under their DESIGN.md names;
+   `static` makes sure every one is emitted even when no utility uses it yet. */
+@theme static {
+  --font-display: var(--font-newsreader), 'Iowan Old Style', Georgia, serif;   /* all headlines */
+  --font-body:    var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono:    var(--font-geist-mono), ui-monospace, monospace;             /* numbers, receipts */
+  --font-sans:    var(--font-body);
+
+  --radius-sm: 6px; --radius-md: 10px; --radius-lg: 16px; --radius-pill: 999px;
+
+  --ease-ui: cubic-bezier(0.32, 0.72, 0, 1);     /* hovers, presses */
+  --ease-ink: cubic-bezier(0.65, 0, 0.35, 1);     /* lines drawing themselves */
+  --ease-settle: cubic-bezier(0.16, 1, 0.3, 1);   /* reveals */
+}
+
+/* Everything else is exposed to Tailwind by reference. The default palette is removed so only
+   design tokens can be used for color. */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-paper: var(--paper);
+  --color-paper-2: var(--paper-2);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-deep: var(--accent-deep);
+  --color-on-accent: var(--on-accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-gain: var(--gain);
+  --color-loss: var(--loss);
+  --color-wash: var(--wash);
+  --color-longterm: var(--longterm);
+  --color-sec1256: var(--sec1256);
+  --color-gain-ink: var(--gain-ink);
+  --color-loss-ink: var(--loss-ink);
+  --color-wash-ink: var(--wash-ink);
+  --color-stamp: var(--stamp);
+
+  --color-ctx-bg: var(--ctx-bg);
+  --color-ctx-fg: var(--ctx-fg);
+  --color-ctx-muted: var(--ctx-muted);
+  --color-ctx-line: var(--ctx-line);
+  --color-ctx-rule: var(--ctx-rule);
+  --color-ctx-rule-strong: var(--ctx-rule-strong);
+  --color-ctx-raised: var(--ctx-raised);
+  --color-ctx-accent: var(--ctx-accent);
+  --color-ctx-accent-hover: var(--ctx-accent-hover);
+  --color-ctx-on-accent: var(--ctx-on-accent);
+  --color-ctx-focus: var(--ctx-focus);
+  --color-ctx-control: var(--ctx-control);
+  --color-ctx-on-control: var(--ctx-on-control);
+  --color-ctx-gain: var(--ctx-gain);
+  --color-ctx-loss: var(--ctx-loss);
+  --color-ctx-wash: var(--ctx-wash);
+  --color-ctx-longterm: var(--ctx-longterm);
+  --color-ctx-sec1256: var(--ctx-sec1256);
+
+  --text-display: var(--fs-display);
+  --text-display--line-height: 0.98;
+  --text-display--letter-spacing: -0.02em;
+  --text-h2: var(--fs-h2);
+  --text-h2--line-height: 1.05;
+  --text-h2--letter-spacing: -0.015em;
+  --text-lead: var(--fs-lead);
+  --text-lead--line-height: 1.55;
+  --text-body: var(--fs-body);
+  --text-body--line-height: 1.6;
+  --text-meta: var(--fs-meta);
+  --text-meta--line-height: 1.4;
+  --text-receipt: var(--fs-receipt);
+  --text-receipt--line-height: 1.7;
+
+  --spacing-gutter: var(--gutter);
+  --spacing-ledger: var(--ledger-row);
+  --container-page: var(--container);
+
+  --shadow-paper: var(--shadow-paper);
+  --animate-duration-fast: var(--motion-fast);
+}
+
+/* Interaction-state variants. `data-force` lets /dev/kitchen-sink pin a state for review. */
+@custom-variant is-hover {
+  @media (hover: hover) { &:hover:not(:disabled, [aria-disabled="true"]) { @slot; } }
+  &[data-force~="hover"] { @slot; }
+}
+@custom-variant is-active {
+  &:active:not(:disabled, [aria-disabled="true"]) { @slot; }
+  &[data-force~="active"] { @slot; }
+}
+@custom-variant is-focus {
+  &:focus-visible { @slot; }
+  &[data-force~="focus"] { @slot; }
+}
+@custom-variant group-is-hover {
+  @media (hover: hover) { :where(.group):hover:not(:disabled, [aria-disabled="true"]) & { @slot; } }
+  :where(.group)[data-force~="hover"] & { @slot; }
+}
+@custom-variant group-is-focus {
+  :where(.group):focus-visible & { @slot; }
+  :where(.group)[data-force~="focus"] & { @slot; }
+}
+@custom-variant group-is-active {
+  :where(.group):active:not(:disabled, [aria-disabled="true"]) & { @slot; }
+  :where(.group)[data-force~="active"] & { @slot; }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Base
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: var(--fs-body);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-optical-sizing: auto;
+  }
+  body {
+    min-height: 100dvh;
+    background-color: var(--bg);
+  }
+  p { text-wrap: pretty; }
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    text-wrap: balance;
+  }
+  :focus-visible,
+  [data-force~="focus"] {
+    outline: 2px solid var(--ctx-focus);
+    outline-offset: 3px;
+  }
+  ::selection {
+    background: color-mix(in oklch, var(--accent) 35%, transparent);
+    color: var(--fg);
+  }
+}
+
+@layer utilities {
+  /* Anything numeric (§2.3). */
+  .num {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "zero" 0;
+  }
+  /* Small caps style: receipts and stamps ONLY (§2.3). */
+  .receipt-caps {
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .hatch-wash {
+    background-color: color-mix(in oklch, var(--ctx-wash) 12%, transparent);
+    background-image: repeating-linear-gradient(135deg, var(--ctx-wash) 0 1.5px, transparent 1.5px 6px);
+  }
+  .hatch-accent {
+    background-image: repeating-linear-gradient(135deg, var(--ctx-accent) 0 1px, transparent 1px 4px);
+  }
+  .page-container {
+    width: 100%;
+    max-width: calc(var(--container) + 2 * var(--gutter));
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Ledger ruling (§2.6.1). Horizontal rules every --ledger-row, double margin rule.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.ledger-rules {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(var(--ledger-row) - 1px),
+    var(--ctx-rule) calc(var(--ledger-row) - 1px),
+    var(--ctx-rule) var(--ledger-row)
+  );
+  background-position: 0 var(--ledger-offset, 0px);
+}
+.ledger-margin {
+  /* Two hairlines 3px apart, like the red double rule on accounting paper (here in rule ink). */
+  background-image:
+    linear-gradient(to right, var(--ctx-rule-strong), var(--ctx-rule-strong)),
+    linear-gradient(to right, var(--ctx-rule-strong), var(--ctx-rule-strong));
+  background-size: 1px 100%, 1px 100%;
+  background-position: 0 0, 4px 0;
+  background-repeat: no-repeat;
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Slider (native range input, restyled; the fill is a scaled sibling element)
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.lw-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+  margin: 0;
+  cursor: pointer;
+}
+.lw-range:focus-visible,
+.lw-range[data-force~="focus"] { outline: none; }
+.lw-range::-webkit-slider-runnable-track { height: 100%; background: transparent; }
+.lw-range::-moz-range-track { background: transparent; }
+.lw-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px; margin-top: 7px;
+  border-radius: 999px;
+  background: var(--ctx-fg);
+  box-shadow: 0 0 0 3px var(--ctx-bg);
+  transition: transform var(--motion-fast) var(--ease-ui);
+}
+.lw-range::-moz-range-thumb {
+  width: 18px; height: 18px; border: 0;
+  border-radius: 999px;
+  background: var(--ctx-fg);
+  box-shadow: 0 0 0 3px var(--ctx-bg);
+  transition: transform var(--motion-fast) var(--ease-ui);
+}
+@media (hover: hover) {
+  .lw-range:not(:disabled):hover::-webkit-slider-thumb { transform: scale(1.12); }
+  .lw-range:not(:disabled):hover::-moz-range-thumb { transform: scale(1.12); }
+}
+.lw-range[data-force~="hover"]::-webkit-slider-thumb { transform: scale(1.12); }
+.lw-range[data-force~="hover"]::-moz-range-thumb { transform: scale(1.12); }
+.lw-range:not(:disabled):active::-webkit-slider-thumb,
+.lw-range[data-force~="active"]::-webkit-slider-thumb { transform: scale(1.22); }
+.lw-range:not(:disabled):active::-moz-range-thumb,
+.lw-range[data-force~="active"]::-moz-range-thumb { transform: scale(1.22); }
+.lw-range:focus-visible::-webkit-slider-thumb,
+.lw-range[data-force~="focus"]::-webkit-slider-thumb { outline: 2px solid var(--ctx-focus); outline-offset: 3px; }
+.lw-range:focus-visible::-moz-range-thumb,
+.lw-range[data-force~="focus"]::-moz-range-thumb { outline: 2px solid var(--ctx-focus); outline-offset: 3px; }
+.lw-range:disabled { cursor: not-allowed; }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Entrance choreography + living ledger (§2.5, §2.6.1, §4.1).
+   Pure CSS keyframes on transform / opacity / stroke-dashoffset; delays come from
+   heroTimeline in lib/motion.ts via --d. Under reduced motion none of this runs and every
+   element simply renders in its final state.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@keyframes lw-fade { from { opacity: 0; } }
+@keyframes lw-rise { from { opacity: 0; transform: translateY(20px); } }
+@keyframes lw-ink-draw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes lw-settle { from { opacity: 0; transform: translateY(-10px) scaleY(1.08); } }
+@keyframes lw-drift { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .enter-fade { animation: lw-fade var(--dur, 300ms) linear var(--d, 0s) both; }
+  .enter-rise { animation: lw-rise var(--motion-reveal) var(--ease-settle) var(--d, 0s) both; }
+  .ink-draw {
+    stroke-dasharray: 1 1;
+    animation: lw-ink-draw 1.6s var(--ease-ink) var(--d, 0s) both;
+  }
+  .settle {
+    transform-box: fill-box;
+    transform-origin: 50% 100%;
+    animation: lw-settle var(--motion-reveal) var(--ease-settle) var(--d, 0s) both;
+  }
+  .drift {
+    will-change: transform;
+    animation: lw-drift var(--drift-dur, 60s) linear var(--d, 0s) infinite;
+  }
+  .drift[data-paused] { animation-play-state: paused; }
+}
+
+/* Hero headline: two set lines (one on md+, three on phones). Its box is rounded up to whole
+   ledger rows so everything below it starts on a rule. */
+.hero-title {
+  min-height: round(up, calc(3 * 0.98 * var(--fs-display)), var(--ledger-row));
+}
+@media (min-width: 768px) {
+  .hero-title { min-height: round(up, calc(2 * 0.98 * var(--fs-display)), var(--ledger-row)); }
+}
+
+/* Inline list with hairline separators that never start a wrapped line. Each item draws its
+   rule 1px left of itself; the list is pulled left by one gap and clipped, so the rule of the
+   first item on every line falls outside the box. */
+.rule-list {
+  --rule-gap: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  margin-left: calc(-1 * var(--rule-gap));
+}
+.rule-list > li { position: relative; padding-inline: var(--rule-gap); }
+.rule-list > li::before {
+  content: "";
+  position: absolute;
+  left: -1px;
+  top: 50%;
+  height: 0.95em;
+  width: 1px;
+  translate: 0 -50%;
+  background: var(--ctx-line);
+}
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Findings tape (§4.3): two copies of the list translate left by one copy, forever.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@keyframes lw-tape { to { transform: translateX(-50%); } }
+.tape-track { display: flex; width: max-content; }
+.tape { mask-image: linear-gradient(to right, transparent, #000 24px, #000 calc(100% - 48px), transparent); }
+@media (prefers-reduced-motion: no-preference) {
+  .tape-track { will-change: transform; animation: lw-tape var(--tape-dur, 60s) linear infinite; }
+  .tape:hover .tape-track,
+  .tape[data-held] .tape-track,
+  .tape-track[data-paused] { animation-play-state: paused; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tape { mask-image: none; }
+  .tape-track { width: auto; }
+  .tape-track > .tape-copy { flex-wrap: wrap; flex-shrink: 1; row-gap: 0; }
+  .tape-track > .tape-copy[aria-hidden] { display: none; }
+  .tape-copy > li { white-space: normal; }
+}
+
+/* Convergence (§4.4): the scroll-driven stage, or the Broker/IRS toggle when scrolling a 300vh
+   stage would be wrong (reduced motion, short screens, phones too narrow for three ledgers). */
+.convergence-fallback { display: none; }
+@media (prefers-reduced-motion: reduce), (max-height: 719px), (max-width: 767px) {
+  .convergence-scroll { display: none; }
+  .convergence-fallback { display: block; }
+}
+
+/* Stamps multiply into paper; on ink they print as-is. */
+.paper .stamp-ink { mix-blend-mode: multiply; }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   Paper objects (§2.4, §2.6.2, §2.6.4). Masks clip box-shadow, so paper shadows are
+   drop-shadow filters on a wrapper.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.paper-shadow { filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .06)) drop-shadow(0 22px 22px rgba(0, 0, 0, .5)); }
+.paper-shadow-sm { filter: drop-shadow(0 1px 0 rgba(0, 0, 0, .06)) drop-shadow(0 12px 14px rgba(0, 0, 0, .45)); }
+
+/* Perforated zigzag top and bottom edges. */
+.perforated {
+  --z: 6px;
+  --zig-top: conic-gradient(from 135deg at 50% 0, #000 90deg, #0000 0) 0 0 / calc(2 * var(--z)) var(--z) repeat-x;
+  --zig-mid: linear-gradient(#000 0 0) 0 var(--z) / 100% calc(100% - 2 * var(--z)) no-repeat;
+  --zig-bottom: conic-gradient(from -45deg at 50% 100%, #000 90deg, #0000 0) 0 100% / calc(2 * var(--z)) var(--z) repeat-x;
+  -webkit-mask: var(--zig-top), var(--zig-mid), var(--zig-bottom);
+  mask: var(--zig-top), var(--zig-mid), var(--zig-bottom);
+}
+
+/* Tear-off coupon: half-circle notches cut from the left and right edges. */
+.coupon-notch {
+  --r: 8px;
+  --notch-l: radial-gradient(circle var(--r) at 0 50%, #0000 calc(100% - .5px), #000) 0 0 / 51% 100% no-repeat;
+  --notch-r: radial-gradient(circle var(--r) at 100% 50%, #0000 calc(100% - .5px), #000) 100% 0 / 51% 100% no-repeat;
+  -webkit-mask: var(--notch-l), var(--notch-r);
+  mask: var(--notch-l), var(--notch-r);
+}
+
+/* Dotted leader between a receipt label and its value. */
+.receipt-leader {
+  background-image: radial-gradient(circle, color-mix(in oklch, var(--ink) 45%, transparent) 0.75px, transparent 1px);
+  background-size: 5px 4px;
+  background-position: 0 calc(100% - 5px);
+  background-repeat: repeat-x;
+}
+
+/* Receipt clip: anything above the ticket's slot line is hidden, so paper emerges from the slit. */
+.slot-clip { clip-path: inset(0 -100vw -100vh -100vw); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

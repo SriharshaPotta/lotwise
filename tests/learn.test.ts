@@ -162,3 +162,21 @@ describe("the-ira-trap", () => {
     expect(mdx).toContain(`sold ${S.qty} ${S.lot.symbol}`);
   });
 });
+
+describe("options-can-trigger-it", () => {
+  const S = WASH_SCENARIOS.options;
+  it("2 NVDA calls bought Oct 3 at $6.40 a share: $1,280, counted as 200 shares", () => {
+    expect(S.defaultDate).toBe("2026-10-03");
+    expect(S.purchase).toMatchObject({ qty: 200, price: 6.4, what: "2 NVDA calls" });
+    expect(washOutcome(S, "2026-11-20").newBasis).toBe(1280);
+  });
+  it("inside the window they disallow the whole $1,840 and the calls' basis becomes $3,120", () => {
+    expect(washOutcome(S, S.defaultDate)).toMatchObject({ where: "lot", disallowed: 1840, newBasis: 3120, deductible: 0 });
+  });
+  it("this is the same wash the hero receipt and the convergence show", () => {
+    expect(washOutcome(S, S.defaultDate).disallowed).toBe(accountsExplainer().disallowed);
+  });
+  it("prose quotes only those numbers", () => {
+    proseChecks("options-can-trigger-it", 500, [money(S.purchase.price), "$1,280", "$1,840", "$3,120"]);
+  });
+});

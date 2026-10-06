@@ -11,3 +11,8 @@ export function WashSaleExplainer() {
 export function IraTrapExplainer() {
   return <WashWindowExplainer scenario="iraTrap" readouts="ira" />;
 }
+
+/** §5 options-can-trigger-it: the NVDA sale against call options dragged along the calendar. */
+export function OptionsExplainer() {
+  return <WashWindowExplainer scenario="options" chipMarker />;
+}

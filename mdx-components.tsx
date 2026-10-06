@@ -1,7 +1,7 @@
 import type { MDXComponents } from "mdx/types";
 import { AcrossAccountsExplainer } from "@/components/explainers/AcrossAccountsExplainer";
 import { ShortVsLongTermExplainer } from "@/components/explainers/ShortVsLongTermExplainer";
-import { IraTrapExplainer, WashSaleExplainer } from "@/components/explainers/WashSaleExplainer";
+import { IraTrapExplainer, OptionsExplainer, WashSaleExplainer } from "@/components/explainers/WashSaleExplainer";
 
 // Typography for MDX lives in globals.css (.learn-prose). Explainer interactives are available to
 // every MDX file without imports.
@@ -10,6 +10,7 @@ const components: MDXComponents = {
   ShortVsLongTermExplainer,
   AcrossAccountsExplainer,
   IraTrapExplainer,
+  OptionsExplainer,
 };
 
 export function useMDXComponents(): MDXComponents {

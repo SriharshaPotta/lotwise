@@ -53,7 +53,16 @@ function summary(d: Derived, s: WashState) {
  * chip flies out of "Deductible" into the new lot (basis up, holding start earlier) or, if the
  * purchase is in an IRA, into "Gone for good". Every number comes from the engine.
  */
-export function WashWindowExplainer({ scenario, readouts = "wash" }: { scenario: WashScenario["id"]; readouts?: "wash" | "ira" }) {
+export function WashWindowExplainer({
+  scenario,
+  readouts = "wash",
+  chipMarker = false,
+}: {
+  scenario: WashScenario["id"];
+  readouts?: "wash" | "ira";
+  /** Draw the dragged purchase as a chip ("2 NVDA calls · Oct 3") instead of a text label. */
+  chipMarker?: boolean;
+}) {
   const d = useMemo(() => derive(WASH_SCENARIOS[scenario]), [scenario]);
   const { S } = d;
   const [day, setDay] = useState(() => scenarioDay(S, S.defaultDate));
@@ -102,7 +111,15 @@ export function WashWindowExplainer({ scenario, readouts = "wash" }: { scenario:
         dateOf={d.date}
         label={`${S.purchase.verb === "buy back" ? "Buy-back" : "Purchase"} date`}
         valueText={`${shortDate(state.rebuyDate)}, ${state.inWindow ? "inside" : "outside"} the wash-sale window`}
-        markerLabel={`${S.purchase.verb} ${shortDate(state.rebuyDate)}`}
+        markerLabel={
+          chipMarker ? (
+            <Chip tone="neutral" className="-mt-1.5 bg-surface">
+              {S.purchase.what} · {shortDate(state.rebuyDate)}
+            </Chip>
+          ) : (
+            `${S.purchase.verb} ${shortDate(state.rebuyDate)}`
+          )
+        }
       >
         {(pct) => (
           <>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { useCallback, useRef, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
 interface DayScrubberProps {
@@ -35,6 +35,17 @@ export function DayScrubber({ days, value, onChange, dateOf, label, valueText, m
   const trackRef = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
   const dragging = useRef(false);
+  const labelRef = useRef<HTMLSpanElement>(null);
+  // Track and marker-label widths (px), so month labels the marker label would cover can step aside.
+  const [size, setSize] = useState({ track: 0, label: 0 });
+  useEffect(() => {
+    const ro = new ResizeObserver(() =>
+      setSize({ track: trackRef.current?.offsetWidth ?? 0, label: labelRef.current?.offsetWidth ?? 0 }),
+    );
+    if (trackRef.current) ro.observe(trackRef.current);
+    if (labelRef.current) ro.observe(labelRef.current);
+    return () => ro.disconnect();
+  }, []);
 
   const dayAt = (clientX: number) => {
     const r = trackRef.current!.getBoundingClientRect();
@@ -70,6 +81,13 @@ export function DayScrubber({ days, value, onChange, dateOf, label, valueText, m
 
   const monthStarts = Array.from({ length: days }, (_, d) => d).filter((d) => dateOf(d).endsWith("-01"));
   const align = value > last * 0.88 ? "-translate-x-full" : value < last * 0.12 ? "" : "-translate-x-1/2";
+  // The marker label's horizontal extent, in px from the track's left edge.
+  const mx = (pct(value) / 100) * size.track;
+  const [l0, l1] = align === "" ? [mx, mx + size.label] : align === "-translate-x-full" ? [mx - size.label, mx] : [mx - size.label / 2, mx + size.label / 2];
+  const covered = (d: number) => {
+    const x = (pct(d) / 100) * size.track;
+    return size.track > 0 && x > l0 - 22 && x < l1 + 22;
+  };
 
   return (
     <div className="px-5 pt-8 pb-4 sm:px-8">
@@ -93,7 +111,12 @@ export function DayScrubber({ days, value, onChange, dateOf, label, valueText, m
           />
         ))}
         {monthStarts.map((d) => (
-          <span key={d} aria-hidden className="num absolute top-32 -translate-x-1/2 text-[12px] text-muted" style={{ left: `${pct(d)}%` }}>
+          <span
+            key={d}
+            aria-hidden
+            className={cn("num absolute top-32 -translate-x-1/2 text-[12px] text-muted transition-opacity duration-(--motion-fast)", covered(d) && "opacity-0")}
+            style={{ left: `${pct(d)}%` }}
+          >
             {MONTHS[Number(dateOf(d).slice(5, 7)) - 1]}
           </span>
         ))}
@@ -101,7 +124,9 @@ export function DayScrubber({ days, value, onChange, dateOf, label, valueText, m
         {/* a full-width layer moved by transform, so dragging never touches layout */}
         <motion.div aria-hidden className="pointer-events-none absolute inset-0" initial={false} animate={{ x: `${pct(value)}%` }} transition={springy}>
           <div className="absolute top-10 left-0 h-[4.5rem] w-px -translate-x-1/2 bg-fg" />
-          <span className={cn("num absolute top-[8.75rem] text-[12px] whitespace-nowrap text-fg", align)}>{markerLabel}</span>
+          <span ref={labelRef} className={cn("num absolute top-[8.75rem] text-[12px] whitespace-nowrap text-fg", align)}>
+            {markerLabel}
+          </span>
         </motion.div>
         <motion.div className="pointer-events-none absolute inset-0" initial={false} animate={{ x: `${pct(value)}%` }} transition={springy}>
           <div

@@ -377,8 +377,11 @@
 @keyframes lw-drift { to { transform: translateX(-50%); } }
 
 @media (prefers-reduced-motion: no-preference) {
-  .enter-fade { animation: lw-fade var(--dur, 300ms) linear var(--d, 0s) both; }
-  .enter-rise { animation: lw-rise var(--motion-reveal) var(--ease-settle) var(--d, 0s) both; }
+  /* `backwards`, not `both`: the keyframes only define `from`, so the end state is the element's own
+     style, and once the animation is over it stops holding a compositor layer. (The full-page ledger
+     ruling would otherwise stay a page-sized layer that re-tiles whenever the page height changes.) */
+  .enter-fade { animation: lw-fade var(--dur, 300ms) linear var(--d, 0s) backwards; }
+  .enter-rise { animation: lw-rise var(--motion-reveal) var(--ease-settle) var(--d, 0s) backwards; }
   .ink-draw {
     stroke-dasharray: 1 1;
     animation: lw-ink-draw 1.6s var(--ease-ink) var(--d, 0s) both;

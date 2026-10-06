@@ -1,4 +1,5 @@
 import type { MDXComponents } from "mdx/types";
+import { AcrossAccountsExplainer } from "@/components/explainers/AcrossAccountsExplainer";
 import { ShortVsLongTermExplainer } from "@/components/explainers/ShortVsLongTermExplainer";
 import { WashSaleExplainer } from "@/components/explainers/WashSaleExplainer";
 
@@ -7,6 +8,7 @@ import { WashSaleExplainer } from "@/components/explainers/WashSaleExplainer";
 const components: MDXComponents = {
   WashSaleExplainer,
   ShortVsLongTermExplainer,
+  AcrossAccountsExplainer,
 };
 
 export function useMDXComponents(): MDXComponents {

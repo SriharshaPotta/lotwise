@@ -11,7 +11,7 @@ export interface Explainer {
 export const EXPLAINERS: readonly Explainer[] = [
   { slug: "the-wash-sale", n: "01", title: "The wash sale", summary: "Sell at a loss, buy it back within 30 days, and the loss has to wait.", ready: true },
   { slug: "short-vs-long-term", n: "02", title: "Short vs long term", summary: "One more day of holding can change the rate on a gain.", ready: true },
-  { slug: "across-accounts", n: "03", title: "Across accounts", summary: "The rule looks at every account you own, not just the one you sold in.", ready: false },
+  { slug: "across-accounts", n: "03", title: "Across accounts", summary: "The rule looks at every account you own, not just the one you sold in.", ready: true },
   { slug: "the-ira-trap", n: "04", title: "The IRA trap", summary: "Buy it back inside an IRA and the loss is gone for good.", ready: false },
   { slug: "options-can-trigger-it", n: "05", title: "Options can trigger it", summary: "A call option on the same stock counts as buying it back.", ready: false },
   { slug: "section-1256", n: "06", title: "Section 1256", summary: "Some index options are taxed 60/40, however long you hold them.", ready: false },

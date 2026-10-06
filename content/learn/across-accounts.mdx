@@ -1,0 +1,30 @@
+Your broker does check for wash sales. It just only checks its own account.
+
+That's all it's required to do. When a broker reports your sales on Form 1099-B, it adjusts for the wash sales it can see: the same security, sold and bought back in the same account. Anything in another account is invisible to it.
+
+The IRS doesn't see accounts. It sees you. A purchase in any account you own can turn a loss into a wash sale.
+
+## Two brokers, one problem
+
+Here's the demo portfolio. In Brokerage One you're about to sell 100 NVDA for a $1,840 loss. In Brokerage Two you bought 2 NVDA call options on October 3, 12 days earlier. Switch between what each broker sees and what the IRS sees.
+
+<AcrossAccountsExplainer />
+
+Each broker, looking at its own ledger, finds nothing wrong. Put both accounts on one ledger in date order and the calls sit right inside the 61-day window around the sale. The whole $1,840 loss is disallowed. (Why a call option counts is explainer 05.)
+
+## Whose job is it?
+
+Yours. The 1099-B from Brokerage One will show the full loss as deductible, because as far as it knows, it is. Getting the wash sale right falls to you, or to whoever prepares your return. Plenty of people never notice, which is a quiet way to receive a letter from the IRS later.
+
+## What counts as your account
+
+- Every taxable brokerage account in your name, at any broker.
+- Your spouse's accounts.
+- Your IRA and Roth IRA, with a nasty twist covered in the next explainer.
+- Purchases you didn't click: dividend reinvestment, an employee stock plan, a robo-advisor rebalancing.
+
+## How to see it coming
+
+The fix is to look across everything before you sell: every account's purchases in the 30 days before the sale, and anything scheduled for the 30 days after. By hand, that's a spreadsheet you won't keep up to date. Lotwise does it for you, before the trade, using the accounts you connect.
+
+<p className="learn-note">Estimates only, not tax advice. Wash-sale rules for spouses, retirement accounts and automatic purchases have details that depend on your situation; ask a tax professional.</p>

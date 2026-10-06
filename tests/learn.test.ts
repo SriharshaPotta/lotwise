@@ -1,7 +1,7 @@
 // §5: the learning path, the wash-sale explainer model, and the numbers its prose quotes.
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { TERM_EXPLAINER, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
+import { TERM_EXPLAINER, accountsExplainer, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
 import { addDays, costBasis, firstSafeRebuyAfter } from "@/lib/engine";
 import { longDate, money } from "@/lib/format";
 import { EXPLAINERS, neighbours, readingMinutes } from "@/lib/learn";
@@ -112,5 +112,29 @@ describe("short-vs-long-term", () => {
     expect(mdx).toContain(`${TERM_EXPLAINER.qty} shares of ${TERM_EXPLAINER.lot.symbol}`);
     expect(mdx).toContain(`about ${Math.round(c.breakEvenDrop * 100)}%`);
     expect(mdx).toContain("October 24, 2026");
+  });
+});
+
+describe("across-accounts", () => {
+  const d = accountsExplainer();
+  it("each broker alone finds nothing; together the Oct 3 calls disallow $1,840", () => {
+    expect(d.accounts.map((a) => [a.name, a.washes])).toEqual([["Brokerage One", false], ["Brokerage Two", false]]);
+    expect(d.replacementId).toBe("t7");
+    expect(d.replacement.date).toBe("2026-10-03");
+    expect(d.daysBefore).toBe(12);
+    expect(d.disallowed).toBe(1840);
+    expect(d.realized).toBe(-1840);
+  });
+  it("the merged ledger is both accounts in date order, with the window around the sale", () => {
+    expect(d.merged).toHaveLength(d.accounts.reduce((n, a) => n + a.entries.length, 0));
+    expect(d.merged.map((e) => e.date)).toEqual([...d.merged.map((e) => e.date)].sort());
+    const ids = d.merged.slice(d.window.first, d.window.last + 1).map((e) => e.id);
+    expect(ids).toContain(d.saleId);
+    expect(ids).toContain(d.replacementId);
+  });
+  it("prose quotes only those numbers", () => {
+    const mdx = proseChecks("across-accounts", 500, [money(d.disallowed, { whole: true })]);
+    expect(mdx).toContain(`${d.daysBefore} days earlier`);
+    expect(mdx).toContain("on October 3");
   });
 });

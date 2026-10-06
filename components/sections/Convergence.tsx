@@ -101,6 +101,8 @@ function ConvergenceScroll() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const fitRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  /** Empty viewport below the finished ledger; the next section is pulled up over it. */
+  const [tail, setTail] = useState(0);
   const { scrollYProgress: p } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
 
   // Fit the canvas to the space under the heading. Re-renders on resize only.
@@ -110,6 +112,11 @@ function ConvergenceScroll() {
     const ro = new ResizeObserver(([e]) => {
       const s = Math.min(1, e.contentRect.width / STAGE_W, e.contentRect.height / STAGE_H);
       setScale((prev) => (Math.abs(prev - s) < 0.005 ? prev : s));
+      const stage = el.closest<HTMLElement>(".sticky");
+      if (stage) {
+        const top = el.getBoundingClientRect().top - stage.getBoundingClientRect().top;
+        setTail(Math.max(0, Math.round(stage.clientHeight - top - MERGED_H * s)));
+      }
     });
     ro.observe(el);
     return () => ro.disconnect();
@@ -119,7 +126,7 @@ function ConvergenceScroll() {
   const caption = useTransform(p, [...T.caption], [0, 1]);
 
   return (
-    <div ref={sectionRef} className="convergence-scroll relative h-[300vh] overflow-x-clip">
+    <div ref={sectionRef} className="convergence-scroll relative h-[300vh] overflow-x-clip" style={{ marginBottom: -tail }}>
       <div className="sticky top-0 flex h-svh flex-col pt-24 pb-8">
         <div className="page-container">
           <Heading />
@@ -304,7 +311,7 @@ const VIEWS = [
 function ConvergenceFallback() {
   const [view, setView] = useState<View>("broker");
   return (
-    <div className="convergence-fallback page-container py-24">
+    <div className="convergence-fallback page-container pt-24">
       <Heading />
       <div className="mt-4 grid max-w-[44ch] text-lead text-muted [&>*]:[grid-area:1/1]">
         <Fade show={view === "broker"}>{LEAD}</Fade>

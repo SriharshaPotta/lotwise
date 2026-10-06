@@ -81,8 +81,12 @@ export const stampIn: { initial: TargetAndTransition; animate: TargetAndTransiti
 /** Fixed nav height: two ledger rows. Anchor scrolls stop below it. */
 export const NAV_HEIGHT = 64;
 
-/** Smooth scroll (Lenis). Off under prefers-reduced-motion. Handles in-page anchor links. */
-export const lenisOptions = { lerp: 0.09, smoothWheel: true, anchors: { offset: -NAV_HEIGHT } } as const;
+/**
+ * Smooth scroll (Lenis). Off under prefers-reduced-motion. Handles in-page anchor links; the stop
+ * below the nav comes from CSS (html scroll-padding-top, section scroll-margin-top), which Lenis
+ * and native anchor jumps both honour.
+ */
+export const lenisOptions = { lerp: 0.09, smoothWheel: true, anchors: true } as const;
 
 /** Hero entrance (§4.1), seconds from first paint. Total ≈ 2s; nothing blocks interaction. */
 export const heroTimeline = {

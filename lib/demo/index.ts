@@ -8,3 +8,4 @@ export * from "./ticket";
 export * from "./findings";
 export * from "./convergence";
 export * from "./bento";
+export * from "./agents";

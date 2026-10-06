@@ -39,7 +39,7 @@ export function Slider({
         <label htmlFor={id} className="text-[14px] text-ctx-fg">
           {label}
         </label>
-        <output htmlFor={id} className="num text-meta text-ctx-fg" aria-hidden>
+        <output htmlFor={id} className="num min-w-[6ch] text-right text-meta text-ctx-fg" aria-hidden>
           {value} <span className="text-ctx-muted">{unit.short}</span>
         </output>
       </div>

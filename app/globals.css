@@ -511,3 +511,12 @@
   .orbit { animation: lw-spin var(--orbit-dur, 30s) linear infinite var(--orbit-dir, normal); }
   .orbit[data-paused] { animation-play-state: paused; }
 }
+
+/* Anchor jumps stop below the fixed nav (NAV_HEIGHT), with Lenis or without. */
+html { scroll-padding-top: 64px; }
+
+/* Learn teaser on phones: a snap strip whose cards line up with the page gutter. */
+@media (max-width: 767px) {
+  .learn-strip { scroll-padding-inline: var(--gutter); scrollbar-width: none; }
+  .learn-strip::-webkit-scrollbar { display: none; }
+}

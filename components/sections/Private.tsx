@@ -25,7 +25,7 @@ const ESCAPEES = [
 /** §4.6. */
 export function Private() {
   return (
-    <section id="private" aria-labelledby="private-title" className="page-container relative">
+    <section id="private" aria-labelledby="private-title" className="page-container relative scroll-mt-24">
       <motion.h2 id="private-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[20ch]">
         Your trades never leave your browser.
       </motion.h2>

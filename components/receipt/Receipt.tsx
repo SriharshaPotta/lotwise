@@ -62,7 +62,8 @@ function Row({ i, label, children, className }: { i: number; label: ReactNode; c
     <Line i={i} className={className}>
       <span className="truncate">{label}</span>
       <Leader />
-      <span className="shrink-0">{children}</span>
+      {/* fixed width: a tweening value never nudges its leader */}
+      <span className="min-w-[10ch] shrink-0 text-right">{children}</span>
     </Line>
   );
 }
@@ -125,7 +126,7 @@ export function Receipt({ model, serial, printing, delay = 0, onPrinted, straigh
               <Rule i={1} />
               <Line i={2} className="receipt-caps">
                 <span>
-                  Sell <MoneyTween value={shares} format={formatInt} /> {sym} @ {p.price.toFixed(2)}
+                  Sell <MoneyTween value={shares} format={formatInt} className="inline-block w-[3ch] text-right" /> {sym} @ {p.price.toFixed(2)}
                 </span>
               </Line>
               <Row i={3} label="Proceeds"><MoneyTween value={model.proceeds} /></Row>

@@ -145,7 +145,7 @@ export function Nav() {
  * A nav link: --muted at rest, --fg on hover. The color change is a crossfade of an --fg copy
  * of the label (opacity only, §2.5), so it eases without animating color.
  */
-function NavAnchor({ link, className, onNavigate }: { link: NavLink; className?: string; onNavigate?: () => void }) {
+export function NavAnchor({ link, className, onNavigate }: { link: NavLink; className?: string; onNavigate?: () => void }) {
   const classes = cn("group relative text-muted", className);
   const label = (
     <>

@@ -31,11 +31,10 @@ export function HandUnderline({ d = PLACEHOLDER_UNDERLINE, viewBox = "0 0 120 12
         pathLength={1}
         fill="none"
         stroke="currentColor"
-        strokeWidth={1.5}
+        strokeWidth={1.8}
         strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
         className={cn(
-          "[stroke-dasharray:1_1] transition-[stroke-dashoffset] duration-(--motion-reveal) ease-ink",
+          "[stroke-dasharray:1_1.01] transition-[stroke-dashoffset] duration-(--motion-reveal) ease-ink",
           trigger === "on" ? "[stroke-dashoffset:0]" : "[stroke-dashoffset:1] group-is-hover:[stroke-dashoffset:0] group-is-focus:[stroke-dashoffset:0]",
         )}
       />

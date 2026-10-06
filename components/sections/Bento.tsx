@@ -11,7 +11,7 @@ import { reveal, revealGroup } from "@/lib/motion";
 /** §4.5. One wide card on top (lg+), three below; one column on phones. */
 export function Bento() {
   return (
-    <section id="features" aria-labelledby="bento-title" className="page-container relative">
+    <section id="features" aria-labelledby="bento-title" className="page-container relative scroll-mt-24">
       <motion.h2 id="bento-title" {...reveal} className="max-w-[18ch] text-h2 lg:max-w-[20ch]">
         Every trade, checked before it happens.
       </motion.h2>

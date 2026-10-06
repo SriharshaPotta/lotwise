@@ -637,3 +637,12 @@ html { scroll-padding-top: 64px; }
   background-image: image-set(url("/textures/paper-fiber.webp") type("image/webp"), url("/textures/paper-fiber.png") type("image/png"));
   opacity: 0.04;
 }
+
+/* Agents transcript (§4.7): the spark breathes while Claude is thinking, and "Thinking…" shimmers
+   letter by letter (opacity only; no gradient). */
+@keyframes lw-spark { 0%, 100% { transform: scale(0.82) rotate(0deg); opacity: .7; } 50% { transform: scale(1) rotate(22deg); opacity: 1; } }
+@keyframes lw-shimmer { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: no-preference) {
+  .spark-pulse { transform-origin: center; animation: lw-spark 1s var(--ease-ui) infinite; }
+  .shimmer-char { animation: lw-shimmer 1.1s ease-in-out infinite; }
+}

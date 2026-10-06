@@ -2,38 +2,30 @@
 
 import { m, useInView } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { ArrowUp, Check, Chevron, Copy, Plug, Plus, Retry, SPARK_ORANGE, Spark, Spinner, ThumbDown, ThumbUp } from "@/components/agents/ChatIcons";
 import { useReducedMotionSafe } from "@/components/effects/useReducedMotionSafe";
-import { LedgerPage } from "@/components/ledger/LedgerPage";
-import { Button } from "@/components/ui/Button";
+import { Badge } from "@/components/ui/Badge";
 import { Lead } from "@/components/ui/Lead";
 import { Marker } from "@/components/ui/Marker";
+import { Surface } from "@/components/ui/Surface";
 import { cn } from "@/lib/cn";
 import { AGENT_TOOL, agentTranscript } from "@/lib/demo";
-import { print, printDuration, reveal } from "@/lib/motion";
-import { SITE } from "@/lib/site";
+import { ease, print, printDuration, reveal } from "@/lib/motion";
 
 /** Hyphens inside words don't break (U+2011), so "similar-but-not-identical" stays whole. */
 const T = (({ reply, ...t }) => ({ ...t, reply: reply.replace(/(?<=\w)-(?=\w)/g, "‑") }))(agentTranscript());
-/** User text types at ~35 characters a second; the reply streams in chunks of 1–3 words. */
-const USER_CPS = 35;
-const CHUNK_EVERY = 0.07;
-const CHUNK_WORDS = [2, 3, 1, 2, 3, 2, 1];
-const BEAT = { start: 0.25, afterUser: 0.45, afterReceipt: 0.3 };
+
+/** The reply streams in word by word. */
+const WORD_EVERY = 0.04;
+const BEAT = { start: 0.25, bubble: 0.24, afterUser: 0.35, thinking: 0.7, spinner: 0.6, afterReceipt: 0.25 };
 const RECEIPT_ROWS = 4;
+const THINKING = "Thinking…";
 
-/** Character offsets where each streamed chunk of the reply ends. */
-const REPLY_CHUNKS = (() => {
-  const words = [...T.reply.matchAll(/\S+\s*/g)].map((m) => m.index! + m[0].length);
-  const ends: number[] = [0];
-  for (let w = 0, i = 0; w < words.length; i++) {
-    w = Math.min(words.length, w + CHUNK_WORDS[i % CHUNK_WORDS.length]);
-    ends.push(words[w - 1]);
-  }
-  return ends;
-})();
+/** Character offsets where each streamed word of the reply ends. */
+const REPLY_WORDS = [0, ...[...T.reply.matchAll(/\S+\s*/g)].map((w) => w.index! + w[0].length)];
 
-type Phase = "idle" | "user" | "tool" | "reply" | "done";
-const ORDER: Phase[] = ["idle", "user", "tool", "reply", "done"];
+type Phase = "idle" | "user" | "thinking" | "tool" | "result" | "reply" | "done";
+const ORDER: Phase[] = ["idle", "user", "thinking", "tool", "result", "reply", "done"];
 const reached = (phase: Phase, step: Phase) => ORDER.indexOf(phase) >= ORDER.indexOf(step);
 
 /** §4.7. */
@@ -45,12 +37,10 @@ export function Agents() {
       </m.h2>
       <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
         <m.div {...reveal} className="lg:col-span-4 lg:pt-4">
-          <Lead strong="Lotwise ships an MCP server.">
-            Claude, Cursor or any agent can check the tax impact of a trade before placing it.
+          <Lead strong="An MCP server for your agents.">
+            Claude, Cursor or any agent will be able to check the tax impact of a trade before placing it.
           </Lead>
-          <Button href={SITE.github} variant="quiet" className="mt-8" target="_blank" rel="noreferrer">
-            Set up the MCP server →
-          </Button>
+          <Badge className="mt-6">MCP server · coming soon</Badge>
         </m.div>
         <m.div {...reveal} className="min-w-0 lg:col-span-8">
           <Transcript />
@@ -68,9 +58,10 @@ function write({ shown, rest, text }: Typed, n: number) {
 }
 
 /**
- * The transcript replays once when 40% of it is in view, and again on "Replay". Both messages are
- * laid out at full length from the start (the untyped part is transparent), so typing never moves
- * anything and screen readers always get the whole conversation.
+ * A Claude-style conversation that plays once when 40% of it is in view, and again on "Replay".
+ * Every turn is laid out at its final size from the start (hidden parts are transparent, the reply's
+ * untyped words included), so the card's height is the finished conversation's and nothing moves
+ * while it plays. Screen readers always get the whole transcript, in order.
  */
 function Transcript() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -78,12 +69,10 @@ function Transcript() {
   const reduce = useReducedMotionSafe();
   const [phase, setPhase] = useState<Phase>("idle");
   const [play, setPlay] = useState(0);
-  const user: Typed = { shown: useRef(null), rest: useRef(null), text: T.user };
   const reply: Typed = { shown: useRef(null), rest: useRef(null), text: T.reply };
 
   useEffect(() => {
     if (reduce) {
-      write(user, user.text.length);
       write(reply, reply.text.length);
       setPhase("done");
     } else if (inView && play === 0) {
@@ -98,34 +87,37 @@ function Transcript() {
     let raf = 0;
     const timers: number[] = [];
     const wait = (s: number) => new Promise<void>((r) => timers.push(window.setTimeout(r, s * 1000)));
-    const typeOut = (t: Typed, at: (elapsed: number) => number) =>
+    const stream = (t: Typed) =>
       new Promise<void>((done) => {
         let t0 = 0;
         let last = -1;
         const step = (now: number) => {
           if (!alive) return;
           t0 ||= now;
-          const n = Math.min(t.text.length, at((now - t0) / 1000));
+          const n = REPLY_WORDS[Math.min(Math.floor((now - t0) / 1000 / WORD_EVERY), REPLY_WORDS.length - 1)];
           if (n !== last) write(t, (last = n));
           if (n >= t.text.length) done();
           else raf = requestAnimationFrame(step);
         };
         raf = requestAnimationFrame(step);
       });
+    const go = async (next: Phase, after: number) => {
+      if (!alive) return false;
+      setPhase(next);
+      await wait(after);
+      return alive;
+    };
 
     (async () => {
-      write(user, 0);
       write(reply, 0);
-      setPhase("user");
+      setPhase("idle");
       await wait(BEAT.start);
-      await typeOut(user, (e) => Math.floor(e * USER_CPS));
-      await wait(BEAT.afterUser);
-      if (!alive) return;
-      setPhase("tool");
-      await wait(printDuration(RECEIPT_ROWS) + BEAT.afterReceipt);
-      if (!alive) return;
+      if (!(await go("user", BEAT.bubble + BEAT.afterUser))) return;
+      if (!(await go("thinking", BEAT.thinking))) return;
+      if (!(await go("tool", BEAT.spinner))) return;
+      if (!(await go("result", printDuration(RECEIPT_ROWS) + BEAT.afterReceipt))) return;
       setPhase("reply");
-      await typeOut(reply, (e) => REPLY_CHUNKS[Math.min(Math.floor(e / CHUNK_EVERY), REPLY_CHUNKS.length - 1)]);
+      await stream(reply);
       if (alive) setPhase("done");
     })();
 
@@ -137,67 +129,120 @@ function Transcript() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [play, reduce]);
 
-  const replay = () => {
-    rootRef.current?.focus();
-    setPlay((p) => p + 1);
-  };
+  const at = (step: Phase) => reached(phase, step);
+  const done = phase === "done";
 
   return (
-    <div ref={rootRef} tabIndex={-1} className="outline-none">
-      <LedgerPage
-        title={<span>conversation · lotwise MCP</span>}
-        footer={
-          <div className="flex h-8 items-center">
-            {!reduce && (
-              <m.div initial={false} animate={{ opacity: phase === "done" ? 1 : 0 }} transition={{ duration: 0.3 }} inert={phase !== "done"}>
-                <Button variant="quiet" size="sm" onClick={replay} className="text-muted">
-                  Replay ↺
-                </Button>
-              </m.div>
-            )}
-          </div>
-        }
-      >
-        <div className="px-5 pb-2 text-[15px] leading-[1.55] tracking-[-0.006em]">
-          <Message who="you" show={reached(phase, "user")}>
-            <TypedText t={user} />
-          </Message>
-          <Message who="claude" show={reached(phase, "tool")} className="mt-8">
-            <ToolReceipt printing={reached(phase, "tool")} instant={reduce} play={play} />
-            <p className="text-fg">
-              <TypedText t={reply} />
+    <div ref={rootRef} tabIndex={-1} className="max-w-[720px] outline-none">
+      <Surface className="flex flex-col">
+        <div className="px-4 pt-6 sm:px-8 sm:pt-8">
+          {/* User turn */}
+          <m.div
+            initial={false}
+            animate={at("user") ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={reduce ? { duration: 0 } : { duration: BEAT.bubble, ease: ease.settle }}
+            className="flex items-start gap-3"
+          >
+            <span aria-hidden className="mt-2 grid size-7 shrink-0 place-items-center rounded-full bg-[color-mix(in_oklch,var(--fg)_14%,transparent)] text-[13px] font-medium text-fg">
+              S
+            </span>
+            <p className="min-w-0 rounded-[14px] bg-surface-2 px-4 py-2.5 text-[16px] leading-[1.5] text-fg">
+              <span className="sr-only">You: </span>
+              {T.user}
             </p>
-          </Message>
+          </m.div>
+
+          {/* Assistant turn */}
+          <div className="mt-7 flex items-start gap-3">
+            <m.span
+              aria-hidden
+              initial={false}
+              animate={{ opacity: at("thinking") ? 1 : 0 }}
+              transition={{ duration: 0.2 }}
+              className="grid h-10 w-7 shrink-0 place-items-center"
+            >
+              <Spark className={cn(phase === "thinking" && "spark-pulse")} />
+            </m.span>
+            <div className="min-w-0 flex-1">
+              <span className="sr-only">Claude:</span>
+              <div className="grid grid-cols-[minmax(0,1fr)] [&>*]:min-w-0 [&>*]:[grid-area:1/1]">
+                <Fade show={phase === "thinking"} aria-hidden className="flex h-10 items-center text-[15px] text-muted">
+                  {[...THINKING].map((c, i) => (
+                    <span key={i} className="shimmer-char" style={{ animationDelay: `${i * 70}ms` }}>
+                      {c}
+                    </span>
+                  ))}
+                </Fade>
+                <Fade show={at("tool")}>
+                  <ToolRow done={at("result")} spinning={phase === "tool" && !reduce} />
+                </Fade>
+              </div>
+              <ToolResult printing={at("result")} instant={reduce} play={play} />
+              <p className="mt-5 max-w-[62ch] font-display text-[17px] leading-[1.65] text-fg">
+                <span ref={reply.shown} />
+                <span ref={reply.rest} className="opacity-0">
+                  {T.reply}
+                </span>
+              </p>
+              <Fade show={done} aria-hidden className="-ml-1.5 mt-1.5 flex text-muted">
+                {[Copy, ThumbUp, ThumbDown, Retry].map((Icon, i) => (
+                  <span key={i} className="grid size-7 place-items-center">
+                    <Icon />
+                  </span>
+                ))}
+              </Fade>
+            </div>
+          </div>
         </div>
-      </LedgerPage>
+        <Composer />
+      </Surface>
+
+      {!reduce && (
+        <m.div initial={false} animate={{ opacity: done ? 1 : 0 }} transition={{ duration: 0.3 }} inert={!done} className="mt-3">
+          <button
+            type="button"
+            onClick={() => {
+              rootRef.current?.focus();
+              setPlay((p) => p + 1);
+            }}
+            className="text-[13px] text-muted underline-offset-4 transition-colors duration-(--motion-fast) hover:text-fg hover:underline"
+          >
+            Replay ↺
+          </button>
+        </m.div>
+      )}
     </div>
   );
 }
 
-function Message({ who, show, className, children }: { who: string; show: boolean; className?: string; children: ReactNode }) {
+function Fade({ show, className, children, ...rest }: { show: boolean; className?: string; children: ReactNode; "aria-hidden"?: boolean }) {
   return (
-    <div className={cn("grid sm:grid-cols-[5.5rem_1fr]", className)}>
-      <m.span initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} className="num text-meta leading-[calc(15px*1.55)] text-muted">
-        {who}
-      </m.span>
-      <div className="min-w-0 max-w-[64ch]">{children}</div>
-    </div>
+    <m.div initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} className={className} {...rest}>
+      {children}
+    </m.div>
   );
 }
 
-function TypedText({ t }: { t: Typed }) {
+/** The collapsed tool call: server, tool name, a spinner while it runs, a check when it's back. */
+function ToolRow({ done, spinning }: { done: boolean; spinning: boolean }) {
   return (
-    <span className="text-fg">
-      <span ref={t.shown} />
-      <span ref={t.rest} className="opacity-0">
-        {t.text}
+    <div className="ring-hairline flex h-10 min-w-0 items-center gap-2 rounded-[10px] px-3 text-[14px]">
+      <Plug className="shrink-0 text-muted" />
+      <span className="text-muted max-sm:hidden">Lotwise</span>
+      <span className="num min-w-0 truncate text-[13px] text-fg">{AGENT_TOOL}</span>
+      <span aria-hidden className="ml-auto flex shrink-0 items-center gap-1.5 text-muted">
+        <span className="grid size-4 place-items-center [&>*]:[grid-area:1/1]">
+          <Spinner className={cn("transition-opacity duration-150", spinning && "animate-spin", done && "opacity-0")} />
+          <Check className={cn("text-fg transition-opacity duration-150", !done && "opacity-0")} />
+        </span>
+        <Chevron className={cn("transition-transform duration-(--motion-fast) ease-ui", done && "rotate-90")} />
       </span>
-    </span>
+    </div>
   );
 }
 
-/** The tool call as a mini paper receipt that feeds out of a slot line, then types its rows in. */
-function ToolReceipt({ printing, instant, play }: { printing: boolean; instant: boolean; play: number }) {
+/** The tool result: the paper receipt feeds out from under the tool row, then types its rows in. */
+function ToolResult({ printing, instant, play }: { printing: boolean; instant: boolean; play: number }) {
   const r = T.receipt;
   const rows: [ReactNode, ReactNode][] = [
     [r.sale, <><span className="max-[400px]:sr-only">realized </span><span className="text-loss-ink">{r.realized}</span></>],
@@ -218,24 +263,22 @@ function ToolReceipt({ printing, instant, play }: { printing: boolean; instant: 
       : { y: "-100%", transition: { duration: 0 } };
 
   return (
-    <div className="relative mb-4 h-[calc(var(--ledger-row)*5)] max-w-[440px]">
-      <span aria-hidden className="absolute inset-x-0 top-3 h-px rounded-full bg-rule-strong" />
-      <div className="absolute inset-x-0 top-3 bottom-0 overflow-hidden">
-        <m.div key={play} initial={{ y: instant ? "0%" : "-100%" }} animate={feed} className="paper-shadow-sm px-1 pb-3">
-          <div className="paper paper-fiber perforated num px-4 pt-4 pb-4 text-[12px] leading-6 text-ink">
-            <Line i={0} shown={shown} instant={instant} className="receipt-caps truncate text-[11px] text-ink-muted">
-              lotwise · {AGENT_TOOL}
+    // Clipped on top only, so the paper emerges from under the tool row but its shadow still falls freely.
+    <div className="relative h-[140px] max-w-[440px] [clip-path:inset(0_-32px_-48px_-32px)]">
+      <m.div key={play} initial={{ y: instant ? "0%" : "-100%" }} animate={feed} className="paper-shadow-sm px-1 pt-2 pb-3">
+        <div className="paper paper-fiber perforated num px-4 pt-4 pb-4 text-[12px] leading-6 text-ink">
+          <Line i={0} shown={shown} instant={instant} className="receipt-caps truncate text-[11px] text-ink-muted">
+            lotwise · result
+          </Line>
+          {rows.map(([label, value], i) => (
+            <Line key={i} i={i + 1} shown={shown} instant={instant} className="flex items-end gap-1.5">
+              <span className="receipt-caps whitespace-nowrap">{label}</span>
+              <span aria-hidden className="receipt-leader min-w-4 flex-1 self-stretch" />
+              <span className="receipt-caps whitespace-nowrap">{value}</span>
             </Line>
-            {rows.map(([label, value], i) => (
-              <Line key={i} i={i + 1} shown={shown} instant={instant} className="flex items-end gap-1.5">
-                <span className="receipt-caps whitespace-nowrap">{label}</span>
-                <span aria-hidden className="receipt-leader min-w-4 flex-1 self-stretch" />
-                <span className="receipt-caps whitespace-nowrap">{value}</span>
-              </Line>
-            ))}
-          </div>
-        </m.div>
-      </div>
+          ))}
+        </div>
+      </m.div>
     </div>
   );
 }
@@ -250,5 +293,29 @@ function Line({ i, shown, instant, className, children }: { i: number; shown: bo
     >
       {children}
     </m.div>
+  );
+}
+
+/** The message box, drawn only: aria-hidden and inert, nothing in it can be focused or typed into. */
+function Composer() {
+  return (
+    <div aria-hidden inert className="px-4 pt-6 pb-4 sm:px-8 sm:pb-8">
+      <div className="ring-hairline rounded-[20px] bg-surface-2 px-3 pt-3.5 pb-2.5">
+        <p className="px-1.5 text-[15px] text-muted">Reply to Claude…</p>
+        <div className="mt-3 flex items-center gap-2">
+          <span className="ring-hairline grid size-8 place-items-center rounded-[8px] text-muted">
+            <Plus />
+          </span>
+          <span className="ml-auto flex items-center gap-1 text-[13px] text-muted">
+            Sonnet 5.5
+            <Chevron size={12} className="rotate-90" />
+          </span>
+          {/* Dimmed: nothing typed yet, as in the real composer. */}
+          <span className="grid size-8 place-items-center rounded-full text-[#fff] opacity-50" style={{ backgroundColor: SPARK_ORANGE }}>
+            <ArrowUp />
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }

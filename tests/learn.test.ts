@@ -1,7 +1,7 @@
 // §5: the learning path, the wash-sale explainer model, and the numbers its prose quotes.
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { WASH_EXPLAINER as X, calendarDate, calendarDay, washState } from "@/lib/demo";
+import { TERM_EXPLAINER, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
 import { addDays, costBasis, firstSafeRebuyAfter } from "@/lib/engine";
 import { longDate, money } from "@/lib/format";
 import { EXPLAINERS, neighbours, readingMinutes } from "@/lib/learn";
@@ -22,6 +22,7 @@ describe("learning path", () => {
   it("neighbours follow the path", () => {
     expect(neighbours("the-wash-sale").prev).toBeUndefined();
     expect(neighbours("the-wash-sale").next?.slug).toBe("short-vs-long-term");
+    expect(neighbours("short-vs-long-term").prev?.slug).toBe("the-wash-sale");
   });
 });
 
@@ -70,5 +71,46 @@ describe("the-wash-sale prose", () => {
     expect(X.daysHeld).toBe(217);
     expect(MDX).toContain(`that's ${longDate(firstSafeRebuyAfter(X.saleDate))}`);
     expect(MDX).toContain(`on ${longDate(X.saleDate)}`);
+  });
+});
+
+/** Shared prose checks: word limit, closing note, and only engine-backed dollar amounts. */
+function proseChecks(slug: string, limit: number, amounts: string[]) {
+  const mdx = readFileSync(`content/learn/${slug}.mdx`, "utf8");
+  const words = mdx.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
+  expect(words).toBeLessThan(limit);
+  expect(mdx).toContain("Estimates only, not tax advice.");
+  expect(mdx.trim().endsWith("</p>")).toBe(true);
+  expect([...new Set(mdx.match(/\$\d{1,3}(?:,\d{3})*(?:\.\d{2})?/g))].sort()).toEqual([...new Set(amounts)].sort());
+  return mdx;
+}
+
+describe("short-vs-long-term", () => {
+  it("turns long-term on Oct 24 2026, the day after the anniversary", () => {
+    expect(TERM_EXPLAINER.ltDate).toBe("2026-10-24");
+    expect(termState("2026-10-23").term).toBe("short");
+    expect(termState("2026-10-24").term).toBe("long");
+    expect(termState(TERM_EXPLAINER.today).daysHeld).toBe(357);
+    const lt = termDay(TERM_EXPLAINER.ltDate);
+    expect(lt).toBeGreaterThan(0);
+    expect(lt).toBeLessThan(TERM_EXPLAINER.calendarDays - 1);
+  });
+  it("the cliff: $1,093 → $683, saving $410 (the findings tape figure); waiting loses if AAPL falls ~5%", () => {
+    const c = termCliff();
+    expect(c.short.estTax).toBe(1093.34);
+    expect(c.long.estTax).toBe(683.34);
+    expect(c.save).toBe(410);
+    expect(c.save).toBe(longTermSaving().save);
+    expect(Math.round(c.breakEvenDrop * 100)).toBe(5);
+  });
+  it("prose quotes only those numbers", () => {
+    const c = termCliff();
+    const mdx = proseChecks("short-vs-long-term", 500, [
+      money(TERM_EXPLAINER.lot.costPerShare), money(TERM_EXPLAINER.price), money(c.short.gain, { whole: true }),
+      money(c.short.estTax, { whole: true }), money(c.long.estTax, { whole: true }), money(c.save, { whole: true }),
+    ]);
+    expect(mdx).toContain(`${TERM_EXPLAINER.qty} shares of ${TERM_EXPLAINER.lot.symbol}`);
+    expect(mdx).toContain(`about ${Math.round(c.breakEvenDrop * 100)}%`);
+    expect(mdx).toContain("October 24, 2026");
   });
 });

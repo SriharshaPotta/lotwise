@@ -31,7 +31,7 @@ export function simulatorTable(): SimRow[] {
 /* ── Loss harvesting: a grid of lots; losses flip to harvested, one washes ──────────────── */
 
 /** Illustrative underwater lots beside the demo's AMD lot. Prices are last prices on DEMO_DATE. */
-const EXTRA_LOSSES: readonly (Lot & { price: number })[] = [
+export const EXTRA_LOSSES: readonly (Lot & { price: number })[] = [
   { id: "b2-pypl-1", account: "brokerage-two", symbol: "PYPL", qty: 60, costPerShare: 78.4, acquired: "2026-04-08", price: 71.1 },
   { id: "b1-nke-1", account: "brokerage-one", symbol: "NKE", qty: 25, costPerShare: 96.3, acquired: "2026-02-19", price: 81.9 },
   { id: "b2-dis-1", account: "brokerage-two", symbol: "DIS", qty: 30, costPerShare: 112.5, acquired: "2026-05-27", price: 101.2 },

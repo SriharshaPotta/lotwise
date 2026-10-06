@@ -533,8 +533,8 @@ html { scroll-padding-top: 64px; }
 .learn-prose > * { max-width: 680px; }
 .learn-prose > .breakout { max-width: none; }
 .learn-prose { font-size: 17px; line-height: var(--ledger-row); }
-.learn-prose p,
-.learn-prose ul { margin-top: var(--space-6); }
+.learn-prose > p,
+.learn-prose > ul { margin-top: var(--space-6); }
 .learn-prose > :first-child { margin-top: 0; }
 .learn-prose h2 {
   margin-top: var(--space-16);
@@ -545,11 +545,12 @@ html { scroll-padding-top: 64px; }
 .learn-prose h2 + p { margin-top: var(--space-4); }
 .learn-prose em { font-style: italic; }
 .learn-prose strong { font-weight: 600; }
-.learn-prose ul { padding-left: 0; list-style: none; }
-.learn-prose li { position: relative; padding-left: 28px; }
-.learn-prose li + li { margin-top: var(--space-2); }
+/* Prose lists only: interactives (.breakout) keep their own list styling. */
+.learn-prose > ul { padding-left: 0; list-style: none; }
+.learn-prose > ul > li { position: relative; padding-left: 28px; }
+.learn-prose > ul > li + li { margin-top: var(--space-2); }
 /* list items wear the finance grammar: a lot is a short rounded bar */
-.learn-prose li::before {
+.learn-prose > ul > li::before {
   content: "";
   position: absolute;
   left: 0;

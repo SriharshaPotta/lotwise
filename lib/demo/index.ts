@@ -13,3 +13,4 @@ export * from "./washExplainer";
 export * from "./termExplainer";
 export * from "./accountsExplainer";
 export * from "./s1256Explainer";
+export * from "./harvestExplainer";

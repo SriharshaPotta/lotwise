@@ -1,7 +1,7 @@
 // §5: the learning path, the wash-sale explainer model, and the numbers its prose quotes.
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { S1256_EXPLAINER, TERM_EXPLAINER, WASH_SCENARIOS, s1256State, xspSaving, accountsExplainer, washOutcome, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
+import { ORDINARY_INCOME_OFFSET, S1256_EXPLAINER, harvestGrid, harvestLots, harvestTotals, TERM_EXPLAINER, WASH_SCENARIOS, s1256State, xspSaving, accountsExplainer, washOutcome, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
 import { addDays, costBasis, daysBetween, firstSafeRebuyAfter } from "@/lib/engine";
 import { longDate, money } from "@/lib/format";
 import { EXPLAINERS, neighbours, readingMinutes } from "@/lib/learn";
@@ -205,5 +205,41 @@ describe("section-1256", () => {
     const mdx = proseChecks("section-1256", 500, ["$7,185", money(def.spy.tax, { whole: true }), money(def.xsp.tax, { whole: true }), money(def.saving, { whole: true })]);
     expect(mdx).toContain("18.6%");
     expect(mdx).toContain("5.4%");
+  });
+});
+
+describe("tax-loss-harvesting", () => {
+  const lots = harvestLots();
+  const safe = lots.filter((l) => l.kind === "harvest");
+  it("six safe losses, one blocked lot (NVDA, safe from Nov 3), three gains", () => {
+    expect(safe).toHaveLength(6);
+    expect(lots.filter((l) => l.kind === "gain").map((l) => l.symbol).sort()).toEqual(["AAPL", "VTI", "VTI"]);
+    const blocked = lots.filter((l) => l.kind === "blocked");
+    expect(blocked).toHaveLength(1);
+    expect(blocked[0]).toMatchObject({ symbol: "NVDA", pnl: -1840, disallowed: 1840, safeFrom: "2026-11-03" });
+  });
+  it("harvesting all six saves $678.38, the same as the bento grid", () => {
+    const all = harvestTotals(safe.map((l) => l.id));
+    expect(all.count).toBe(6);
+    expect(all.saved).toBe(678.38);
+    const bento = harvestGrid().reduce((s, c) => s + (c.kind === "harvest" ? c.saved : 0), 0);
+    expect(all.saved).toBeCloseTo(bento, 2);
+    expect(harvestTotals([]).saved).toBe(0);
+  });
+  it("prose quotes only those numbers", () => {
+    const all = harvestTotals(safe.map((l) => l.id));
+    proseChecks("tax-loss-harvesting", 500, [money(ORDINARY_INCOME_OFFSET, { whole: true }), "$1,840", money(all.saved)]);
+  });
+});
+
+describe("the learning path is complete", () => {
+  it("every explainer is written and registered", () => {
+    expect(EXPLAINERS.every((e) => e.ready)).toBe(true);
+    const mdxComponents = readFileSync("mdx-components.tsx", "utf8");
+    for (const e of EXPLAINERS) {
+      const used = readFileSync(`content/learn/${e.slug}.mdx`, "utf8").match(/<([A-Z]\w+Explainer) \/>/)?.[1];
+      expect(used, e.slug).toBeTruthy();
+      expect(mdxComponents).toContain(`  ${used},`);
+    }
   });
 });

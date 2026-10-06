@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { ExplainerCard } from "@/components/learn/ExplainerCard";
 import { EXPLAINERS } from "@/lib/learn";
+import { SITE } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Learn · Lotwise",
+  title: "Learn",
+  alternates: { canonical: "/learn" },
+  openGraph: { title: "Taxes, explained by playing with them", url: "/learn", images: [SITE.ogImage] },
+  twitter: { card: "summary_large_image", title: "Taxes, explained by playing with them", images: [SITE.ogImage] },
   description: "Seven interactive explainers on wash sales, holding periods, IRAs, options and Section 1256.",
 };
 

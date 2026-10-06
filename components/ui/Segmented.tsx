@@ -80,7 +80,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, d
               "group relative isolate h-8 rounded-sm whitespace-nowrap",
               stretch ? "min-w-0 flex-1 px-1 text-[13px] sm:flex-none sm:px-3 sm:text-[14px]" : "shrink-0 px-3 text-[14px]",
               "transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.97] disabled:cursor-not-allowed",
-              selected ? "text-ctx-fg" : "text-ctx-muted is-hover:text-ctx-fg",
+              "text-ctx-muted",
             )}
           >
             {selected && (
@@ -98,6 +98,16 @@ export function Segmented<T extends string>({ label, options, value, onChange, d
               />
             )}
             {o.label}
+            {/* the --fg colour crossfades over the muted label (opacity only, §2.5) */}
+            <span
+              aria-hidden
+              className={cn(
+                "absolute inset-0 grid place-items-center text-ctx-fg transition-opacity duration-(--motion-fast) ease-ui",
+                selected ? "opacity-100" : "opacity-0 group-is-hover:opacity-100",
+              )}
+            >
+              {o.label}
+            </span>
           </button>
         );
       })}

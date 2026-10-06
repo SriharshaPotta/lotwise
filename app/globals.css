@@ -576,3 +576,16 @@ html { scroll-padding-top: 64px; }
   .readouts > :nth-child(odd) { border-left: 0; }
   .readouts > :nth-child(n + 3) { border-top: 1px solid var(--border); }
 }
+
+/* Paper-fiber texture (receipts and coupons only): a static tile at ~4%, under the ink, clipped by
+   the perforation masks like the paper itself. */
+.paper-fiber { position: relative; isolation: isolate; }
+.paper-fiber::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("/textures/paper-fiber.png") 0 0 / 128px 128px repeat;
+  opacity: 0.04;
+}

@@ -220,7 +220,7 @@ function ToolReceipt({ printing, instant, play }: { printing: boolean; instant: 
       <span aria-hidden className="absolute inset-x-0 top-3 h-px rounded-full bg-rule-strong" />
       <div className="absolute inset-x-0 top-3 bottom-0 overflow-hidden">
         <motion.div key={play} initial={{ y: instant ? "0%" : "-100%" }} animate={feed} className="paper-shadow-sm px-1 pb-3">
-          <div className="paper perforated num px-4 pt-4 pb-4 text-[12px] leading-6 text-ink">
+          <div className="paper paper-fiber perforated num px-4 pt-4 pb-4 text-[12px] leading-6 text-ink">
             <Line i={0} shown={shown} instant={instant} className="receipt-caps truncate text-[11px] text-ink-muted">
               lotwise · {AGENT_TOOL}
             </Line>

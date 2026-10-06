@@ -1,8 +1,20 @@
+/** Absolute origin for metadata, the sitemap and OG URLs. Set NEXT_PUBLIC_SITE_URL in production. */
+const url =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
+
 export const SITE = {
   name: "Lotwise",
+  url,
+  tagline: "Know the tax bill before you click sell.",
+  description:
+    "Lotwise checks every account you own for wash sales and hands you the tax receipt for a trade before you place it. It runs entirely in your browser.",
   /** TODO: replace with the real repository URL. */
   github: "https://github.com/",
   author: "Sriharsha Potta",
+  /** The generated share image (app/opengraph-image.tsx). Pages that set their own openGraph repeat it,
+   *  because metadata merges shallowly. */
+  ogImage: { url: "/opengraph-image", width: 1200, height: 630, alt: "Lotwise: a pre-trade receipt for selling 100 NVDA, stamped WASH SALE." },
 } as const;
 
 export interface NavLink {

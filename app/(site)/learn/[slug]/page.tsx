@@ -3,8 +3,10 @@ import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { HandUnderline } from "@/components/annotate/HandUnderline";
 import { Button } from "@/components/ui/Button";
 import { EXPLAINERS, explainer, neighbours, readingMinutes, type Explainer } from "@/lib/learn";
+import { SITE } from "@/lib/site";
 
 export const dynamicParams = false;
 
@@ -14,7 +16,15 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const e = explainer((await params).slug);
-  return e ? { title: `${e.title} · Learn · Lotwise`, description: e.summary } : {};
+  if (!e) return {};
+  const url = `/learn/${e.slug}`;
+  return {
+    title: `${e.title} · Learn`,
+    description: e.summary,
+    alternates: { canonical: url },
+    openGraph: { type: "article", title: e.title, description: e.summary, url, images: [SITE.ogImage] },
+    twitter: { card: "summary_large_image", title: e.title, description: e.summary, images: [SITE.ogImage] },
+  };
 }
 
 /**
@@ -77,12 +87,15 @@ function PathLink({ e, dir }: { e?: Explainer; dir: "prev" | "next" }) {
       <span className="num block text-meta leading-8 text-muted">
         {kicker} · {e.n}
       </span>
-      <span className="block font-display text-[22px] leading-8">{e.title}</span>
+      <span className="relative inline-block font-display text-[22px] leading-8">
+        {e.title}
+        {e.ready && <HandUnderline />}
+      </span>
       {!e.ready && <span className="num block text-meta leading-8 text-muted">Coming soon</span>}
     </>
   );
   return e.ready ? (
-    <Link href={`/learn/${e.slug}`} className={`group block ${align}`}>
+    <Link href={`/learn/${e.slug}`} className={`group block rounded-sm transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.98] ${align}`}>
       {inner}
     </Link>
   ) : (

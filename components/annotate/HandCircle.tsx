@@ -3,16 +3,12 @@
 import { motion, useInView } from "motion/react";
 import { useReducedMotionSafe } from "@/components/effects/useReducedMotionSafe";
 import { useRef } from "react";
+import { ANNOTATIONS } from "@/lib/annotations";
 import { cn } from "@/lib/cn";
 import { duration, ease } from "@/lib/motion";
 
-/**
- * PLACEHOLDER stroke. Replace with the hand-drawn, vectorized loop (public/annotations/circle.svg):
- * keep the 0 0 200 120 viewBox, or pass `viewBox` alongside your own `d`. It overshoots its start
- * like a pen loop does.
- */
-export const PLACEHOLDER_CIRCLE =
-  "M160 14C124 2 52 6 22 30 2 46 8 86 46 102c40 16 112 14 142-8 18-14 14-44-12-62C148 12 104 6 74 12";
+/** The hand-drawn loop (public/annotations/circle.svg), or its placeholder. See scripts/annotations.mjs. */
+export const CIRCLE = ANNOTATIONS.circle;
 
 interface HandCircleProps {
   d?: string;
@@ -27,7 +23,7 @@ interface HandCircleProps {
  * then applies dashes in screen space and the draw-on breaks). Sits around its positioned parent and draws on with
  * ink easing once, the first time it is mostly in view. Drawn from the start under reduced motion.
  */
-export function HandCircle({ d = PLACEHOLDER_CIRCLE, viewBox = "0 0 200 120", className, delay = 0.25 }: HandCircleProps) {
+export function HandCircle({ d = CIRCLE.d, viewBox = CIRCLE.viewBox, className, delay = 0.25 }: HandCircleProps) {
   const ref = useRef<SVGSVGElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.8 });
   const reduce = useReducedMotionSafe();

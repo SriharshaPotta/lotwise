@@ -37,7 +37,10 @@ export function ExplainerCard({ e, summary = false }: { e: Explainer; summary?: 
       </div>
     </>
   );
-  const classes = "group relative block h-full overflow-hidden rounded-md border border-border bg-surface px-6 py-8 lg:px-8";
+  const classes = cn(
+    "group relative block h-full overflow-hidden rounded-md border border-border bg-surface px-6 py-8 lg:px-8",
+    e.ready && "transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.99]",
+  );
   return e.ready ? (
     <Link href={`/learn/${e.slug}`} className={classes}>
       {body}

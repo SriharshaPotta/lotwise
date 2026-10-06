@@ -114,7 +114,7 @@ export function Receipt({ model, serial, printing, delay = 0, onPrinted, straigh
         transition={{ type: "spring", stiffness: 220, damping: 26, mass: 1.1 }}
         className="paper-shadow origin-top"
       >
-        <div className="paper perforated relative px-5 pt-6 pb-6 text-receipt text-ink sm:px-7">
+        <div className="paper paper-fiber perforated relative px-5 pt-6 pb-6 text-receipt text-ink sm:px-7">
           <Typing.Provider value={{ printing, instant, start }}>
             <div className="num">
               <Line i={0} className="receipt-caps justify-between text-[0.92em]">

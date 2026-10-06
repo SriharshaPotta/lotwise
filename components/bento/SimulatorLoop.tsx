@@ -74,7 +74,7 @@ export function SimulatorLoop({ time }: { time: MotionValue<number> }) {
 
       {/* Receipt */}
       <div className="paper-shadow-sm w-full max-w-[320px] shrink-0 -rotate-[1.5deg] self-center sm:w-[320px]">
-        <div className="paper perforated num px-5 py-5 text-[12px] leading-6 text-ink">
+        <div className="paper paper-fiber perforated num px-5 py-5 text-[12px] leading-6 text-ink">
           <div className="receipt-caps flex justify-between text-[11px] text-ink-muted">
             <span>Pre-trade receipt</span>
             <span>Est.</span>

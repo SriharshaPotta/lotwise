@@ -1,7 +1,7 @@
 // §5: the learning path, the wash-sale explainer model, and the numbers its prose quotes.
 import { existsSync, readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
-import { TERM_EXPLAINER, WASH_SCENARIOS, accountsExplainer, washOutcome, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
+import { S1256_EXPLAINER, TERM_EXPLAINER, WASH_SCENARIOS, s1256State, xspSaving, accountsExplainer, washOutcome, WASH_EXPLAINER as X, calendarDate, calendarDay, longTermSaving, termCliff, termDay, termState, washState } from "@/lib/demo";
 import { addDays, costBasis, daysBetween, firstSafeRebuyAfter } from "@/lib/engine";
 import { longDate, money } from "@/lib/format";
 import { EXPLAINERS, neighbours, readingMinutes } from "@/lib/learn";
@@ -178,5 +178,32 @@ describe("options-can-trigger-it", () => {
   });
   it("prose quotes only those numbers", () => {
     proseChecks("options-can-trigger-it", 500, [money(S.purchase.price), "$1,280", "$1,840", "$3,120"]);
+  });
+});
+
+describe("section-1256", () => {
+  const def = s1256State(S1256_EXPLAINER.defaultGain, false);
+  it("the demo's $7,185 SPY gain: $1,724 short-term vs $1,336 on XSP, saving $388 (the findings tape figure)", () => {
+    expect(def.gain).toBe(7185);
+    expect(def.spy).toEqual({ term: "short", tax: 1724.4 });
+    expect(def.xsp.tax).toBe(1336.41);
+    expect(Math.round(def.saving)).toBe(Math.round(xspSaving()));
+    expect(def.xsp.ltTax + def.xsp.stTax).toBeCloseTo(def.xsp.tax, 2);
+  });
+  it("XSP is 18.6% blended, 5.4 points under short-term and 3.6 over long-term", () => {
+    expect(def.xsp.blendedRate).toBeCloseTo(0.186, 6);
+    const long = s1256State(10000, true);
+    expect(long.spy.term).toBe("long");
+    expect(long.saving).toBe(-360);
+    expect(s1256State(10000, false).saving).toBe(540);
+  });
+  it("the default sits on the slider's step", () => {
+    const x = S1256_EXPLAINER;
+    expect((x.defaultGain - x.min) % x.step).toBe(0);
+  });
+  it("prose quotes only those numbers", () => {
+    const mdx = proseChecks("section-1256", 500, ["$7,185", money(def.spy.tax, { whole: true }), money(def.xsp.tax, { whole: true }), money(def.saving, { whole: true })]);
+    expect(mdx).toContain("18.6%");
+    expect(mdx).toContain("5.4%");
   });
 });

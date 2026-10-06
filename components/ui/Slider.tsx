@@ -14,6 +14,8 @@ interface SliderProps {
   unit?: { short: string; long: string };
   /** Tick marks every N units, like the rules of a ledger. 0 hides them. */
   tickEvery?: number;
+  /** Format the shown and spoken value (e.g. as money). Defaults to "value unit". */
+  format?: (value: number) => string;
   disabled?: boolean;
   className?: string;
   "data-force"?: string;
@@ -27,7 +29,7 @@ const THUMB = 18;
  */
 export function Slider({
   label, value, onChange, min = 0, max = 100, step = 1,
-  unit = { short: "sh", long: "shares" }, tickEvery = 10, disabled, className, "data-force": force,
+  unit = { short: "sh", long: "shares" }, tickEvery = 10, format, disabled, className, "data-force": force,
 }: SliderProps) {
   const id = useId();
   const pct = (value - min) / (max - min || 1);
@@ -40,7 +42,7 @@ export function Slider({
           {label}
         </label>
         <output htmlFor={id} className="num min-w-[6ch] text-right text-meta text-ctx-fg" aria-hidden>
-          {value} <span className="text-ctx-muted">{unit.short}</span>
+          {format ? format(value) : <>{value} <span className="text-ctx-muted">{unit.short}</span></>}
         </output>
       </div>
       <div className="relative h-8">
@@ -67,7 +69,7 @@ export function Slider({
           value={value}
           disabled={disabled}
           data-force={force}
-          aria-valuetext={`${value} ${unit.long}`}
+          aria-valuetext={format ? format(value) : `${value} ${unit.long}`}
           onChange={(e) => onChange(Number(e.currentTarget.value))}
           className="lw-range absolute inset-0 h-8 w-full"
         />

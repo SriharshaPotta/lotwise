@@ -14,7 +14,7 @@ export const EXPLAINERS: readonly Explainer[] = [
   { slug: "across-accounts", n: "03", title: "Across accounts", summary: "The rule looks at every account you own, not just the one you sold in.", ready: true },
   { slug: "the-ira-trap", n: "04", title: "The IRA trap", summary: "Buy it back inside an IRA and the loss is gone for good.", ready: true },
   { slug: "options-can-trigger-it", n: "05", title: "Options can trigger it", summary: "A call option on the same stock counts as buying it back.", ready: true },
-  { slug: "section-1256", n: "06", title: "Section 1256", summary: "Some index options are taxed 60/40, however long you hold them.", ready: false },
+  { slug: "section-1256", n: "06", title: "Section 1256", summary: "Some index options are taxed 60/40, however long you hold them.", ready: true },
   { slug: "tax-loss-harvesting", n: "07", title: "Tax-loss harvesting", summary: "Take losses on purpose, without tripping the wash-sale rule.", ready: false },
 ];
 

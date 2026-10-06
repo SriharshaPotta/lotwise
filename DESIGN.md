@@ -21,7 +21,7 @@ Apple-level restraint still applies: one idea per screen, huge confident headlin
   --surface:   oklch(20%   0.014 160);
   --surface-2: oklch(24%   0.016 160);
   --fg:        oklch(94.5% 0.018 95);    /* warm paper-white text */
-  --muted:     oklch(70%   0.020 120);
+  --muted:     oklch(73%   0.020 120);
   --border:    oklch(30%   0.018 160);
   --rule:      color-mix(in oklch, var(--fg) 6%, transparent);   /* ledger lines */
   --rule-strong: color-mix(in oklch, var(--fg) 12%, transparent);
@@ -65,14 +65,18 @@ Rules: semantic colors only ever carry their meaning. Wash amber is never used w
 
 --fs-display: clamp(44px, 6vw, 92px);    /* hero h1: Newsreader 500, opsz 72, line-height 0.98, letter-spacing -0.02em */
 --fs-h2:      clamp(30px, 3.6vw, 52px);  /* Newsreader 500, letter-spacing -0.015em */
---fs-lead:    clamp(17px, 1.3vw, 20px);  /* Geist Sans, --muted, line-height 1.55, max 44ch */
---fs-body:    16px;
+--fs-lead:    clamp(18px, 1.35vw, 21px); /* Geist Sans, line-height 1.5, letter-spacing -0.011em, max 38ch */
+--fs-body:    16px;                      /* line-height 1.55, letter-spacing -0.006em */
+--fs-small:   14px;                      /* small supporting copy (14–15px), line-height 1.5 */
 --fs-meta:    13px;                      /* Geist Mono labels */
 --fs-receipt: clamp(12px, 0.95vw, 14px); /* Geist Mono on paper */
 ```
 
 - **All headlines are serif.** Emphasis inside a headline is Newsreader *italic* (not a different color).
 - Body copy is sans; anything numeric is mono with `tabular-nums`.
+- **Two-tone supporting copy** (`components/ui/Lead.tsx`): the clause that carries the point in `--fg`, the rest of the sentence in `--muted`. Use it for leads and card descriptions: `<Lead strong="First clause.">rest of the sentence</Lead>`.
+- **Text never snaps to the ledger grid.** `--ledger-row` is background decoration (and a unit for visual boxes); copy keeps its own line-height and margins.
+- Paragraphs use `text-wrap: pretty`; h1–h3 use `text-wrap: balance`.
 - Small-caps style (uppercase + 0.08em tracking, mono) is allowed **only on receipts and stamps**, nowhere else.
 
 ### 2.4 Space, radius, layout

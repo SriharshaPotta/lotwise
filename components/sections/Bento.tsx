@@ -27,7 +27,8 @@ export function Bento() {
           wide
           className="lg:col-span-12"
           title="Pre-trade simulator"
-          copy="Drag, see the tax hit, change your mind. Before anything is real."
+          strong="Drag, see the tax hit, change your mind."
+          copy="Before anything is real."
           summary={simulatorSummary}
           poster={SIMULATOR_POSTER}
           rows={8}
@@ -38,7 +39,8 @@ export function Bento() {
         <BentoCard
           className="lg:col-span-4"
           title="Loss harvesting"
-          copy="Find losses worth taking — and the ones that would trigger a wash sale."
+          strong="Find losses worth taking,"
+          copy="and the ones that would trigger a wash sale."
           summary={harvestSummary}
           poster={HARVEST_POSTER}
           rows={6}
@@ -48,7 +50,8 @@ export function Bento() {
         <BentoCard
           className="lg:col-span-4"
           title="Long-term countdown"
-          copy="Some trades get much cheaper if you wait. We tell you which, and by how much."
+          strong="Some trades get much cheaper if you wait."
+          copy="We tell you which, and by how much."
           summary={countdownSummary}
           poster={COUNTDOWN_POSTER}
           rows={6}
@@ -58,7 +61,8 @@ export function Bento() {
         <BentoCard
           className="lg:col-span-4"
           title="Section 1256"
-          copy="The same trade on a different ticker can be taxed very differently."
+          strong="The same trade on a different ticker"
+          copy="can be taxed very differently."
           summary={sec1256Summary}
           poster={SEC1256_POSTER}
           rows={6}

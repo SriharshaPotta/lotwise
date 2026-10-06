@@ -3,10 +3,13 @@
 import { animate, m, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Chip } from "@/components/ui/Chip";
+import { Lead } from "@/components/ui/Lead";
 import { ease, reveal, spring } from "@/lib/motion";
 
-const COPY =
-  "The tax engine is written in Rust and compiled to WebAssembly. It runs on your device. There is no backend to send your trades to.";
+const COPY = {
+  strong: "The tax engine runs on your device.",
+  rest: "It’s written in Rust and compiled to WebAssembly. There is no backend to send your trades to.",
+};
 
 /** Data dots circling the engine: [orbit radius px, seconds per turn, direction, dot angles°]. */
 const ORBITS = [
@@ -30,9 +33,9 @@ export function Private() {
         Your trades never leave your browser.
       </m.h2>
       <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
-        <m.p {...reveal} className="max-w-[44ch] text-lead text-muted lg:col-span-4">
-          {COPY}
-        </m.p>
+        <m.div {...reveal} className="lg:col-span-4">
+          <Lead strong={COPY.strong}>{COPY.rest}</Lead>
+        </m.div>
         <m.div {...reveal} className="lg:col-span-8">
           <Sandbox />
           <p className="sr-only">The engine runs inside your browser. Our servers have received 0 bytes.</p>

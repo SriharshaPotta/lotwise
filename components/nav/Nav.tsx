@@ -79,7 +79,7 @@ export function Nav() {
           ))}
         </ul>
         <div className="ml-8 hidden md:block">
-          <Button variant="outline" size="sm" href="/demo">
+          <Button variant="paper" size="pill" href="/demo">
             Open the demo
           </Button>
         </div>
@@ -130,7 +130,7 @@ export function Nav() {
               ))}
             </ul>
             <div className="page-container py-8">
-              <Button variant="outline" href="/demo" className="w-full" onClick={() => close(false)}>
+              <Button variant="paper" href="/demo" className="w-full" onClick={() => close(false)}>
                 Open the demo
               </Button>
             </div>

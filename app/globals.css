@@ -10,7 +10,7 @@
   --surface:   oklch(20%   0.014 160);
   --surface-2: oklch(24%   0.016 160);
   --fg:        oklch(94.5% 0.018 95);    /* warm paper-white text */
-  --muted:     oklch(70%   0.020 120);
+  --muted:     oklch(73%   0.020 120);
   --border:    oklch(30%   0.018 160);
   --rule:      color-mix(in oklch, var(--fg) 6%, transparent);   /* ledger lines */
   --rule-strong: color-mix(in oklch, var(--fg) 12%, transparent);
@@ -44,8 +44,9 @@
   /* 2.3 type scale */
   --fs-display: clamp(44px, 6vw, 92px);
   --fs-h2:      clamp(30px, 3.6vw, 52px);
-  --fs-lead:    clamp(17px, 1.3vw, 20px);
+  --fs-lead:    clamp(18px, 1.35vw, 21px);
   --fs-body:    16px;
+  --fs-small:   14px;
   --fs-meta:    13px;
   --fs-receipt: clamp(12px, 0.95vw, 14px);
 
@@ -186,9 +187,14 @@
   --text-h2--line-height: 1.05;
   --text-h2--letter-spacing: -0.015em;
   --text-lead: var(--fs-lead);
-  --text-lead--line-height: 1.55;
+  --text-lead--line-height: 1.5;
+  --text-lead--letter-spacing: -0.011em;
   --text-body: var(--fs-body);
-  --text-body--line-height: 1.6;
+  --text-body--line-height: 1.55;
+  --text-body--letter-spacing: -0.006em;
+  --text-small: var(--fs-small);
+  --text-small--line-height: 1.5;
+  --text-small--letter-spacing: -0.003em;
   --text-meta: var(--fs-meta);
   --text-meta--line-height: 1.4;
   --text-receipt: var(--fs-receipt);
@@ -238,7 +244,8 @@
     color: var(--fg);
     font-family: var(--font-body);
     font-size: var(--fs-body);
-    line-height: 1.6;
+    line-height: 1.55;
+    letter-spacing: -0.006em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -401,13 +408,11 @@
   .drift[data-paused] { animation-play-state: paused; }
 }
 
-/* Hero headline: two set lines (one on md+, three on phones). Its box is rounded up to whole
-   ledger rows so everything below it starts on a rule. */
-.hero-title {
-  min-height: round(up, calc(3 * 0.98 * var(--fs-display)), var(--ledger-row));
-}
+/* Hero headline: two set lines (three on phones). The box reserves them so nothing shifts while
+   the font loads. */
+.hero-title { min-height: calc(3 * 0.98 * var(--fs-display)); }
 @media (min-width: 768px) {
-  .hero-title { min-height: round(up, calc(2 * 0.98 * var(--fs-display)), var(--ledger-row)); }
+  .hero-title { min-height: calc(2 * 0.98 * var(--fs-display)); }
 }
 
 /* Inline list with hairline separators that never start a wrapped line. Each item draws its
@@ -529,13 +534,13 @@ html { scroll-padding-top: 64px; }
 
 /* ───────────────────────────────────────────────────────────────────────────
    Learn pages (§5): a 680px editorial column; `.breakout` children (interactives) span the
-   container. Prose sits on the ledger rhythm: 32px lines for body text.
+   container. Prose keeps its own leading; the ruling behind it is decoration.
    ─────────────────────────────────────────────────────────────────────────── */
 
 .learn-column { max-width: 680px; }
 .learn-prose > * { max-width: 680px; }
 .learn-prose > .breakout { max-width: none; }
-.learn-prose { font-size: 17px; line-height: var(--ledger-row); }
+.learn-prose { font-size: 17px; line-height: 1.6; letter-spacing: -0.006em; }
 .learn-prose > p,
 .learn-prose > ul { margin-top: var(--space-6); }
 .learn-prose > :first-child { margin-top: 0; }
@@ -557,7 +562,7 @@ html { scroll-padding-top: 64px; }
   content: "";
   position: absolute;
   left: 0;
-  top: calc(var(--ledger-row) / 2 - 2px);
+  top: calc(0.8em - 2px);
   width: 14px;
   height: 4px;
   border-radius: 999px;

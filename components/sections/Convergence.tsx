@@ -8,6 +8,7 @@ import { useMediaQuery } from "@/components/effects/useMediaQuery";
 import { Stamp } from "@/components/receipt/Stamp";
 import { Badge } from "@/components/ui/Badge";
 import { Chip } from "@/components/ui/Chip";
+import { Lead } from "@/components/ui/Lead";
 import { Marker } from "@/components/ui/Marker";
 import { Segmented } from "@/components/ui/Segmented";
 import { FlyingChip } from "@/components/viz/FlyingChip";
@@ -18,8 +19,8 @@ import { money, shortDate } from "@/lib/format";
 import { ease, stampIn } from "@/lib/motion";
 
 const data = convergence();
-const LEAD = "Each broker checks its own account. That’s all it’s required to do.";
-const CAPTION = "lotwise checks across all of them, before you trade.";
+const LEAD = { strong: "Each broker checks its own account.", rest: "That’s all it’s required to do." };
+const CAPTION = { strong: "lotwise checks across all of them,", rest: "before you trade." };
 const WASH_BADGE = `1 wash sale · ${money(data.disallowed, { whole: true })} disallowed`;
 const IRA_BADGE = "1 IRA trap · loss permanently lost";
 const WINDOW_LABEL = `${shortDate(data.window.start)} – ${shortDate(data.window.end)}`;
@@ -142,11 +143,13 @@ function ConvergenceScroll() {
         <div className="sticky top-0 flex h-svh flex-col pt-24 pb-8">
           <div className="page-container">
             <Heading />
-            <div className="mt-4 grid max-w-[44ch] text-lead text-muted [&>*]:[grid-area:1/1]">
-              <m.p style={{ opacity: lead }}>{LEAD}</m.p>
-              <m.p style={{ opacity: caption }} aria-hidden>
-                {CAPTION}
-              </m.p>
+            <div className="mt-4 grid [&>*]:[grid-area:1/1]">
+              <m.div style={{ opacity: lead }}>
+                <Lead strong={LEAD.strong}>{LEAD.rest}</Lead>
+              </m.div>
+              <m.div style={{ opacity: caption }} aria-hidden>
+                <Lead strong={CAPTION.strong}>{CAPTION.rest}</Lead>
+              </m.div>
             </div>
           </div>
           <div className="page-container mt-8 min-h-0 flex-1">
@@ -329,9 +332,13 @@ function ConvergenceFallback() {
   return (
     <div className="convergence-fallback page-container pt-24">
       <Heading />
-      <div className="mt-4 grid max-w-[44ch] text-lead text-muted [&>*]:[grid-area:1/1]">
-        <Fade show={view === "broker"}>{LEAD}</Fade>
-        <Fade show={view === "irs"}>{CAPTION}</Fade>
+      <div className="mt-4 grid [&>*]:[grid-area:1/1]">
+        <Fade show={view === "broker"}>
+          <Lead strong={LEAD.strong}>{LEAD.rest}</Lead>
+        </Fade>
+        <Fade show={view === "irs"}>
+          <Lead strong={CAPTION.strong}>{CAPTION.rest}</Lead>
+        </Fade>
       </div>
       <Segmented label="Ledger view" options={VIEWS} value={view} onChange={setView} className="mt-8" />
       <div className="mt-8 grid [&>*]:[grid-area:1/1]">
@@ -358,9 +365,9 @@ function ConvergenceFallback() {
 
 function Fade({ show, children }: { show: boolean; children: ReactNode }) {
   return (
-    <m.p initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} aria-hidden={!show}>
+    <m.div initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} aria-hidden={!show}>
       {children}
-    </m.p>
+    </m.div>
   );
 }
 

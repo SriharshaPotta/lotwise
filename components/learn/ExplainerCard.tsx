@@ -21,8 +21,8 @@ export function ExplainerCard({ e, summary = false }: { e: Explainer; summary?: 
       )}
       <div className="relative">
         <span className="num block text-meta leading-8 text-muted">{e.n}</span>
-        <h3 className="text-[26px] leading-8 tracking-[-0.01em]">{e.title}</h3>
-        {summary && <p className="mt-0 leading-8 text-muted">{e.summary}</p>}
+        <h3 className="mt-1 text-[26px] leading-[1.15] tracking-[-0.01em]">{e.title}</h3>
+        {summary && <p className="mt-3 text-muted">{e.summary}</p>}
         <div aria-hidden className={cn("mt-8 h-[calc(var(--ledger-row)*4)]", !e.ready && "opacity-60")}>
           {PREVIEWS[e.slug]}
         </div>

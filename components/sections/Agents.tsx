@@ -5,13 +5,15 @@ import { useEffect, useRef, useState, type ReactNode, type RefObject } from "rea
 import { useReducedMotionSafe } from "@/components/effects/useReducedMotionSafe";
 import { LedgerPage } from "@/components/ledger/LedgerPage";
 import { Button } from "@/components/ui/Button";
+import { Lead } from "@/components/ui/Lead";
 import { Marker } from "@/components/ui/Marker";
 import { cn } from "@/lib/cn";
 import { AGENT_TOOL, agentTranscript } from "@/lib/demo";
 import { print, printDuration, reveal } from "@/lib/motion";
 import { SITE } from "@/lib/site";
 
-const T = agentTranscript();
+/** Hyphens inside words don't break (U+2011), so "similar-but-not-identical" stays whole. */
+const T = (({ reply, ...t }) => ({ ...t, reply: reply.replace(/(?<=\w)-(?=\w)/g, "‑") }))(agentTranscript());
 /** User text types at ~35 characters a second; the reply streams in chunks of 1–3 words. */
 const USER_CPS = 35;
 const CHUNK_EVERY = 0.07;
@@ -42,10 +44,10 @@ export function Agents() {
         Your AI agents can ask <em>before</em> they trade.
       </m.h2>
       <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
-        <m.div {...reveal} className="lg:col-span-4">
-          <p className="max-w-[44ch] text-lead text-muted">
-            Lotwise ships an MCP server, so Claude, Cursor or any agent can check the tax impact of a trade before placing it.
-          </p>
+        <m.div {...reveal} className="lg:col-span-4 lg:pt-4">
+          <Lead strong="Lotwise ships an MCP server.">
+            Claude, Cursor or any agent can check the tax impact of a trade before placing it.
+          </Lead>
           <Button href={SITE.github} variant="quiet" className="mt-8" target="_blank" rel="noreferrer">
             Set up the MCP server →
           </Button>
@@ -156,7 +158,7 @@ function Transcript() {
           </div>
         }
       >
-        <div className="px-5 text-[15px] leading-8">
+        <div className="px-5 pb-2 text-[15px] leading-[1.55] tracking-[-0.006em]">
           <Message who="you" show={reached(phase, "user")}>
             <TypedText t={user} />
           </Message>
@@ -175,10 +177,10 @@ function Transcript() {
 function Message({ who, show, className, children }: { who: string; show: boolean; className?: string; children: ReactNode }) {
   return (
     <div className={cn("grid sm:grid-cols-[5.5rem_1fr]", className)}>
-      <m.span initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} className="num text-meta leading-8 text-muted">
+      <m.span initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} className="num text-meta leading-[calc(15px*1.55)] text-muted">
         {who}
       </m.span>
-      <div className="min-w-0">{children}</div>
+      <div className="min-w-0 max-w-[64ch]">{children}</div>
     </div>
   );
 }

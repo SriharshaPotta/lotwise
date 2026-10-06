@@ -4,6 +4,7 @@ import { m, type MotionValue } from "motion/react";
 import type { ReactNode } from "react";
 import { useInViewLoop } from "@/components/effects/useInViewLoop";
 import { LedgerRules } from "@/components/ledger/LedgerRules";
+import { Lead } from "@/components/ui/Lead";
 import { cn } from "@/lib/cn";
 import { revealItem } from "@/lib/motion";
 
@@ -12,6 +13,8 @@ const HOVER_SPEED = 1.5;
 
 interface BentoCardProps {
   title: string;
+  /** The description's key clause (--fg); `copy` is the rest of it (--muted). */
+  strong: string;
   copy: string;
   /** What the visual shows, for screen readers (the visual itself is decorative). */
   summary: string;
@@ -29,7 +32,7 @@ interface BentoCardProps {
  * A dark ruled feature card with a small looping visual. The loop only runs while the card is on
  * screen; hover eases it to 1.5× and brightens the border one step.
  */
-export function BentoCard({ title, copy, summary, poster, wide, rows, mobileRows = rows, className, children }: BentoCardProps) {
+export function BentoCard({ title, strong, copy, summary, poster, wide, rows, mobileRows = rows, className, children }: BentoCardProps) {
   const { ref, time, setSpeed } = useInViewLoop<HTMLElement>({ poster });
   return (
     <m.article
@@ -50,8 +53,10 @@ export function BentoCard({ title, copy, summary, poster, wide, rows, mobileRows
         className="pointer-events-none absolute inset-0 rounded-[inherit] border border-[color-mix(in_oklch,var(--fg)_20%,transparent)] opacity-0 transition-opacity duration-(--motion-fast) ease-ui group-is-hover:opacity-100"
       />
       <div className={cn("relative", wide && "lg:col-span-4")}>
-        <h3 className="text-[26px] leading-8 tracking-[-0.01em]">{title}</h3>
-        <p className={cn("mt-0 max-w-[36ch] leading-8 text-muted", wide && "lg:mt-4 lg:max-w-[28ch]")}>{copy}</p>
+        <h3 className="text-[26px] leading-[1.15] tracking-[-0.01em]">{title}</h3>
+        <Lead size="body" strong={strong} className={cn("mt-3", wide && "lg:mt-4 lg:max-w-[28ch]")}>
+          {copy}
+        </Lead>
       </div>
       <div
         aria-hidden

@@ -3,8 +3,8 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "reac
 import { HandUnderline } from "@/components/annotate/HandUnderline";
 import { cn } from "@/lib/cn";
 
-type Variant = "primary" | "outline" | "quiet";
-type Size = "md" | "sm";
+type Variant = "primary" | "outline" | "quiet" | "paper";
+type Size = "md" | "sm" | "pill";
 
 interface CommonProps {
   variant?: Variant;
@@ -24,18 +24,21 @@ type ButtonProps = CommonProps &
 const SIZE: Record<Size, string> = {
   md: "h-11 px-5 text-[15px] gap-2.5",
   sm: "h-9 px-3.5 text-[14px] gap-2",
+  pill: "h-[34px] px-3.5 text-[14px] gap-2",
 };
 
 const VARIANT: Record<Variant, { root: string; layer: string }> = {
   /** Filled emerald, --on-accent text. The one saturated moment on a screen. */
-  primary: { root: "bg-ctx-accent text-ctx-on-accent", layer: "bg-ctx-accent-hover" },
+  primary: { root: "rounded-sm bg-ctx-accent text-ctx-on-accent", layer: "bg-ctx-accent-hover" },
   /** Hairline emerald border. */
   outline: {
-    root: "text-ctx-fg border border-[color-mix(in_oklch,var(--ctx-accent)_55%,transparent)]",
+    root: "rounded-sm text-ctx-fg border border-[color-mix(in_oklch,var(--ctx-accent)_55%,transparent)]",
     layer: "bg-[color-mix(in_oklch,var(--ctx-accent)_12%,transparent)]",
   },
   /** Text action with a hand-drawn underline that draws on (HandUnderline). */
-  quiet: { root: "text-ctx-fg !px-0.5", layer: "" },
+  quiet: { root: "rounded-sm text-ctx-fg !px-0.5 -mx-0.5", layer: "" },
+  /** A small solid paper chip on ink (nav). No border; hover fades to --paper-2. */
+  paper: { root: "rounded-[8px] bg-paper text-ink", layer: "bg-paper-2" },
 };
 
 /**
@@ -46,7 +49,7 @@ export function Button(props: ButtonProps) {
   const { variant = "primary", size = "md", className, children, ...rest } = props;
   const v = VARIANT[variant];
   const classes = cn(
-    "group relative isolate inline-flex select-none items-center justify-center rounded-sm font-body font-medium whitespace-nowrap",
+    "group relative isolate inline-flex select-none items-center justify-center font-body font-medium whitespace-nowrap",
     "transition-transform duration-(--motion-fast) ease-ui is-active:scale-[0.98]",
     "disabled:cursor-not-allowed disabled:opacity-40 aria-disabled:cursor-not-allowed aria-disabled:opacity-40",
     SIZE[size],

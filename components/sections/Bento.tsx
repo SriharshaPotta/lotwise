@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { BentoCard } from "@/components/bento/BentoCard";
 import { COUNTDOWN_POSTER, CountdownLoop, countdownSummary } from "@/components/bento/CountdownLoop";
 import { HARVEST_POSTER, HarvestLoop, harvestSummary } from "@/components/bento/HarvestLoop";
@@ -12,11 +12,11 @@ import { reveal, revealGroup } from "@/lib/motion";
 export function Bento() {
   return (
     <section id="features" aria-labelledby="bento-title" className="page-container relative scroll-mt-24">
-      <motion.h2 id="bento-title" {...reveal} className="max-w-[18ch] text-h2 lg:max-w-[20ch]">
+      <m.h2 id="bento-title" {...reveal} className="max-w-[18ch] text-h2 lg:max-w-[20ch]">
         Every trade, checked before it happens.
-      </motion.h2>
+      </m.h2>
 
-      <motion.div
+      <m.div
         variants={revealGroup}
         initial="hidden"
         whileInView="shown"
@@ -65,7 +65,7 @@ export function Bento() {
         >
           {(t) => <Sec1256Loop time={t} />}
         </BentoCard>
-      </motion.div>
+      </m.div>
     </section>
   );
 }

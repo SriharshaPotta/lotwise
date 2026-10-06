@@ -1,6 +1,6 @@
 "use client";
 
-import { cubicBezier, motion, useTransform, type MotionValue } from "motion/react";
+import { cubicBezier, m, useTransform, type MotionValue } from "motion/react";
 import { HARVEST_COLS, harvestGrid, type HarvestCell } from "@/lib/demo";
 import { money } from "@/lib/format";
 import { keyframes, progress, wrap } from "@/lib/loop";
@@ -53,13 +53,13 @@ export function HarvestLoop({ time }: { time: MotionValue<number> }) {
       </div>
       <div className="mt-auto">
         <div className="num flex h-8 items-baseline gap-3">
-          <motion.span className="inline-block w-[7ch] text-[22px] text-accent">{saved}</motion.span>
+          <m.span className="inline-block w-[7ch] text-[22px] text-accent">{saved}</m.span>
           <span className="text-meta text-muted">saved this year</span>
         </div>
-        <motion.div className="num flex h-8 items-center gap-2 text-meta text-muted" style={{ opacity: washNote }}>
+        <m.div className="num flex h-8 items-center gap-2 text-meta text-muted" style={{ opacity: washNote }}>
           <span className="hatch-wash inline-block h-2.5 w-4 rounded-[2px]" />
           {WASH.symbol} skipped: it would wash
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );
@@ -70,7 +70,7 @@ function Flip({ cell, t }: { cell: LossCell; t: MotionValue<number> }) {
   const rotateY = useTransform(t, (u) => keyframes(u, [[start, 0], [start + FLIP, 180], [RESET[0], 180], [RESET[1], 360]], inOut));
   return (
     <span className="relative size-6 [perspective:240px]">
-      <motion.span className="absolute inset-0 [transform-style:preserve-3d]" style={{ rotateY }}>
+      <m.span className="absolute inset-0 [transform-style:preserve-3d]" style={{ rotateY }}>
         <span className="absolute inset-0 rounded-[4px] bg-loss [backface-visibility:hidden]" />
         <span
           className={
@@ -79,7 +79,7 @@ function Flip({ cell, t }: { cell: LossCell; t: MotionValue<number> }) {
               : "absolute inset-0 rounded-[4px] bg-accent [backface-visibility:hidden] [transform:rotateY(180deg)]"
           }
         />
-      </motion.span>
+      </m.span>
     </span>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, type MotionValue } from "motion/react";
+import { m, type MotionValue } from "motion/react";
 import type { ReactNode } from "react";
 import { useInViewLoop } from "@/components/effects/useInViewLoop";
 import { LedgerRules } from "@/components/ledger/LedgerRules";
@@ -32,7 +32,7 @@ interface BentoCardProps {
 export function BentoCard({ title, copy, summary, poster, wide, rows, mobileRows = rows, className, children }: BentoCardProps) {
   const { ref, time, setSpeed } = useInViewLoop<HTMLElement>({ poster });
   return (
-    <motion.article
+    <m.article
       ref={ref}
       variants={revealItem}
       onPointerEnter={(e) => e.pointerType === "mouse" && setSpeed(HOVER_SPEED)}
@@ -64,6 +64,6 @@ export function BentoCard({ title, copy, summary, poster, wide, rows, mobileRows
         {children(time)}
       </div>
       <p className="sr-only">{summary}</p>
-    </motion.article>
+    </m.article>
   );
 }

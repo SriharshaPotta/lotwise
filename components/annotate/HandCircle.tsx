@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { m, useInView } from "motion/react";
 import { useReducedMotionSafe } from "@/components/effects/useReducedMotionSafe";
 import { useRef } from "react";
 import { ANNOTATIONS } from "@/lib/annotations";
@@ -36,7 +36,7 @@ export function HandCircle({ d = CIRCLE.d, viewBox = CIRCLE.viewBox, className, 
       preserveAspectRatio="none"
       className={cn("pointer-events-none absolute -inset-x-[18%] -inset-y-[22%] h-[144%] w-[136%] overflow-visible", className)}
     >
-      <motion.path
+      <m.path
         d={d}
         fill="none"
         stroke="currentColor"

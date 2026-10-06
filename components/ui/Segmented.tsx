@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useId, useRef, type KeyboardEvent } from "react";
 import { cn } from "@/lib/cn";
 import { spring } from "@/lib/motion";
@@ -84,7 +84,7 @@ export function Segmented<T extends string>({ label, options, value, onChange, d
             )}
           >
             {selected && (
-              <motion.span
+              <m.span
                 aria-hidden
                 layoutId={`${groupId}-plate`}
                 transition={spring.paper}

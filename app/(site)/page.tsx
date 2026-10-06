@@ -1,3 +1,4 @@
+import { HydrateOnView } from "@/components/effects/HydrateOnView";
 import { Agents } from "@/components/sections/Agents";
 import { Bento } from "@/components/sections/Bento";
 import { Convergence } from "@/components/sections/Convergence";
@@ -9,6 +10,9 @@ import { Private } from "@/components/sections/Private";
 import { FindingsTape } from "@/components/tape/FindingsTape";
 
 /**
+ * Sections below the first screen hydrate as they approach (HydrateOnView), so the initial load
+ * only pays for the hero and the tape.
+ *
  * Sections are separated by --space-32 (desktop) / --space-24 (phones), §2.4, measured from the
  * last content of one section to the next headline. The convergence brings 96px of its own above
  * its headline (its sticky stage clears the nav) and the CTA band carries its gap inside the band.
@@ -19,23 +23,37 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <FindingsTape />
+      <HydrateOnView>
+        <FindingsTape />
+      </HydrateOnView>
       <div className="lg:pt-12">
-        <Convergence />
+        <HydrateOnView>
+          <Convergence />
+        </HydrateOnView>
       </div>
       <div className={GAP}>
-        <Bento />
+        <HydrateOnView>
+          <Bento />
+        </HydrateOnView>
       </div>
       <div className={GAP}>
-        <Private />
+        <HydrateOnView>
+          <Private />
+        </HydrateOnView>
       </div>
       <div className={GAP}>
-        <Agents />
+        <HydrateOnView>
+          <Agents />
+        </HydrateOnView>
       </div>
       <div className={GAP}>
-        <LearnTeaser />
+        <HydrateOnView>
+          <LearnTeaser />
+        </HydrateOnView>
       </div>
-      <FinalCta />
+      <HydrateOnView>
+        <FinalCta />
+      </HydrateOnView>
       <Footer />
     </>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { cubicBezier, motion, useTransform, type MotionValue } from "motion/react";
+import { cubicBezier, m, useTransform, type MotionValue } from "motion/react";
 import { Ring } from "@/components/viz/Ring";
 import { LOTS, countdown } from "@/lib/demo";
 import { money, shortDate } from "@/lib/format";
@@ -37,7 +37,7 @@ export function CountdownLoop({ time }: { time: MotionValue<number> }) {
       <div className="relative shrink-0" style={{ width: SIZE, height: SIZE }}>
         <Ring progress={fill} opacity={ring} size={SIZE} color="var(--longterm)" endTick />
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <motion.span className="num inline-block w-[3ch] text-center text-[36px] leading-none text-fg">{days}</motion.span>
+          <m.span className="num inline-block w-[3ch] text-center text-[36px] leading-none text-fg">{days}</m.span>
           <span className="num mt-2 text-meta text-muted">days to go</span>
         </div>
       </div>
@@ -50,9 +50,9 @@ export function CountdownLoop({ time }: { time: MotionValue<number> }) {
           <span className="inline-block h-3 w-0.5 rounded-full bg-longterm" />
           long-term {shortDate(CD.ltDate)}
         </div>
-        <motion.div className="flex h-8 items-center text-fg" style={{ opacity: save }}>
+        <m.div className="flex h-8 items-center text-fg" style={{ opacity: save }}>
           wait, save {money(CD.save, { whole: true })}
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { AnimatePresence, m, useReducedMotion } from "motion/react";
 import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { Marker } from "@/components/ui/Marker";
 import { MoneyTween, formatInt } from "@/components/viz/MoneyTween";
@@ -37,7 +37,7 @@ const Typing = createContext<{ printing: boolean; instant: boolean; start: numbe
 function Line({ i, className, children, wrap }: { i: number; className?: string; children?: ReactNode; wrap?: boolean }) {
   const { printing, instant, start } = useContext(Typing);
   return (
-    <motion.div
+    <m.div
       initial={printing ? { opacity: 0 } : false}
       animate={{ opacity: 1 }}
       transition={instant ? { duration: 0 } : { delay: start + i * print.lineGap, duration: print.lineFade }}
@@ -49,7 +49,7 @@ function Line({ i, className, children, wrap }: { i: number; className?: string;
       )}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -98,7 +98,7 @@ export function Receipt({ model, serial, printing, delay = 0, onPrinted, straigh
   const loss = model.realized < 0;
 
   return (
-    <motion.div
+    <m.div
       initial={printing ? { y: print.feedY[0] } : false}
       animate={
         instant
@@ -108,7 +108,7 @@ export function Receipt({ model, serial, printing, delay = 0, onPrinted, straigh
       exit={{ y: 28, opacity: 0, transition: { duration: print.tearOff, ease: "easeIn" } }}
       className="w-full"
     >
-      <motion.div
+      <m.div
         initial={false}
         animate={{ rotate: straight ? 0 : -1.5 }}
         transition={{ type: "spring", stiffness: 220, damping: 26, mass: 1.1 }}
@@ -176,8 +176,8 @@ export function Receipt({ model, serial, printing, delay = 0, onPrinted, straigh
           {/* Lands on the totals once printing is done (Showcase decides when). */}
           <AnimatePresence>{showStamp && model.stamp && <StampSlot key="stamp" label={model.stamp} />}</AnimatePresence>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 

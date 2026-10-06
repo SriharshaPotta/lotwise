@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useMemo, useRef, useState, type KeyboardEvent } from "react";
 import { Button } from "@/components/ui/Button";
 import { Marker } from "@/components/ui/Marker";
@@ -139,7 +139,7 @@ function LotCell({
       )}
     >
       {/* picked: emerald hairline and wash of colour, faded in (opacity only) */}
-      <motion.span
+      <m.span
         aria-hidden
         className="absolute -inset-px -z-10 rounded-[inherit] border border-accent bg-[color-mix(in_oklch,var(--accent)_10%,transparent)]"
         initial={false}
@@ -159,9 +159,9 @@ function LotCell({
         </span>
         {lot.kind === "blocked" && <Marker tone="wash" className="mt-1.5" />}
         {lot.kind === "harvest" && (
-          <motion.svg viewBox="0 0 12 12" className="mt-1 size-3.5" initial={false} animate={{ opacity: picked ? 1 : 0, scale: picked ? 1 : 0.5 }} transition={spring.paper}>
+          <m.svg viewBox="0 0 12 12" className="mt-1 size-3.5" initial={false} animate={{ opacity: picked ? 1 : 0, scale: picked ? 1 : 0.5 }} transition={spring.paper}>
             <path d="M2.5 6.5l2.2 2.2L9.5 3.8" fill="none" stroke="var(--accent)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
-          </motion.svg>
+          </m.svg>
         )}
       </span>
       <span aria-hidden>

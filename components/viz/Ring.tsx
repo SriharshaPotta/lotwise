@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "motion/react";
+import { m, useTransform, type MotionValue } from "motion/react";
 import { cn } from "@/lib/cn";
 
 interface RingProps {
@@ -27,7 +27,7 @@ export function Ring({ progress, opacity, size, stroke = 6, color, endTick, clas
   return (
     <svg aria-hidden width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={cn("overflow-visible", className)}>
       <circle cx={c} cy={c} r={r} fill="none" stroke="var(--ctx-line)" strokeWidth={1} />
-      <motion.circle
+      <m.circle
         cx={c}
         cy={c}
         r={r}

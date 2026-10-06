@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import type { ReactNode } from "react";
 import { cn } from "@/lib/cn";
 import { spring } from "@/lib/motion";
@@ -37,7 +37,7 @@ export function Toggle({ checked, onChange, label, disabled, className, "data-fo
           aria-hidden
           className={cn("absolute inset-0 rounded-[inherit] bg-ctx-control transition-opacity duration-(--motion-fast) ease-ui", checked ? "opacity-100" : "opacity-0")}
         />
-        <motion.span
+        <m.span
           aria-hidden
           initial={false}
           animate={{ x: checked ? 16 : 0 }}

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -122,13 +122,13 @@ export function DayScrubber({ days, value, onChange, dateOf, label, valueText, m
         ))}
 
         {/* a full-width layer moved by transform, so dragging never touches layout */}
-        <motion.div aria-hidden className="pointer-events-none absolute inset-0" initial={false} animate={{ x: `${pct(value)}%` }} transition={springy}>
+        <m.div aria-hidden className="pointer-events-none absolute inset-0" initial={false} animate={{ x: `${pct(value)}%` }} transition={springy}>
           <div className="absolute top-10 left-0 h-[4.5rem] w-px -translate-x-1/2 bg-fg" />
           <span ref={labelRef} className={cn("num absolute top-[8.75rem] text-[12px] whitespace-nowrap text-fg", align)}>
             {markerLabel}
           </span>
-        </motion.div>
-        <motion.div className="pointer-events-none absolute inset-0" initial={false} animate={{ x: `${pct(value)}%` }} transition={springy}>
+        </m.div>
+        <m.div className="pointer-events-none absolute inset-0" initial={false} animate={{ x: `${pct(value)}%` }} transition={springy}>
           <div
             ref={handleRef}
             role="slider"
@@ -144,7 +144,7 @@ export function DayScrubber({ days, value, onChange, dateOf, label, valueText, m
           >
             <span className="size-[18px] rounded-full border-2 border-fg bg-surface shadow-[0_0_0_3px_var(--surface)] transition-transform duration-(--motion-fast) ease-ui group-hover:scale-110 group-focus-visible:outline-2 group-focus-visible:outline-offset-3 group-focus-visible:outline-accent group-active:scale-125" />
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );

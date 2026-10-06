@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Chip } from "@/components/ui/Chip";
 import { Marker } from "@/components/ui/Marker";
@@ -229,17 +229,17 @@ function Buckets({ d, state, shown }: { d: Derived; state: WashState; shown: Was
       )}
 
       {target && (
-        <motion.div
+        <m.div
           aria-hidden
           className="pointer-events-none absolute top-0 left-0"
           initial={{ x: target.x, y: target.y }}
           animate={{ x: [null, target.x], y: [null, lift, target.y] }}
           transition={{ duration: 0.7, ease: ease.settle, y: { duration: 0.7, times: [0, 0.4, 1], ease: ["easeOut", ease.settle] } }}
         >
-          <motion.div className="-translate-1/2" initial={false} animate={{ opacity: state.where === "gone" ? 0.55 : 1 }} transition={{ duration: 0.3, delay: state.where === "gone" ? LAND_AFTER : 0 }}>
+          <m.div className="-translate-1/2" initial={false} animate={{ opacity: state.where === "gone" ? 0.55 : 1 }} transition={{ duration: 0.3, delay: state.where === "gone" ? LAND_AFTER : 0 }}>
             <Chip tone="loss">{money(d.loss, { whole: true })} loss</Chip>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </div>
   );
@@ -265,7 +265,7 @@ function LotBar({ d, added }: { d: Derived; added: number }) {
   return (
     <div className="relative h-2.5 min-w-0 flex-1">
       <span className="absolute inset-y-0 left-0 rounded-l-full bg-[color-mix(in_oklch,var(--fg)_45%,transparent)]" style={{ width: `${paid}%` }} />
-      <motion.span
+      <m.span
         className="absolute inset-y-0 origin-left rounded-r-full bg-loss"
         style={{ left: `calc(${paid}% + 1px)`, right: 0 }}
         initial={false}
@@ -283,10 +283,10 @@ function HoldingStrip({ d, state }: { d: Derived; state: WashState }) {
   return (
     <div className="relative h-7 min-w-0 flex-1">
       <span className="absolute inset-x-0 top-1/2 h-px bg-border" />
-      <motion.span className="absolute inset-y-0 left-0 w-full" initial={false} animate={{ x: `${start}%` }} transition={spring.paper}>
+      <m.span className="absolute inset-y-0 left-0 w-full" initial={false} animate={{ x: `${start}%` }} transition={spring.paper}>
         <span className="absolute top-1/2 left-0 h-2.5 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-fg" />
-      </motion.span>
-      <motion.span
+      </m.span>
+      <m.span
         className="absolute top-1/2 left-0 h-1 w-full origin-left -translate-y-1/2 rounded-full bg-[color-mix(in_oklch,var(--fg)_45%,transparent)]"
         initial={false}
         animate={{ x: `${start}%`, scaleX: Math.max(0, end - start) / 100 }}

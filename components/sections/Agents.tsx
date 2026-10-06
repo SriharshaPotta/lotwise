@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useInView } from "motion/react";
+import { m, useInView } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { useReducedMotionSafe } from "@/components/effects/useReducedMotionSafe";
 import { LedgerPage } from "@/components/ledger/LedgerPage";
@@ -38,21 +38,21 @@ const reached = (phase: Phase, step: Phase) => ORDER.indexOf(phase) >= ORDER.ind
 export function Agents() {
   return (
     <section id="agents" aria-labelledby="agents-title" className="page-container relative scroll-mt-24">
-      <motion.h2 id="agents-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[22ch]">
+      <m.h2 id="agents-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[22ch]">
         Your AI agents can ask <em>before</em> they trade.
-      </motion.h2>
+      </m.h2>
       <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
-        <motion.div {...reveal} className="lg:col-span-4">
+        <m.div {...reveal} className="lg:col-span-4">
           <p className="max-w-[44ch] text-lead text-muted">
             Lotwise ships an MCP server, so Claude, Cursor or any agent can check the tax impact of a trade before placing it.
           </p>
           <Button href={SITE.github} variant="quiet" className="mt-8" target="_blank" rel="noreferrer">
             Set up the MCP server →
           </Button>
-        </motion.div>
-        <motion.div {...reveal} className="min-w-0 lg:col-span-8">
+        </m.div>
+        <m.div {...reveal} className="min-w-0 lg:col-span-8">
           <Transcript />
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );
@@ -147,11 +147,11 @@ function Transcript() {
         footer={
           <div className="flex h-8 items-center">
             {!reduce && (
-              <motion.div initial={false} animate={{ opacity: phase === "done" ? 1 : 0 }} transition={{ duration: 0.3 }} inert={phase !== "done"}>
+              <m.div initial={false} animate={{ opacity: phase === "done" ? 1 : 0 }} transition={{ duration: 0.3 }} inert={phase !== "done"}>
                 <Button variant="quiet" size="sm" onClick={replay} className="text-muted">
                   Replay ↺
                 </Button>
-              </motion.div>
+              </m.div>
             )}
           </div>
         }
@@ -175,9 +175,9 @@ function Transcript() {
 function Message({ who, show, className, children }: { who: string; show: boolean; className?: string; children: ReactNode }) {
   return (
     <div className={cn("grid sm:grid-cols-[5.5rem_1fr]", className)}>
-      <motion.span initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} className="num text-meta leading-8 text-muted">
+      <m.span initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} className="num text-meta leading-8 text-muted">
         {who}
-      </motion.span>
+      </m.span>
       <div className="min-w-0">{children}</div>
     </div>
   );
@@ -219,7 +219,7 @@ function ToolReceipt({ printing, instant, play }: { printing: boolean; instant: 
     <div className="relative mb-4 h-[calc(var(--ledger-row)*5)] max-w-[440px]">
       <span aria-hidden className="absolute inset-x-0 top-3 h-px rounded-full bg-rule-strong" />
       <div className="absolute inset-x-0 top-3 bottom-0 overflow-hidden">
-        <motion.div key={play} initial={{ y: instant ? "0%" : "-100%" }} animate={feed} className="paper-shadow-sm px-1 pb-3">
+        <m.div key={play} initial={{ y: instant ? "0%" : "-100%" }} animate={feed} className="paper-shadow-sm px-1 pb-3">
           <div className="paper paper-fiber perforated num px-4 pt-4 pb-4 text-[12px] leading-6 text-ink">
             <Line i={0} shown={shown} instant={instant} className="receipt-caps truncate text-[11px] text-ink-muted">
               lotwise · {AGENT_TOOL}
@@ -232,7 +232,7 @@ function ToolReceipt({ printing, instant, play }: { printing: boolean; instant: 
               </Line>
             ))}
           </div>
-        </motion.div>
+        </m.div>
       </div>
     </div>
   );
@@ -240,13 +240,13 @@ function ToolReceipt({ printing, instant, play }: { printing: boolean; instant: 
 
 function Line({ i, shown, instant, className, children }: { i: number; shown: boolean; instant: boolean; className?: string; children: ReactNode }) {
   return (
-    <motion.div
+    <m.div
       initial={false}
       animate={{ opacity: shown ? 1 : 0 }}
       transition={instant || !shown ? { duration: 0 } : { duration: print.lineFade, delay: print.feedDuration + i * print.lineGap }}
       className={className}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }

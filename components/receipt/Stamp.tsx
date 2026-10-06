@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 import { ANNOTATIONS } from "@/lib/annotations";
 import { cn } from "@/lib/cn";
 import { stampIn } from "@/lib/motion";
@@ -35,14 +35,14 @@ export function Stamp({ children, className, entrance = true }: StampProps) {
     );
   }
   return (
-    <motion.div
+    <m.div
       initial={stampIn.initial}
       animate={reduce ? { opacity: 1, scale: 1, rotate: -8, y: 0, transition: { duration: 0 } } : stampIn.animate}
       exit={{ opacity: 0, transition: { duration: 0.12 } }}
       className={classes}
     >
       <StampMark>{children}</StampMark>
-    </motion.div>
+    </m.div>
   );
 }
 

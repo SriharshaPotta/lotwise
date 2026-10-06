@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { ExplainerCard } from "@/components/learn/ExplainerCard";
 import { Button } from "@/components/ui/Button";
 import { explainer } from "@/lib/learn";
@@ -13,14 +13,14 @@ export function LearnTeaser() {
   return (
     <section id="learn" aria-labelledby="learn-title" className="relative scroll-mt-24">
       <div className="page-container flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
-        <motion.h2 id="learn-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[22ch]">
+        <m.h2 id="learn-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[22ch]">
           Taxes, explained by playing with them.
-        </motion.h2>
+        </m.h2>
         <Button href="/learn" variant="quiet" className="mb-2">
           All explainers →
         </Button>
       </div>
-      <motion.ul
+      <m.ul
         variants={revealGroup}
         initial="hidden"
         whileInView="shown"
@@ -28,11 +28,11 @@ export function LearnTeaser() {
         className="learn-strip page-container mt-12 flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible lg:mt-16"
       >
         {TEASED.map((e) => (
-          <motion.li key={e.slug} variants={revealItem} className="w-[82%] shrink-0 snap-start md:w-auto">
+          <m.li key={e.slug} variants={revealItem} className="w-[82%] shrink-0 snap-start md:w-auto">
             <ExplainerCard e={e} />
-          </motion.li>
+          </m.li>
         ))}
-      </motion.ul>
+      </m.ul>
     </section>
   );
 }

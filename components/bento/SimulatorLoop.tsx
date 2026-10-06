@@ -1,6 +1,6 @@
 "use client";
 
-import { cubicBezier, motion, useTransform, type MotionValue } from "motion/react";
+import { cubicBezier, m, useTransform, type MotionValue } from "motion/react";
 import type { ReactNode } from "react";
 import { SIM_LOT, SIM_PRICE, account, simulatorTable } from "@/lib/demo";
 import { money } from "@/lib/format";
@@ -50,22 +50,22 @@ export function SimulatorLoop({ time }: { time: MotionValue<number> }) {
         <div className="flex h-8 items-end justify-between">
           <span className="text-[14px] text-fg">Shares to sell</span>
           <span className="num text-meta text-fg">
-            <motion.span className="inline-block w-[2ch] text-right">{count}</motion.span> <span className="text-muted">sh</span>
+            <m.span className="inline-block w-[2ch] text-right">{count}</m.span> <span className="text-muted">sh</span>
           </span>
         </div>
         <div className="relative h-8">
           <div className="absolute top-1/2 h-px -translate-y-1/2 bg-border" style={{ left: THUMB / 2, right: THUMB / 2 }} />
-          <motion.div
+          <m.div
             className="absolute top-1/2 -mt-px h-0.5 origin-left rounded-full bg-fg"
             style={{ left: THUMB / 2, right: THUMB / 2, scaleX: fill }}
           />
           <div className="absolute inset-y-0" style={{ left: THUMB / 2, right: THUMB / 2 }}>
-            <motion.div className="absolute inset-0" style={{ x: thumbX }}>
+            <m.div className="absolute inset-0" style={{ x: thumbX }}>
               <span
                 className="absolute top-1/2 -translate-1/2 rounded-full bg-fg shadow-[0_0_0_3px_var(--bg)]"
                 style={{ width: THUMB, height: THUMB }}
               />
-            </motion.div>
+            </m.div>
           </div>
         </div>
         {/* the slot the receipt prints from */}
@@ -80,14 +80,14 @@ export function SimulatorLoop({ time }: { time: MotionValue<number> }) {
             <span>Est.</span>
           </div>
           <div className="receipt-caps">
-            Sell <motion.span className="inline-block w-[2ch] text-right">{count}</motion.span> {SIM_LOT.symbol} @ {SIM_PRICE.toFixed(2)}
+            Sell <m.span className="inline-block w-[2ch] text-right">{count}</m.span> {SIM_LOT.symbol} @ {SIM_PRICE.toFixed(2)}
           </div>
-          <Row label="Proceeds"><motion.span>{proceeds}</motion.span></Row>
-          <Row label="Cost basis"><motion.span>{basis}</motion.span></Row>
-          <Row label="Realized"><motion.span className="text-gain-ink">{gain}</motion.span></Row>
+          <Row label="Proceeds"><m.span>{proceeds}</m.span></Row>
+          <Row label="Cost basis"><m.span>{basis}</m.span></Row>
+          <Row label="Realized"><m.span className="text-gain-ink">{gain}</m.span></Row>
           <Row label="Term"><span className="receipt-caps">Short</span></Row>
           <span className="my-1.5 block h-[3px] border-y border-ink" />
-          <Row label="Est. tax" className="font-medium"><motion.span>{tax}</motion.span></Row>
+          <Row label="Est. tax" className="font-medium"><m.span>{tax}</m.span></Row>
         </div>
       </div>
     </div>

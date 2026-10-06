@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGroup, motion } from "motion/react";
+import { LayoutGroup, m } from "motion/react";
 import { useState } from "react";
 import { LedgerPage } from "@/components/ledger/LedgerPage";
 import { AccountTag, LedgerRow } from "@/components/ledger/LedgerRow";
@@ -61,14 +61,14 @@ export function AcrossAccountsExplainer() {
           <span className="text-loss">{money(D.realized)}</span>
         </Readout>
         <Readout label={irs ? "Disallowed (IRS)" : "Disallowed (broker)"}>
-          <motion.span key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <m.span key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             {money(irs ? D.disallowed : 0)}
-          </motion.span>
+          </m.span>
         </Readout>
         <Readout label="Issues found">
-          <motion.span key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
+          <m.span key={view} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.2 }}>
             {irs ? "1 wash sale" : "None"}
-          </motion.span>
+          </m.span>
         </Readout>
       </Readouts>
     </ExplainerFrame>
@@ -77,7 +77,7 @@ export function AcrossAccountsExplainer() {
 
 function Row({ entry, withAccount, highlight }: { entry: LedgerEntry; withAccount?: boolean; highlight?: boolean }) {
   return (
-    <motion.div layoutId={`row-${entry.id}`} layout="position" transition={spring.paper} className="relative flex h-8 items-center justify-between gap-3">
+    <m.div layoutId={`row-${entry.id}`} layout="position" transition={spring.paper} className="relative flex h-8 items-center justify-between gap-3">
       {highlight && (
         <span className="absolute -inset-x-3 inset-y-0.5 rounded-sm bg-[color-mix(in_oklch,var(--fg)_7%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--wash)_45%,transparent)]" />
       )}
@@ -91,7 +91,7 @@ function Row({ entry, withAccount, highlight }: { entry: LedgerEntry; withAccoun
           </>
         )}
       </span>
-    </motion.div>
+    </m.div>
   );
 }
 
@@ -99,7 +99,7 @@ function BrokerLedgers() {
   return (
     <div className="grid gap-6 md:grid-cols-2">
       {D.accounts.map((a) => (
-        <motion.div key={a.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
+        <m.div key={a.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
           <LedgerPage title={a.name} footer={a.washes ? <WashBadge /> : <Badge tone="gain">No issues found</Badge>}>
             <div className="px-5">
               {a.entries.map((e) => (
@@ -107,7 +107,7 @@ function BrokerLedgers() {
               ))}
             </div>
           </LedgerPage>
-        </motion.div>
+        </m.div>
       ))}
     </div>
   );
@@ -117,7 +117,7 @@ function IrsLedger() {
   const top = D.window.first * ROW + 4;
   const bottom = (D.window.last + 1) * ROW - 4;
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }} className="max-w-[40rem]">
+    <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }} className="max-w-[40rem]">
       <LedgerPage
         title={
           <span className="flex w-full items-center justify-between">
@@ -141,6 +141,6 @@ function IrsLedger() {
       <p className="num mt-4 text-meta text-muted">
         <span className="text-fg">61-day window</span> · {shortDate(D.window.start)} – {shortDate(D.window.end)}
       </p>
-    </motion.div>
+    </m.div>
   );
 }

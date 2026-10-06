@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { cn } from "@/lib/cn";
 import { spring } from "@/lib/motion";
 
@@ -24,7 +24,7 @@ export function TaxBar({ value, max, color = "color-mix(in oklch, var(--fg) 55%,
   return (
     <div aria-hidden className={cn("relative h-3 w-full", className)}>
       {ghost && <span className="absolute inset-0 rounded-full border border-dashed border-border" />}
-      <motion.span
+      <m.span
         className="absolute inset-0 origin-left rounded-full"
         style={{ background: color }}
         initial={false}

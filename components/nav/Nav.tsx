@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import Link from "next/link";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { getLenis } from "@/components/providers/MotionProvider";
@@ -113,7 +113,7 @@ export function Nav() {
 
       <AnimatePresence>
         {open && (
-          <motion.div
+          <m.div
             ref={sheetRef}
             id={menuId}
             initial={{ y: "-100%" }}
@@ -134,7 +134,7 @@ export function Nav() {
                 Open the demo
               </Button>
             </div>
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
     </header>

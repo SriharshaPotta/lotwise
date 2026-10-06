@@ -1,6 +1,6 @@
 "use client";
 
-import { cubicBezier, motion, useTransform, type MotionValue } from "motion/react";
+import { cubicBezier, m, useTransform, type MotionValue } from "motion/react";
 import { sec1256Compare } from "@/lib/demo";
 import { money } from "@/lib/format";
 import { keyframes, wrap } from "@/lib/loop";
@@ -36,25 +36,25 @@ export function Sec1256Loop({ time }: { time: MotionValue<number> }) {
       </Row>
       <div className="flex h-8 items-start pl-12 text-muted">100% short-term</div>
 
-      <Row label="XSP" tax={<motion.span>{xspTax}</motion.span>}>
+      <Row label="XSP" tax={<m.span>{xspTax}</m.span>}>
         <span className="absolute inset-0 rounded-full bg-[color-mix(in_oklch,var(--muted)_45%,transparent)]" />
-        <motion.span
+        <m.span
           className="absolute inset-y-0 left-0 origin-left rounded-l-full bg-sec1256"
           style={{ width: `calc(${LT_SHARE * 100}% - 1px)`, scaleX: ltScale }}
         />
-        <motion.span
+        <m.span
           className="absolute inset-y-0 right-0 rounded-r-full bg-[color-mix(in_oklch,var(--sec1256)_50%,transparent)]"
           style={{ width: `calc(${(1 - LT_SHARE) * 100}% - 1px)`, opacity: split }}
         />
       </Row>
       <div className="grid h-8 items-start pl-12 text-muted [&>*]:[grid-area:1/1]">
-        <motion.span style={{ opacity: fade }}>100% short-term</motion.span>
-        <motion.span style={{ opacity: split }}>60% long · 40% short</motion.span>
+        <m.span style={{ opacity: fade }}>100% short-term</m.span>
+        <m.span style={{ opacity: split }}>60% long · 40% short</m.span>
       </div>
 
-      <motion.div className="mt-auto flex h-8 items-center text-fg" style={{ opacity: split }}>
+      <m.div className="mt-auto flex h-8 items-center text-fg" style={{ opacity: split }}>
         XSP saves {money(S.save, { whole: true })}
-      </motion.div>
+      </m.div>
     </div>
   );
 }

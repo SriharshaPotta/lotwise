@@ -23,7 +23,8 @@ test.describe("hero showcase", () => {
   test("the receipt prints and the WASH SALE stamp lands", async ({ page }) => {
     await page.goto("/");
     const showcase = page.locator("#showcase");
-    // the one-time teaser slides to 100 shares and the receipt prints
+    // the one-time teaser slides to 100 shares and the receipt prints, once the showcase is seen
+    await showcase.scrollIntoViewIfNeeded();
     await expect(showcase.getByText("Disallowed (wash sale)")).toBeVisible({ timeout: 10_000 });
     await expect(showcase.getByText("WASH SALE", { exact: true })).toBeVisible({ timeout: 10_000 });
     await expect(showcase.getByText("$1,840.00").first()).toBeVisible();

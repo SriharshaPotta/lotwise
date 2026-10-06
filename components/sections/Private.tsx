@@ -1,6 +1,6 @@
 "use client";
 
-import { animate, motion, useInView, useReducedMotion } from "motion/react";
+import { animate, m, useInView, useReducedMotion } from "motion/react";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Chip } from "@/components/ui/Chip";
 import { ease, reveal, spring } from "@/lib/motion";
@@ -26,17 +26,17 @@ const ESCAPEES = [
 export function Private() {
   return (
     <section id="private" aria-labelledby="private-title" className="page-container relative scroll-mt-24">
-      <motion.h2 id="private-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[20ch]">
+      <m.h2 id="private-title" {...reveal} className="max-w-[16ch] text-h2 lg:max-w-[20ch]">
         Your trades never leave your browser.
-      </motion.h2>
+      </m.h2>
       <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
-        <motion.p {...reveal} className="max-w-[44ch] text-lead text-muted lg:col-span-4">
+        <m.p {...reveal} className="max-w-[44ch] text-lead text-muted lg:col-span-4">
           {COPY}
-        </motion.p>
-        <motion.div {...reveal} className="lg:col-span-8">
+        </m.p>
+        <m.div {...reveal} className="lg:col-span-8">
           <Sandbox />
           <p className="sr-only">The engine runs inside your browser. Our servers have received 0 bytes.</p>
-        </motion.div>
+        </m.div>
       </div>
     </section>
   );

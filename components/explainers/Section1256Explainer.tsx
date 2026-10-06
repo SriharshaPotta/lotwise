@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import { useMemo, useState, type ReactNode } from "react";
 import { Marker } from "@/components/ui/Marker";
 import { Slider } from "@/components/ui/Slider";
@@ -125,14 +125,14 @@ function BarRow({
       </div>
       {/* the whole gain, split by how it's taxed; scaled (transform only) to the slider */}
       <div className="relative mt-1 h-4 w-full rounded-full bg-[color-mix(in_oklch,var(--fg)_5%,transparent)]">
-        <motion.div className="absolute inset-0 flex origin-left gap-px" initial={false} animate={{ scaleX: scale }} transition={spring.paper}>
+        <m.div className="absolute inset-0 flex origin-left gap-px" initial={false} animate={{ scaleX: scale }} transition={spring.paper}>
           {segments.map((g, i) => (
             <span key={i} className="relative h-full overflow-hidden first:rounded-l-full last:rounded-r-full" style={{ width: `${g.share * 100}%`, background: ST }}>
               {/* long-term colour crossfades in (opacity only) */}
-              <motion.span className="absolute inset-0" style={{ background: LT }} initial={false} animate={{ opacity: g.long ? 1 : 0 }} transition={{ duration: 0.3 }} />
+              <m.span className="absolute inset-0" style={{ background: LT }} initial={false} animate={{ opacity: g.long ? 1 : 0 }} transition={{ duration: 0.3 }} />
             </span>
           ))}
-        </motion.div>
+        </m.div>
       </div>
       <p className="num mt-2 text-[12px] leading-6 text-muted">{legend}</p>
     </div>

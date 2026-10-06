@@ -1,5 +1,7 @@
+import { Bento } from "@/components/sections/Bento";
 import { Convergence } from "@/components/sections/Convergence";
 import { Hero } from "@/components/sections/Hero";
+import { Private } from "@/components/sections/Private";
 import { FindingsTape } from "@/components/tape/FindingsTape";
 
 export default function Home() {
@@ -10,8 +12,14 @@ export default function Home() {
       <div className="pt-24 lg:pt-36">
         <Convergence />
       </div>
-      {/* Placeholder runway until §4.5 lands, so the convergence can be scrolled past. */}
-      <div className="h-[60vh]" />
+      <div className="pt-24 lg:pt-36">
+        <Bento />
+      </div>
+      <div className="pt-24 lg:pt-36">
+        <Private />
+      </div>
+      {/* Runway until §4.7 lands. */}
+      <div className="h-[40vh]" />
     </>
   );
 }

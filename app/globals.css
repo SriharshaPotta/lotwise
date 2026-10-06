@@ -504,3 +504,10 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* Private section (§4.6): data dots orbiting the engine. Paused offscreen. */
+@keyframes lw-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: no-preference) {
+  .orbit { animation: lw-spin var(--orbit-dur, 30s) linear infinite var(--orbit-dir, normal); }
+  .orbit[data-paused] { animation-play-state: paused; }
+}

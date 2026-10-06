@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useTransform, type MotionValue } from "motion/react";
+import { m, useTransform, type MotionValue } from "motion/react";
 import type { ReactNode } from "react";
 
 interface Point {
@@ -28,8 +28,8 @@ export function FlyingChip({ t, from, to, bulge = 60, opacity, children }: Flyin
   const x = useTransform(t, (u) => (1 - u) ** 2 * from.x + 2 * (1 - u) * u * c.x + u * u * to.x);
   const y = useTransform(t, (u) => (1 - u) ** 2 * from.y + 2 * (1 - u) * u * c.y + u * u * to.y);
   return (
-    <motion.div aria-hidden className="pointer-events-none absolute top-0 left-0" style={{ x, y, opacity }}>
+    <m.div aria-hidden className="pointer-events-none absolute top-0 left-0" style={{ x, y, opacity }}>
       <div className="-translate-x-1/2 -translate-y-1/2">{children}</div>
-    </motion.div>
+    </m.div>
   );
 }

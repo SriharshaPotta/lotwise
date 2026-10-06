@@ -1,10 +1,8 @@
+import { ANNOTATIONS } from "@/lib/annotations";
 import { cn } from "@/lib/cn";
 
-/**
- * PLACEHOLDER stroke. Replace with the hand-drawn, vectorized mark (public/annotations/underline.svg):
- * keep the 0 0 120 12 viewBox, or pass `viewBox` alongside your own `d`.
- */
-export const PLACEHOLDER_UNDERLINE = "M2.5 8.2C14 6.9 25.5 8.9 38 8.1S62 5.6 76 6.6 101 9.1 117.5 6.2";
+/** The hand-drawn mark (public/annotations/underline.svg), or its placeholder. See scripts/annotations.mjs. */
+export const UNDERLINE = ANNOTATIONS.underline;
 
 interface HandUnderlineProps {
   d?: string;
@@ -18,7 +16,7 @@ interface HandUnderlineProps {
  * A hand-drawn underline (§2.6.6) that draws on with ink easing. Sits under its positioned parent;
  * stretches to the parent's width while the stroke weight stays constant.
  */
-export function HandUnderline({ d = PLACEHOLDER_UNDERLINE, viewBox = "0 0 120 12", className, trigger = "hover" }: HandUnderlineProps) {
+export function HandUnderline({ d = UNDERLINE.d, viewBox = UNDERLINE.viewBox, className, trigger = "hover" }: HandUnderlineProps) {
   return (
     <svg
       aria-hidden
@@ -31,11 +29,10 @@ export function HandUnderline({ d = PLACEHOLDER_UNDERLINE, viewBox = "0 0 120 12
         pathLength={1}
         fill="none"
         stroke="currentColor"
-        strokeWidth={1.5}
+        strokeWidth={1.8}
         strokeLinecap="round"
-        vectorEffect="non-scaling-stroke"
         className={cn(
-          "[stroke-dasharray:1_1] transition-[stroke-dashoffset] duration-(--motion-reveal) ease-ink",
+          "[stroke-dasharray:1_1.01] transition-[stroke-dashoffset] duration-(--motion-reveal) ease-ink",
           trigger === "on" ? "[stroke-dashoffset:0]" : "[stroke-dashoffset:1] group-is-hover:[stroke-dashoffset:0] group-is-focus:[stroke-dashoffset:0]",
         )}
       />

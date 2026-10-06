@@ -15,6 +15,14 @@ export function shortDate(iso: string): string {
   return `${MONTHS[m - 1]} ${d}`;
 }
 
+const MONTHS_LONG = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+/** "November 15" (prose). */
+export function longDate(iso: string): string {
+  const [, m, d] = iso.split("-").map(Number);
+  return `${MONTHS_LONG[m - 1]} ${d}`;
+}
+
 /** "OCT 15 2026" (receipts and stamps only). */
 export function receiptDate(iso: string): string {
   const [y, m, d] = iso.split("-").map(Number);

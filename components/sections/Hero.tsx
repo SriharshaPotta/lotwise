@@ -22,10 +22,10 @@ export function Hero() {
     <section aria-labelledby="hero-title" className="relative overflow-x-clip pt-[calc(var(--ledger-row)*4)] pb-24 lg:pb-36">
       <div className="page-container grid grid-cols-12 gap-x-6">
         <h1 id="hero-title" className="hero-title col-span-12 text-display lg:col-span-10 lg:col-start-1 lg:row-start-1">
-          <span className="enter-rise block" style={delay(heroTimeline.headline)}>
+          <span className="enter-ink block" style={delay(heroTimeline.headline)}>
             Know the tax bill
           </span>
-          <span className="enter-rise block" style={delay(heroTimeline.headline + stagger.headline)}>
+          <span className="enter-ink block" style={delay(heroTimeline.headline + stagger.headline)}>
             <em>before</em> you click sell.
           </span>
         </h1>
@@ -36,7 +36,7 @@ export function Hero() {
 
         <div className="relative col-span-12 lg:col-span-5 lg:col-start-1 lg:row-start-3">
           {/* md+: lines are one ledger row tall and nudged down so baselines sit on the rules. */}
-          <p className="enter-rise relative max-w-[44ch] text-lead text-muted md:top-[6px] md:leading-(--ledger-row)" style={delay(heroTimeline.lead)}>
+          <p className="enter-ink relative max-w-[44ch] text-lead text-muted md:top-[6px] md:leading-(--ledger-row)" style={delay(heroTimeline.lead)}>
             Lotwise checks every account you own for wash sales and hands you the tax receipt for a trade{" "}
             <em>before</em> you place it. It runs entirely in your browser.
           </p>

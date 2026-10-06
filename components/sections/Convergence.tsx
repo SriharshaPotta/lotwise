@@ -1,17 +1,10 @@
 "use client";
 
-import {
-  animate,
-  cubicBezier,
-  motion,
-  useMotionValueEvent,
-  useScroll,
-  useTransform,
-  type MotionValue,
-} from "motion/react";
+import { animate, cubicBezier, m, useMotionValueEvent, useScroll, useTransform, type MotionValue } from "motion/react";
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { LedgerPage } from "@/components/ledger/LedgerPage";
 import { AccountTag, LedgerRow } from "@/components/ledger/LedgerRow";
+import { useMediaQuery } from "@/components/effects/useMediaQuery";
 import { Stamp } from "@/components/receipt/Stamp";
 import { Badge } from "@/components/ui/Badge";
 import { Chip } from "@/components/ui/Chip";
@@ -97,10 +90,33 @@ const T = {
   ira: [0.88, 0.92],
 } as const;
 
+/**
+ * Empty viewport below the finished ledger, in px: the next section is pulled up over it so the gap
+ * after the convergence is the usual section gap. Plain DOM code, because it runs twice: inline while
+ * the HTML parses (TAIL_SCRIPT, so the page never moves when the section later hydrates) and from
+ * the section's ResizeObserver once it has.
+ */
+function convergenceTail(root: HTMLElement, W: number, H: number, MH: number): number {
+  if (getComputedStyle(root).display === "none") return 0;
+  const sticky = root.firstElementChild as HTMLElement | null;
+  const fit = root.querySelector<HTMLElement>("[data-stage-fit]");
+  if (!sticky || !fit) return 0;
+  const s = Math.min(1, fit.clientWidth / W, fit.clientHeight / H);
+  const top = fit.getBoundingClientRect().top - sticky.getBoundingClientRect().top;
+  return Math.max(0, Math.round(sticky.clientHeight - top - MH * s));
+}
+
+const TAIL_SCRIPT = `(function(root){var f=${convergenceTail.toString()};function a(){var t=f(root,${STAGE_W},${STAGE_H},${MERGED_H});root.style.marginBottom=-t+"px";window.__lwConvTail=t}a();addEventListener("resize",a);if(document.fonts)document.fonts.ready.then(a)})(document.currentScript.previousElementSibling)`;
+
+/** Where the scroll stage is shown instead of the fallback; mirrors the media query in globals.css. */
+const STAGE_QUERY = "(prefers-reduced-motion: no-preference) and (min-height: 720px) and (min-width: 768px)";
+
 function ConvergenceScroll() {
   const sectionRef = useRef<HTMLDivElement>(null);
   const fitRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
+  // Starts from what TAIL_SCRIPT measured, so the first client render matches the page as painted.
+  const [tail, setTail] = useState(() => (typeof window === "undefined" ? 0 : ((window as { __lwConvTail?: number }).__lwConvTail ?? 0)));
   const { scrollYProgress: p } = useScroll({ target: sectionRef, offset: ["start start", "end end"] });
 
   // Fit the canvas to the space under the heading. Re-renders on resize only.
@@ -110,42 +126,49 @@ function ConvergenceScroll() {
     const ro = new ResizeObserver(([e]) => {
       const s = Math.min(1, e.contentRect.width / STAGE_W, e.contentRect.height / STAGE_H);
       setScale((prev) => (Math.abs(prev - s) < 0.005 ? prev : s));
+      if (sectionRef.current) setTail(convergenceTail(sectionRef.current, STAGE_W, STAGE_H, MERGED_H));
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
+  const stageShown = useMediaQuery(STAGE_QUERY);
   const lead = useTransform(p, [...T.lead], [1, 0]);
   const caption = useTransform(p, [...T.caption], [0, 1]);
 
   return (
-    <div ref={sectionRef} className="convergence-scroll relative h-[300vh] overflow-x-clip">
-      <div className="sticky top-0 flex h-svh flex-col pt-24 pb-8">
-        <div className="page-container">
-          <Heading />
-          <div className="mt-4 grid max-w-[44ch] text-lead text-muted [&>*]:[grid-area:1/1]">
-            <motion.p style={{ opacity: lead }}>{LEAD}</motion.p>
-            <motion.p style={{ opacity: caption }} aria-hidden>
-              {CAPTION}
-            </motion.p>
-          </div>
-        </div>
-        <div className="page-container mt-8 min-h-0 flex-1">
-          <div ref={fitRef} className="relative size-full">
-            <div className="absolute top-0 left-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}>
-              <Stage p={p} />
+    <>
+      <div ref={sectionRef} className="convergence-scroll relative h-[300vh] overflow-x-clip" style={{ marginBottom: -tail }}>
+        <div className="sticky top-0 flex h-svh flex-col pt-24 pb-8">
+          <div className="page-container">
+            <Heading />
+            <div className="mt-4 grid max-w-[44ch] text-lead text-muted [&>*]:[grid-area:1/1]">
+              <m.p style={{ opacity: lead }}>{LEAD}</m.p>
+              <m.p style={{ opacity: caption }} aria-hidden>
+                {CAPTION}
+              </m.p>
             </div>
           </div>
+          <div className="page-container mt-8 min-h-0 flex-1">
+            <div ref={fitRef} data-stage-fit="" className="relative size-full">
+              <div className="absolute top-0 left-0 origin-top-left" style={{ width: STAGE_W, height: STAGE_H, transform: `scale(${scale})` }}>
+                {/* The stage is client-only and only where it's shown: phones, short screens and
+                    reduced motion never build it (they get the fallback below). */}
+                {stageShown && <Stage p={p} />}
+              </div>
+            </div>
+          </div>
+          {/* What a screen reader gets instead of the choreography. */}
+          <p className="sr-only">
+            Three broker ledgers each report no issues. Merged by date, the proposed sale of {data.sale.label} on{" "}
+            {shortDate(data.sale.date)} falls inside the 61-day window ({WINDOW_LABEL}) of the{" "}
+            {data.replacement.label} bought {shortDate(data.replacement.date)} in {data.replacementAccount.name}: {WASH_BADGE}.{" "}
+            {IRA_BADGE}.
+          </p>
         </div>
-        {/* What a screen reader gets instead of the choreography. */}
-        <p className="sr-only">
-          Three broker ledgers each report no issues. Merged by date, the proposed sale of {data.sale.label} on{" "}
-          {shortDate(data.sale.date)} falls inside the 61-day window ({WINDOW_LABEL}) of the{" "}
-          {data.replacement.label} bought {shortDate(data.replacement.date)} in {data.replacementAccount.name}: {WASH_BADGE}.{" "}
-          {IRA_BADGE}.
-        </p>
       </div>
-    </div>
+      <script dangerouslySetInnerHTML={{ __html: TAIL_SCRIPT }} />
+    </>
   );
 }
 
@@ -167,35 +190,35 @@ function Stage({ p }: { p: MotionValue<number> }) {
   return (
     <div aria-hidden className="relative size-full">
       {/* Merged ledger frame (fades in as the broker pages dissolve into it). */}
-      <motion.div className="absolute top-0 left-0" style={{ opacity: mergedOpacity, width: MERGED_W, height: MERGED_H }}>
+      <m.div className="absolute top-0 left-0" style={{ opacity: mergedOpacity, width: MERGED_W, height: MERGED_H }}>
         <LedgerPage title="All accounts · by date" className="size-full" />
-        <motion.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 18, opacity: okBadge }}>
+        <m.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 18, opacity: okBadge }}>
           <Badge tone="gain">No issues found</Badge>
-        </motion.div>
-        <motion.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 18, opacity: washBadge }}>
+        </m.div>
+        <m.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 18, opacity: washBadge }}>
           <Badge tone="wash">{WASH_BADGE}</Badge>
-        </motion.div>
-        <motion.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 54, opacity: iraBadge }}>
+        </m.div>
+        <m.div className="absolute left-5" style={{ top: HEAD + ROWS * ROW + 54, opacity: iraBadge }}>
           <Badge tone="loss">{IRA_BADGE}</Badge>
-        </motion.div>
+        </m.div>
         <StampOnThreshold p={p} />
-      </motion.div>
+      </m.div>
 
       {LEDGER_ACCOUNTS.map((a) => (
         <CardFrame key={a.id} p={p} id={a.id} title={a.name} />
       ))}
 
       {/* 61-day window: draws outward from the sale row. */}
-      <motion.div
+      <m.div
         className="absolute left-[15px]"
         style={{ top, height: bottom - top, scaleY: windowScale, originY: (saleCenter - top) / (bottom - top) }}
       >
         <WashWindow className="h-full" />
-      </motion.div>
-      <motion.div className="num absolute text-meta leading-5" style={{ left: MERGED_W + 24, top, opacity: windowLabel }}>
+      </m.div>
+      <m.div className="num absolute text-meta leading-5" style={{ left: MERGED_W + 24, top, opacity: windowLabel }}>
         <p className="text-fg">61-day window</p>
         <p className="text-muted">{WINDOW_LABEL}</p>
-      </motion.div>
+      </m.div>
 
       {data.entries.map((e) => (
         <StageRow key={e.id} p={p} entry={e} />
@@ -221,15 +244,15 @@ function CardFrame({ p, id, title }: { p: MotionValue<number>; id: string; title
   const opacity = useTransform(p, [...T.framesFade], [1, 0]);
   const chrome = useTransform(p, [...T.cardChrome], [1, 0]);
   return (
-    <motion.div className="absolute top-0 left-0" style={{ x, y, opacity, width: CARD_W, height: CARD_H }}>
+    <m.div className="absolute top-0 left-0" style={{ x, y, opacity, width: CARD_W, height: CARD_H }}>
       <LedgerPage className="size-full" />
-      <motion.div style={{ opacity: chrome }}>
+      <m.div style={{ opacity: chrome }}>
         <p className="num absolute top-0 left-5 flex h-16 items-center text-meta text-muted">{title}</p>
         <div className="absolute left-5" style={{ top: CARD_H - 48 }}>
           <Badge tone="gain">No issues found</Badge>
         </div>
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
@@ -246,23 +269,23 @@ function StageRow({ p, entry }: { p: MotionValue<number>; entry: LedgerEntry }) 
   const trap = useTransform(p, [...T.ira], [0, 1]);
 
   return (
-    <motion.div className="absolute top-0 left-0" style={{ x, y, width: ROW_W + 150, height: ROW }}>
+    <m.div className="absolute top-0 left-0" style={{ x, y, width: ROW_W + 150, height: ROW }}>
       {isReplacement && (
-        <motion.div
+        <m.div
           className="absolute -inset-x-3 inset-y-0.5 rounded-sm bg-[color-mix(in_oklch,var(--fg)_7%,transparent)] shadow-[inset_0_0_0_1px_color-mix(in_oklch,var(--wash)_45%,transparent)]"
           style={{ opacity: light }}
         />
       )}
       <LedgerRow entry={entry} proposedRealized={entry.proposed ? data.saleRealized : undefined} className="relative" />
-      <motion.div className="absolute top-0 flex h-8 items-center gap-2" style={{ left: ROW_W, opacity: acct }}>
+      <m.div className="absolute top-0 flex h-8 items-center gap-2" style={{ left: ROW_W, opacity: acct }}>
         <AccountTag entry={entry} />
         {isTrap && (
-          <motion.span style={{ opacity: trap }}>
+          <m.span style={{ opacity: trap }}>
             <Marker tone="loss" />
-          </motion.span>
+          </m.span>
         )}
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 }
 
@@ -283,9 +306,9 @@ function StampOnThreshold({ p }: { p: MotionValue<number> }) {
 
   return (
     <div className="absolute top-3 right-6">
-      <motion.div ref={ref} initial={stampIn.initial} className="origin-center">
+      <m.div ref={ref} initial={stampIn.initial} className="origin-center">
         <Stamp entrance={false}>WASH SALE</Stamp>
-      </motion.div>
+      </m.div>
     </div>
   );
 }
@@ -304,7 +327,7 @@ const VIEWS = [
 function ConvergenceFallback() {
   const [view, setView] = useState<View>("broker");
   return (
-    <div className="convergence-fallback page-container py-24">
+    <div className="convergence-fallback page-container pt-24">
       <Heading />
       <div className="mt-4 grid max-w-[44ch] text-lead text-muted [&>*]:[grid-area:1/1]">
         <Fade show={view === "broker"}>{LEAD}</Fade>
@@ -335,15 +358,15 @@ function ConvergenceFallback() {
 
 function Fade({ show, children }: { show: boolean; children: ReactNode }) {
   return (
-    <motion.p initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} aria-hidden={!show}>
+    <m.p initial={false} animate={{ opacity: show ? 1 : 0 }} transition={{ duration: 0.2 }} aria-hidden={!show}>
       {children}
-    </motion.p>
+    </m.p>
   );
 }
 
 function Panel({ show, children }: { show: boolean; children: ReactNode }) {
   return (
-    <motion.div
+    <m.div
       initial={false}
       animate={{ opacity: show ? 1 : 0 }}
       transition={{ duration: 0.24 }}
@@ -352,7 +375,7 @@ function Panel({ show, children }: { show: boolean; children: ReactNode }) {
       className={cn("min-w-0", !show && "pointer-events-none")}
     >
       {children}
-    </motion.div>
+    </m.div>
   );
 }
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
 import { useState, type ReactNode } from "react";
 import { LedgerRules } from "@/components/ledger/LedgerRules";
 import { Badge } from "@/components/ui/Badge";
@@ -430,7 +430,7 @@ function MotionSample() {
       <div className="grid items-end gap-8 sm:grid-cols-[1fr_1fr_auto]">
         <Cell label="paper spring · 220 / 26 / 1.1" className="w-full">
           <div className="relative h-28 w-full">
-            <motion.div
+            <m.div
               key={`p${run}`}
               initial={{ y: 56, opacity: 0, rotate: 0 }}
               animate={{ y: 0, opacity: 1, rotate: -1.5 }}
@@ -438,12 +438,12 @@ function MotionSample() {
               className="paper absolute inset-x-6 top-2 h-24 rounded-[3px] shadow-paper"
             >
               <div className="num p-3 text-[12px] text-ctx-muted">receipt</div>
-            </motion.div>
+            </m.div>
           </div>
         </Cell>
         <Cell label="ink line · 1.6s, ease-ink" className="w-full">
           <svg viewBox="0 0 240 112" className="h-28 w-full" aria-hidden>
-            <motion.path
+            <m.path
               key={`l${run}`}
               d="M0 80 C 30 70, 50 30, 80 46 S 130 96, 160 60 S 210 20, 240 34"
               fill="none"

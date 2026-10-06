@@ -7,6 +7,7 @@ import {
   aaplLongTerm,
   account,
   agentXyz,
+  agentTranscript,
   amdHarvest,
   heroReceipt,
   heroSafeSale,
@@ -94,5 +95,16 @@ describe("§4.7 agents transcript", () => {
     expect(money(x.result.realized, { whole: true })).toBe("−$1,000");
     expect(x.result.wash).not.toBeNull();
     expect(receiptDate(x.safeFrom).startsWith("NOV 15")).toBe(true);
+  });
+});
+
+describe("§4.7 agents transcript copy", () => {
+  it("matches the plan word for word", () => {
+    const t = agentTranscript();
+    expect(t.user).toBe("Sell my XYZ to lock in the loss, then buy it back next week.");
+    expect(t.receipt).toEqual({ sale: "SELL 100 XYZ", realized: "−$1,000", risk: "HIGH", safeFrom: "NOV 15" });
+    expect(t.reply).toBe(
+      "Selling now locks in a $1,000 loss, but buying back next week would disallow it. I’ll sell today and set a reminder to rebuy on November 15, or I can buy a similar-but-not-identical ETF now. Which do you prefer?",
+    );
   });
 });

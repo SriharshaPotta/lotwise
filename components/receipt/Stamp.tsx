@@ -1,15 +1,17 @@
 "use client";
 
-import { motion, useReducedMotion } from "motion/react";
+import { m, useReducedMotion } from "motion/react";
+import { ANNOTATIONS } from "@/lib/annotations";
 import { cn } from "@/lib/cn";
 import { stampIn } from "@/lib/motion";
 
-/**
- * PLACEHOLDER outline. Replace with the hand-drawn, vectorized stamp border (public/annotations/stamp.svg),
- * keeping the 0 0 200 56 viewBox. The small dash gaps stand in for where the rubber didn't take ink.
- */
-const OUTLINE =
-  "M9.5 4.2C48 2.9 104 3.6 190.8 4.4c3.2.1 5 2 5.1 5.3.3 12.4.2 25.1-.2 37.4-.1 3.2-2.1 5-5.3 5C141 52.6 63 53.4 9.6 52.3c-3.3-.1-5.2-2-5.3-5.2-.4-12.7-.3-25.4.2-37.9.1-3.1 1.9-4.9 5-5z";
+/** The stamp border (public/annotations/stamp.svg), or its placeholder. See scripts/annotations.mjs. */
+const OUTLINE = ANNOTATIONS.stamp;
+const [VX, VY, VW, VH] = OUTLINE.viewBox.split(/[\s,]+/).map(Number);
+const CX = VX + VW / 2;
+const CY = VY + VH / 2;
+/** The placeholder fakes where the rubber didn't take ink with dash gaps; a real drawing has its own. */
+const INK_GAPS = OUTLINE.source === "placeholder" ? "70 1.6 38 2.2 90 1.4 54 2 120 1.8" : undefined;
 
 interface StampProps {
   children: string;
@@ -33,23 +35,23 @@ export function Stamp({ children, className, entrance = true }: StampProps) {
     );
   }
   return (
-    <motion.div
+    <m.div
       initial={stampIn.initial}
       animate={reduce ? { opacity: 1, scale: 1, rotate: -8, y: 0, transition: { duration: 0 } } : stampIn.animate}
       exit={{ opacity: 0, transition: { duration: 0.12 } }}
       className={classes}
     >
       <StampMark>{children}</StampMark>
-    </motion.div>
+    </m.div>
   );
 }
 
 function StampMark({ children }: { children: string }) {
   return (
     <>
-      <svg aria-hidden viewBox="0 0 200 56" preserveAspectRatio="none" className="absolute inset-0 size-full overflow-visible">
-        <path d={OUTLINE} fill="none" stroke="currentColor" strokeWidth={2.4} vectorEffect="non-scaling-stroke" strokeDasharray="70 1.6 38 2.2 90 1.4 54 2 120 1.8" />
-        <path d={OUTLINE} fill="none" stroke="currentColor" strokeWidth={0.9} vectorEffect="non-scaling-stroke" opacity={0.55} transform="translate(100 28) scale(0.94 0.84) translate(-100 -28)" />
+      <svg aria-hidden viewBox={OUTLINE.viewBox} preserveAspectRatio="none" className="absolute inset-0 size-full overflow-visible">
+        <path d={OUTLINE.d} fill="none" stroke="currentColor" strokeWidth={2.4} vectorEffect="non-scaling-stroke" strokeDasharray={INK_GAPS} />
+        <path d={OUTLINE.d} fill="none" stroke="currentColor" strokeWidth={0.9} vectorEffect="non-scaling-stroke" opacity={0.55} transform={`translate(${CX} ${CY}) scale(0.94 0.84) translate(${-CX} ${-CY})`} />
       </svg>
       <span className="receipt-caps relative text-[13px] leading-none font-semibold tracking-[0.14em] opacity-90 sm:text-[15px]">{children}</span>
     </>

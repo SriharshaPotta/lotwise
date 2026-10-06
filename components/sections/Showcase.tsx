@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, animate, motion, useReducedMotion, type AnimationPlaybackControls } from "motion/react";
+import { AnimatePresence, animate, m, useInView, useReducedMotion, type AnimationPlaybackControls } from "motion/react";
 import { useEffect, useMemo, useRef, useState, type FocusEvent } from "react";
 import { useMediaQuery } from "@/components/effects/useMediaQuery";
 import { Coupon } from "@/components/receipt/Coupon";
@@ -9,6 +9,9 @@ import { TradeTicket } from "@/components/ticket/TradeTicket";
 import { position, receiptSerial, tradeReceipt, type AccountId, type CouponModel, type TradeReceipt } from "@/lib/demo";
 import { money, shortDate } from "@/lib/format";
 import { ease, print, spring } from "@/lib/motion";
+
+/** The one-time teaser moves the slider in steps of this many shares. */
+const TEASER_STEP = 5;
 
 const ANNOUNCE_AFTER_MS = 700;
 
@@ -33,9 +36,14 @@ export function Showcase() {
 
   const touched = useRef(false);
   const teaser = useRef<AnimationPlaybackControls | null>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  // On phones the showcase starts below the fold: the teaser waits until it's actually seen.
+  const seen = useInView(rootRef, { once: true, amount: 0.5 });
+  const [mountedAt] = useState(() => (typeof performance === "undefined" ? 0 : performance.now()));
   const model = useMemo(() => tradeReceipt(accountId, shares, buyBack), [accountId, shares, buyBack]);
 
-  // One-time teaser: slide 0 → full position, unless the visitor already touched the ticket.
+  // One-time teaser: slide 0 → full position, unless the visitor already touched the ticket. It runs
+  // print.teaserAt after load, or shortly after the showcase scrolls into view if that's later.
   useEffect(() => {
     if (reduce === null) return;
     const full = position("brokerage-one").lot.qty;
@@ -43,19 +51,23 @@ export function Showcase() {
       if (!touched.current) setShares(full);
       return;
     }
+    if (!seen) return;
+    const wait = Math.max(print.teaserAt * 1000 - (performance.now() - mountedAt), 300);
     const id = window.setTimeout(() => {
       if (touched.current) return;
       teaser.current = animate(0, full, {
         duration: print.teaserDuration,
         ease: ease.settle,
-        onUpdate: (v) => setShares(Math.round(v)),
+        // Steps of 5 shares: the receipt's numbers tween between steps anyway (MoneyTween), and the
+        // whole ticket + receipt re-renders ~20 times instead of once per frame.
+        onUpdate: (v) => setShares(Math.round(v / TEASER_STEP) * TEASER_STEP),
       });
-    }, print.teaserAt * 1000);
+    }, wait);
     return () => {
       window.clearTimeout(id);
       teaser.current?.stop();
     };
-  }, [reduce]);
+  }, [reduce, seen, mountedAt]);
 
   const touch = () => {
     touched.current = true;
@@ -92,7 +104,7 @@ export function Showcase() {
   const showCoupons = printed && model.shares > 0 && model.coupons.length > 0;
 
   return (
-    <div onFocus={() => setFocusWithin(true)} onBlur={onBlur}>
+    <div ref={rootRef} onFocus={() => setFocusWithin(true)} onBlur={onBlur}>
       <TradeTicket
         position={model.position}
         onAccount={onAccount}
@@ -131,7 +143,7 @@ export function Showcase() {
             <AnimatePresence>
               {showCoupons &&
                 model.coupons.map((c, i) => (
-                  <motion.div
+                  <m.div
                     key={`${printIndex}-${c.kind}`}
                     initial={wide ? { x: "-100%", rotate: 0 } : { y: `${-(i + 1) * 115}%`, rotate: 0 }}
                     animate={{ x: 0, y: 0, rotate: i % 2 ? -0.8 : 1.1 }}
@@ -139,7 +151,7 @@ export function Showcase() {
                     transition={{ ...spring.paper, delay: print.couponsAfter + i * print.couponGap }}
                   >
                     <CouponFor coupon={c} tucked={wide} />
-                  </motion.div>
+                  </m.div>
                 ))}
             </AnimatePresence>
           </div>

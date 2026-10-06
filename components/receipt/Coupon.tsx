@@ -18,7 +18,7 @@ interface CouponProps {
 export function Coupon({ when, then, className, tucked }: CouponProps) {
   return (
     <div className={cn("paper-shadow-sm", className)}>
-      <div className="paper coupon-notch rounded-[4px] p-1.5">
+      <div className="paper paper-fiber coupon-notch rounded-[4px] p-1.5">
         <div className={cn("rounded-[2px] border border-dashed border-[color-mix(in_oklch,var(--ink)_32%,transparent)] px-5 py-3", tucked && "xl:pl-10")}>
           <p className="num text-[12px] leading-5 text-ink-muted">{when}</p>
           <p className="mt-0.5 text-[14px] leading-5 text-ink">

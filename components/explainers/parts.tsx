@@ -3,6 +3,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { Surface } from "@/components/ui/Surface";
 import { cn } from "@/lib/cn";
+import { preloadEngine } from "@/lib/engine";
 
 /**
  * The shell every explainer interactive sits in (§5): a full-width dark ruled card with a mono
@@ -26,6 +27,11 @@ export function ExplainerFrame({
   spoken: string;
   children: ReactNode;
 }) {
+  // Interactions run on the real (WASM) engine once it has loaded; until then the reference model
+  // answers with the same cents (tests/engine-parity.test.ts).
+  useEffect(() => {
+    void preloadEngine();
+  }, []);
   return (
     <figure className="breakout not-prose my-16" aria-label={label}>
       <Surface className="overflow-hidden">

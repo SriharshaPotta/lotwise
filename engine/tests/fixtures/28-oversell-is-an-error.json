@@ -1,0 +1,46 @@
+{
+ "name": "28-oversell-is-an-error",
+ "description": "Selling more than held is an error, not a silent short.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "xyz-buy",
+     "account": "b2",
+     "date": "2026-05-19",
+     "side": "buy",
+     "symbol": "XYZ",
+     "qty": "100",
+     "price": "50"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b2",
+   "symbol": "XYZ",
+   "qty": "101",
+   "price": "40",
+   "date": "2026-10-15"
+  }
+ },
+ "error": "only 100 held"
+}

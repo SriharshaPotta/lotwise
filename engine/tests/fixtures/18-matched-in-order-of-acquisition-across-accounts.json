@@ -1,0 +1,138 @@
+{
+ "name": "18-matched-in-order-of-acquisition-across-accounts",
+ "description": "$1,000 loss on 100 shares (held 161 days). Replacements in order of purchase: 30 in Brokerage Two (-20 days, $300 into basis), 50 in the Roth (-10 days, $500 gone for good), then 20 of the 40 bought 5 days later (+$200). The other 20 are untouched.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "m-buy",
+     "account": "b1",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "100",
+     "price": "60"
+    },
+    {
+     "id": "m-b2",
+     "account": "b2",
+     "date": "2026-05-26",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "30",
+     "price": "51"
+    },
+    {
+     "id": "m-roth",
+     "account": "roth",
+     "date": "2026-06-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "50",
+     "price": "52"
+    },
+    {
+     "id": "m-sell",
+     "account": "b1",
+     "date": "2026-06-15",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "100",
+     "price": "50"
+    },
+    {
+     "id": "m-after",
+     "account": "b1",
+     "date": "2026-06-20",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "40",
+     "price": "49"
+    }
+   ]
+  }
+ },
+ "expect": {
+  "realizations": [
+   {
+    "saleId": "m-sell",
+    "realized": "-1000.00",
+    "disallowed": "1000.00",
+    "disallowedPermanent": "500.00",
+    "recognized": "0.00",
+    "wash": [
+     {
+      "tradeId": "m-b2",
+      "shares": "30",
+      "disallowed": "300.00",
+      "permanent": false,
+      "beforeSale": true
+     },
+     {
+      "tradeId": "m-roth",
+      "shares": "50",
+      "disallowed": "500.00",
+      "permanent": true,
+      "beforeSale": true
+     },
+     {
+      "tradeId": "m-after",
+      "shares": "20",
+      "disallowed": "200.00",
+      "permanent": false,
+      "beforeSale": false
+     }
+    ]
+   }
+  ],
+  "lots": [
+   {
+    "id": "m-b2",
+    "account": "b2",
+    "qty": "30",
+    "basis": "1830.00",
+    "holdingStart": "2025-12-16"
+   },
+   {
+    "id": "m-roth",
+    "account": "roth",
+    "qty": "50",
+    "basis": "2600.00",
+    "holdingStart": "2026-06-05",
+    "washReplacement": true
+   },
+   {
+    "id": "m-after#1",
+    "qty": "20",
+    "basis": "1180.00",
+    "holdingStart": "2026-01-10"
+   },
+   {
+    "id": "m-after",
+    "qty": "20",
+    "basis": "980.00",
+    "holdingStart": "2026-06-20",
+    "washReplacement": false
+   }
+  ]
+ }
+}

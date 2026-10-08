@@ -1,4 +1,6 @@
-// Simplified rules, matching PLAN.md §4 for the cases the site shows:
+// The TypeScript reference model: the simplified single-lot rules the marketing explainers use
+// until the WASM engine has loaded (lib/engine/index.ts). tests/engine-parity.test.ts proves it
+// agrees with the real engine to the cent on every scenario the site shows:
 // - long-term if sale date > acquired + 12 months
 // - wash sale if loss AND rebuy within ±30 days; disallowed = |loss| * min(rebuyQty, qty) / qty
 // - taxable rebuy: basis += disallowed, holding start moves earlier by days held
@@ -54,7 +56,7 @@ export function recognized(result: SaleResult): number {
   return cents(result.realized + (result.wash?.disallowed ?? 0));
 }
 
-export const mockEngine: Engine = {
+export const referenceEngine: Engine = {
   simulateSale(input: SaleInput): SaleResult {
     const { lot, qty, price, date, rebuy } = input;
     if (qty <= 0 || qty > lot.qty) throw new RangeError(`qty must be in 1..${lot.qty}, got ${qty}`);

@@ -1,0 +1,49 @@
+{
+ "name": "29-same-purchase-is-not-its-own-replacement",
+ "description": "Selling half of a lot bought 10 days ago at a loss: the other half of the same purchase isn't a replacement.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "h",
+     "account": "b1",
+     "date": "2026-06-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "100",
+     "price": "50"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "ABC",
+   "qty": "50",
+   "price": "45",
+   "date": "2026-06-15"
+  }
+ },
+ "expect": {
+  "realized": "-250.00",
+  "disallowed": "0.00"
+ }
+}

@@ -1,0 +1,79 @@
+{
+ "name": "21-deep-itm-written-put",
+ "description": "Writing a deep-in-the-money put within 30 days counts as a contract to buy: 1 contract covers 100 shares, so the $1,000 loss is disallowed.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "p-buy",
+     "account": "b1",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "100",
+     "price": "50"
+    },
+    {
+     "id": "p-sell",
+     "account": "b1",
+     "date": "2026-06-15",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "100",
+     "price": "40"
+    },
+    {
+     "id": "p-put",
+     "account": "b1",
+     "date": "2026-06-20",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "1",
+     "price": "12",
+     "option": {
+      "type": "put",
+      "multiplier": "100",
+      "strike": "60",
+      "expiry": "2026-09-18",
+      "deepItm": true
+     }
+    }
+   ]
+  }
+ },
+ "expect": {
+  "realizations": [
+   {
+    "saleId": "p-sell",
+    "disallowed": "1000.00",
+    "wash": [
+     {
+      "tradeId": "p-put",
+      "shares": "100",
+      "beforeSale": false
+     }
+    ]
+   }
+  ],
+  "lots": []
+ }
+}

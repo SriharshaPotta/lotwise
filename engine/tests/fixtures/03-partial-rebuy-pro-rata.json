@@ -1,0 +1,74 @@
+{
+ "name": "03-partial-rebuy-pro-rata",
+ "description": "Sell 100 XYZ at a $1,000 loss, rebuy only 40 a week later: 40/100 of the loss ($400) is disallowed and moves into the new shares (40 x $41 + $400 = $2,040), holding start tacked back 149 days to May 26. $600 stays deductible (est. tax -$144).",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "xyz-buy",
+     "account": "b2",
+     "date": "2026-05-19",
+     "side": "buy",
+     "symbol": "XYZ",
+     "qty": "100",
+     "price": "50"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b2",
+   "symbol": "XYZ",
+   "qty": "100",
+   "price": "40",
+   "date": "2026-10-15",
+   "rebuy": {
+    "date": "2026-10-22",
+    "qty": "40",
+    "price": "41"
+   }
+  }
+ },
+ "expect": {
+  "realized": "-1000.00",
+  "disallowed": "400.00",
+  "recognized": "-600.00",
+  "deductible": "600.00",
+  "estTax": "-144.00",
+  "causes": [],
+  "rebuy": {
+   "date": "2026-10-22",
+   "triggers": true,
+   "disallowed": "400.00",
+   "permanent": false,
+   "safeFrom": "2026-11-15",
+   "replacementBasis": "2040.00",
+   "holdingStart": "2026-05-26"
+  },
+  "coupons": [
+   {
+    "kind": "safeRebuy",
+    "date": "2026-11-15",
+    "keeps": "400.00"
+   }
+  ]
+ }
+}

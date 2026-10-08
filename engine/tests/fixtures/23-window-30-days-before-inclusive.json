@@ -1,0 +1,57 @@
+{
+ "name": "23-window-30-days-before-inclusive",
+ "description": "A purchase exactly 30 days before the sale (May 16) washes.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "w-buy",
+     "account": "b1",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100"
+    },
+    {
+     "id": "w-re",
+     "account": "b2",
+     "date": "2026-05-16",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "80"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "ABC",
+   "qty": "10",
+   "price": "80",
+   "date": "2026-06-15"
+  }
+ },
+ "expect": {
+  "disallowed": "200.00"
+ }
+}

@@ -1,0 +1,95 @@
+{
+ "name": "17-chained-wash-sales-net",
+ "description": "End of the chain: C sold for $900 against a $1,030 basis, -$130 recognized: exactly the economic loss (2,530 paid, 2,400 received).",
+ "call": "yearSummary",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "a",
+     "account": "b1",
+     "date": "2026-01-02",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100"
+    },
+    {
+     "id": "a-sell",
+     "account": "b1",
+     "date": "2026-02-02",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "80"
+    },
+    {
+     "id": "b",
+     "account": "b1",
+     "date": "2026-02-10",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "82"
+    },
+    {
+     "id": "b-sell",
+     "account": "b1",
+     "date": "2026-03-01",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "70"
+    },
+    {
+     "id": "c",
+     "account": "b1",
+     "date": "2026-03-15",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "71"
+    },
+    {
+     "id": "c-sell",
+     "account": "b1",
+     "date": "2026-04-01",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "90"
+    }
+   ]
+  },
+  "year": 2026
+ },
+ "expect": {
+  "shortTerm": {
+   "realized": "-650.00",
+   "disallowed": "520.00",
+   "recognized": "-130.00",
+   "count": 3
+  },
+  "netShort": "-130.00",
+  "deductibleLoss": "130.00",
+  "estTax": "-31.20"
+ }
+}

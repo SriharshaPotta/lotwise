@@ -95,6 +95,25 @@ test.describe("convergence fallback", () => {
   });
 });
 
+test.describe("real engine", () => {
+  test("the WASM engine loads on an explainer page and the landing page doesn't fetch it", async ({ page }) => {
+    const wasmRequests: string[] = [];
+    page.on("request", (r) => {
+      if (r.url().endsWith(".wasm")) wasmRequests.push(r.url());
+    });
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+    expect(wasmRequests).toEqual([]);
+
+    await page.goto("/learn/the-wash-sale");
+    await page.getByRole("slider", { name: "Buy-back date" }).scrollIntoViewIfNeeded();
+    await expect(page.locator("html")).toHaveAttribute("data-engine", "wasm");
+    await page.getByRole("slider", { name: "Buy-back date" }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.locator("figure [aria-live]")).toContainText("$1,840");
+  });
+});
+
 test.describe("explainer keyboard control", () => {
   test("wash sale: arrow = 1 day, Shift+arrow = 1 week, Home/End", async ({ page }) => {
     await page.goto("/learn/the-wash-sale");

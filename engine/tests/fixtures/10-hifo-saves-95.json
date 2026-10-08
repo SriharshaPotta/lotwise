@@ -1,0 +1,65 @@
+{
+ "name": "10-hifo-saves-95",
+ "description": "HIFO sells the Oct 9 lot: $26 gain, $6.24 tax ($95.04 less than FIFO).",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "vti-jan",
+     "account": "b1",
+     "date": "2026-01-12",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "248.00"
+    },
+    {
+     "id": "vti-oct",
+     "account": "b1",
+     "date": "2026-10-09",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "287.60"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "VTI",
+   "qty": "10",
+   "price": "290.20",
+   "date": "2026-10-15",
+   "method": "hifo"
+  }
+ },
+ "expect": {
+  "realized": "26.00",
+  "estTax": "6.24",
+  "lots": [
+   {
+    "lotId": "vti-oct",
+    "qty": "10"
+   }
+  ]
+ }
+}

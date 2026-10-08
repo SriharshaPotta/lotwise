@@ -1,0 +1,58 @@
+{
+ "name": "04-agent-xyz-rebuy-next-week",
+ "description": "The agent transcript: sell 100 XYZ ($1,000 loss) and buy all 100 back next week: everything is disallowed; rebuy safe from Nov 15.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "xyz-buy",
+     "account": "b2",
+     "date": "2026-05-19",
+     "side": "buy",
+     "symbol": "XYZ",
+     "qty": "100",
+     "price": "50"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b2",
+   "symbol": "XYZ",
+   "qty": "100",
+   "price": "40",
+   "date": "2026-10-15",
+   "rebuy": {
+    "date": "2026-10-22"
+   }
+  }
+ },
+ "expect": {
+  "realized": "-1000.00",
+  "disallowed": "1000.00",
+  "recognized": "0.00",
+  "rebuy": {
+   "triggers": true,
+   "safeFrom": "2026-11-15",
+   "replacementBasis": "5000.00"
+  }
+ }
+}

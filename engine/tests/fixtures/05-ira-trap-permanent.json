@@ -1,0 +1,89 @@
+{
+ "name": "05-ira-trap-permanent",
+ "description": "INTC sold at a $620 loss in Brokerage One, bought back 8 days later in the Roth IRA: disallowed permanently, the Roth lot's basis is NOT adjusted ($2,190) and its holding period starts fresh.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "intc-buy",
+     "account": "b1",
+     "date": "2026-01-15",
+     "side": "buy",
+     "symbol": "INTC",
+     "qty": "100",
+     "price": "27.40"
+    },
+    {
+     "id": "intc-sell",
+     "account": "b1",
+     "date": "2026-09-28",
+     "side": "sell",
+     "symbol": "INTC",
+     "qty": "100",
+     "price": "21.20"
+    },
+    {
+     "id": "intc-roth",
+     "account": "roth",
+     "date": "2026-10-06",
+     "side": "buy",
+     "symbol": "INTC",
+     "qty": "100",
+     "price": "21.90"
+    }
+   ]
+  }
+ },
+ "expect": {
+  "lots": [
+   {
+    "id": "intc-roth#1",
+    "account": "roth",
+    "qty": "100",
+    "basis": "2190.00",
+    "holdingStart": "2026-10-06",
+    "washAdjustment": "0.00",
+    "washReplacement": true
+   }
+  ],
+  "realizations": [
+   {
+    "saleId": "intc-sell",
+    "realized": "-620.00",
+    "disallowed": "620.00",
+    "disallowedPermanent": "620.00",
+    "recognized": "0.00",
+    "estTax": "0.00",
+    "wash": [
+     {
+      "tradeId": "intc-roth",
+      "accountKind": "roth",
+      "permanent": true,
+      "beforeSale": false,
+      "shares": "100",
+      "disallowed": "620.00"
+     }
+    ]
+   }
+  ]
+ }
+}

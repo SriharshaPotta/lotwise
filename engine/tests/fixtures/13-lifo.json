@@ -1,0 +1,63 @@
+{
+ "name": "13-lifo",
+ "description": "LIFO takes the newest lot first.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "vti-jan",
+     "account": "b1",
+     "date": "2026-01-12",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "248.00"
+    },
+    {
+     "id": "vti-oct",
+     "account": "b1",
+     "date": "2026-10-09",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "287.60"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "VTI",
+   "qty": "10",
+   "price": "290.20",
+   "date": "2026-10-15",
+   "method": "lifo"
+  }
+ },
+ "expect": {
+  "realized": "26.00",
+  "lots": [
+   {
+    "lotId": "vti-oct"
+   }
+  ]
+ }
+}

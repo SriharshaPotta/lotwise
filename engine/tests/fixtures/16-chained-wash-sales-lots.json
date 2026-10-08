@@ -1,0 +1,109 @@
+{
+ "name": "16-chained-wash-sales-lots",
+ "description": "Chain: loss $200 (held 31 days) moves into B: basis $1,020, start Jan 10. B sold at -$320 (held 50 days from Jan 10) moves into C: basis $1,030, start Jan 24.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "a",
+     "account": "b1",
+     "date": "2026-01-02",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100"
+    },
+    {
+     "id": "a-sell",
+     "account": "b1",
+     "date": "2026-02-02",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "80"
+    },
+    {
+     "id": "b",
+     "account": "b1",
+     "date": "2026-02-10",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "82"
+    },
+    {
+     "id": "b-sell",
+     "account": "b1",
+     "date": "2026-03-01",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "70"
+    },
+    {
+     "id": "c",
+     "account": "b1",
+     "date": "2026-03-15",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "71"
+    },
+    {
+     "id": "c-sell",
+     "account": "b1",
+     "date": "2026-04-01",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "90"
+    }
+   ]
+  },
+  "asOf": "2026-03-20"
+ },
+ "expect": {
+  "lots": [
+   {
+    "tradeId": "c",
+    "basis": "1030.00",
+    "holdingStart": "2026-01-24",
+    "washAdjustment": "320.00"
+   }
+  ],
+  "realizations": [
+   {
+    "saleId": "a-sell",
+    "realized": "-200.00",
+    "disallowed": "200.00",
+    "recognized": "0.00"
+   },
+   {
+    "saleId": "b-sell",
+    "basis": "1020.00",
+    "realized": "-320.00",
+    "disallowed": "320.00",
+    "holdingStart": "2026-01-10"
+   }
+  ]
+ }
+}

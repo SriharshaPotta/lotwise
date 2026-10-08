@@ -1,0 +1,58 @@
+{
+ "name": "24-window-31-days-before-clear",
+ "description": "31 days before (May 15) is outside the window. (The May 15 lot is FIFO-later, so the Jan lot is sold.)",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "w-buy",
+     "account": "b1",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100"
+    },
+    {
+     "id": "w-re",
+     "account": "b2",
+     "date": "2026-05-15",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "80"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "ABC",
+   "qty": "10",
+   "price": "80",
+   "date": "2026-06-15"
+  }
+ },
+ "expect": {
+  "disallowed": "0.00",
+  "recognized": "-200.00"
+ }
+}

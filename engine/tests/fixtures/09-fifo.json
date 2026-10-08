@@ -1,0 +1,64 @@
+{
+ "name": "09-fifo",
+ "description": "FIFO sells the cheap January lot: 10 x (290.20 - 248.00) = $422 short-term, $101.28 tax.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "vti-jan",
+     "account": "b1",
+     "date": "2026-01-12",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "248.00"
+    },
+    {
+     "id": "vti-oct",
+     "account": "b1",
+     "date": "2026-10-09",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "287.60"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "VTI",
+   "qty": "10",
+   "price": "290.20",
+   "date": "2026-10-15"
+  }
+ },
+ "expect": {
+  "realized": "422.00",
+  "estTax": "101.28",
+  "lots": [
+   {
+    "lotId": "vti-jan",
+    "qty": "10"
+   }
+  ]
+ }
+}

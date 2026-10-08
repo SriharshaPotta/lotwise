@@ -1,0 +1,79 @@
+{
+ "name": "11-specific-partial-lots",
+ "description": "Specific lots: 4 from January ($168.80) and 6 from October ($15.60).",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "vti-jan",
+     "account": "b1",
+     "date": "2026-01-12",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "248.00"
+    },
+    {
+     "id": "vti-oct",
+     "account": "b1",
+     "date": "2026-10-09",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "287.60"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "VTI",
+   "qty": "10",
+   "price": "290.20",
+   "date": "2026-10-15",
+   "lots": [
+    {
+     "lotId": "vti-jan",
+     "qty": "4"
+    },
+    {
+     "lotId": "vti-oct",
+     "qty": "6"
+    }
+   ]
+  }
+ },
+ "expect": {
+  "realized": "184.40",
+  "lots": [
+   {
+    "lotId": "vti-jan",
+    "qty": "4",
+    "realized": "168.80"
+   },
+   {
+    "lotId": "vti-oct",
+    "qty": "6",
+    "realized": "15.60"
+   }
+  ]
+ }
+}

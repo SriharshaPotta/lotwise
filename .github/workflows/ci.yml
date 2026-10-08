@@ -1,0 +1,88 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  engine:
+    name: Rust engine · WASM artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rust toolchain (pinned in engine/rust-toolchain.toml)
+        run: rustup toolchain install 1.97.0 --profile minimal --component clippy,rustfmt --target wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: engine
+      - name: fmt
+        run: cargo fmt --manifest-path engine/Cargo.toml --check
+      - name: clippy
+        run: cargo clippy --manifest-path engine/Cargo.toml --all-targets -- -D warnings
+      - name: clippy (wasm32)
+        run: cargo clippy --manifest-path engine/Cargo.toml --release --target wasm32-unknown-unknown -- -D warnings
+      - name: test
+        run: cargo test --manifest-path engine/Cargo.toml
+      - name: wasm-bindgen-cli (version from Cargo.lock)
+        run: |
+          v=$(grep -A1 '^name = "wasm-bindgen"$' engine/Cargo.lock | sed -n 's/^version = "\(.*\)"/\1/p')
+          echo "WASM_BINDGEN_VERSION=$v" >> "$GITHUB_ENV"
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: wasm-bindgen@${{ env.WASM_BINDGEN_VERSION }}
+      - name: Committed WASM build is up to date
+        run: |
+          bash scripts/build-engine.sh
+          git diff --exit-code --stat -- lib/engine/wasm mcp/dist/lotwise_engine_bg.wasm || {
+            echo "::error::lib/engine/wasm is stale. Run npm run engine:build and commit the result."; exit 1; }
+
+  web:
+    name: Site · typecheck, lint, unit, build, e2e
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm run build
+      - name: Playwright (Chromium)
+        run: npx playwright install --with-deps chromium
+      - run: npx playwright test --project='chromium-*'
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: test-results
+          retention-days: 7
+
+  mcp:
+    name: MCP server · typecheck, bundle up to date, tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mcp/package-lock.json
+      - run: npm ci
+        working-directory: mcp
+      - run: npm run typecheck
+        working-directory: mcp
+      - name: Committed bundle is up to date
+        run: |
+          npm --prefix mcp run build
+          git diff --exit-code --stat -- mcp/dist || {
+            echo "::error::mcp/dist is stale. Run npm run mcp:build and commit the result."; exit 1; }
+      - run: npm test
+        working-directory: mcp

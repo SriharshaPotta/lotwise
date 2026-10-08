@@ -137,8 +137,8 @@ holding start, and coupons:
 
 ### Phase 5 — links, README, LICENSE, CI
 - [x] SITE.github, copy updates, sitemap
-- [ ] README, LICENSE, CONTRIBUTING
-- [ ] GitHub Actions
+- [x] README, LICENSE, CONTRIBUTING
+- [x] GitHub Actions
 
 ### Phase 6 — review loop, deploy check, known gaps
 
@@ -155,6 +155,8 @@ holding start, and coupons:
 - Demo state = one localStorage key (`lotwise:v1`); the untouched demo is never written.
 
 - MCP server: `mcp/src` bundled by esbuild into one minified file (`mcp/dist/lotwise-mcp.mjs`, committed) next to the .wasm; zero runtime deps. Root `package.json` has `bin` so `npx -y github:SriharshaPotta/lotwise` works (installs the site's deps on first run: slow). Tools: check_trade_tax_impact, list_lots, find_harvestable_losses, days_until_long_term, summarize_tax_year. Data file re-read per call; `--demo` for the built-in portfolio.
+
+- ESLint (eslint-config-next core-web-vitals + typescript) added; the React Compiler rules `set-state-in-effect` and `refs` are warnings (pre-existing deliberate patterns).
 
 ## Known gaps / not great yet
 (filled in at the end)

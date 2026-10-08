@@ -141,6 +141,10 @@ holding start, and coupons:
 - [x] GitHub Actions
 
 ### Phase 6 — review loop, deploy check, known gaps
+- [x] UI review at 390/768/1440, reduced motion, axe on every page and demo tab
+- [x] Lighthouse (local prod build): desktop 99, mobile 90–93, CLS 0; landing never fetches the WASM
+- [x] Production deploy serves /demo and /agents with real GitHub links (checked through the Vercel connector)
+- [x] `npx -y github:SriharshaPotta/lotwise --help` works from a clean machine
 
 ## Decisions log
 - WASM is 323 KB raw / 114 KB gzip; loaded only by /demo and explainer pages (never the landing page).
@@ -159,4 +163,27 @@ holding start, and coupons:
 - ESLint (eslint-config-next core-web-vitals + typescript) added; the React Compiler rules `set-state-in-effect` and `refs` are warnings (pre-existing deliberate patterns).
 
 ## Known gaps / not great yet
-(filled in at the end)
+Honest list, roughly by how much it matters.
+
+**Tax model**
+- Wash sales: a purchase *before* the loss sale only counts if still held at the sale (shares bought and already sold again are ignored). Shares from the same purchase as the sold lot never count as replacements.
+- "Substantially identical" is symbol equality (plus calls / flagged deep-ITM written puts). Different share classes, ETFs on the same index, and mutual-fund/ETF pairs are not detected.
+- Options: an option's own loss only washes against the same contract. Puts bought, short positions, assignment/exercise, expiry and option premium adjustments to stock basis are not modelled. Written puts must be flagged deep-ITM by hand (no pricing model), and a washed loss "into" a written put is recorded as disallowed with no basis to carry it.
+- Section 1256: no year-end mark-to-market of open positions, no 1256 loss carryback; the symbol list is hard-coded (index options only, no futures).
+- Tax: flat marginal ST/LT rates; no NIIT, AMT, state tax, bracket stacking, 0% LT bracket, or carryforward *into* a year (only out of it). Holding-period tacking uses calendar days held.
+- No corporate actions (splits, mergers, spinoffs), dividends/reinvestment as replacements unless entered as buys, return of capital, or gifted/inherited lots.
+- Lot selection defaults to FIFO per trade; there's no per-account default method.
+
+**Demo app**
+- The demo portfolio is pinned to Oct 15 2026 (the site's story); "today" is editable but prices don't move with it.
+- Only one broker export (Schwab) is supported; options in it are parsed from the description-style symbol only.
+- Very large tables scroll horizontally on phones rather than reflowing into cards.
+- Persistence is a single localStorage entry (no IndexedDB, no multiple portfolios, no undo).
+- The receipt is fixed-height and shows only the largest cause ("+N more" points to the "Why" panel).
+
+**Site / infra**
+- Marketing explainers answer from the TypeScript reference model until the WASM loads (identical by test, but it is two implementations of the single-lot path).
+- The committed MCP bundle is ~760 KB minified; `npx github:` installs the site's dependencies on first run (about a minute). Not published to npm.
+- ESLint's React Compiler rules (`set-state-in-effect`, `refs`) are warnings, not errors: 10 pre-existing/deliberate occurrences.
+- Playwright CI runs Chromium only (the config still defines Firefox/WebKit projects for local runs).
+- WASM is 323 KB (114 KB gzipped) with serde_json + rust_decimal; no wasm-opt pass to keep builds reproducible.

@@ -114,6 +114,27 @@ test.describe("real engine", () => {
   });
 });
 
+test.describe("links", () => {
+  test("the Agents section leads to the MCP setup page, which links the source", async ({ page }) => {
+    await page.goto("/");
+    const link = page.locator("#agents").getByRole("link", { name: "Set up the MCP server →" });
+    await link.scrollIntoViewIfNeeded();
+    await link.click();
+    await expect(page).toHaveURL(/\/agents$/);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("before it trades");
+    await expect(page.getByRole("link", { name: "Source and README" })).toHaveAttribute("href", "https://github.com/SriharshaPotta/lotwise/tree/main/mcp");
+    await expect(page.getByText("claude mcp add lotwise -- npx -y github:SriharshaPotta/lotwise").first()).toBeVisible();
+  });
+
+  test("every GitHub link points at the repository", async ({ page }) => {
+    for (const path of ["/", "/demo", "/agents", "/learn", "/nope"]) {
+      await page.goto(path);
+      const hrefs = await page.locator('a[href*="github.com"]').evaluateAll((as) => as.map((a) => a.getAttribute("href")));
+      for (const h of hrefs) expect(h).toMatch(/^https:\/\/github\.com\/SriharshaPotta\/lotwise/);
+    }
+  });
+});
+
 test.describe("explainer keyboard control", () => {
   test("wash sale: arrow = 1 day, Shift+arrow = 1 week, Home/End", async ({ page }) => {
     await page.goto("/learn/the-wash-sale");
@@ -204,7 +225,7 @@ test.describe("navigation", () => {
 });
 
 test.describe("accessibility (axe)", () => {
-  const pages = ["/", "/learn", ...EXPLAINER_SLUGS.map((s) => `/learn/${s}`), "/not-a-real-page"];
+  const pages = ["/", "/learn", ...EXPLAINER_SLUGS.map((s) => `/learn/${s}`), "/agents", "/not-a-real-page"];
   for (const path of pages) {
     test(`no serious or critical violations on ${path}`, async ({ page }) => {
       // Final states, not mid-animation frames (an element fading in is "low contrast" for a moment).

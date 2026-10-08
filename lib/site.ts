@@ -9,8 +9,7 @@ export const SITE = {
   tagline: "Know the tax bill before you click sell.",
   description:
     "Lotwise checks every account you own for wash sales and hands you the tax receipt for a trade before you place it. It runs entirely in your browser.",
-  /** TODO: replace with the real repository URL. */
-  github: "https://github.com/",
+  github: "https://github.com/SriharshaPotta/lotwise",
   author: "Sriharsha Potta",
   /** The generated share image (app/opengraph-image.tsx). Pages that set their own openGraph repeat it,
    *  because metadata merges shallowly. */

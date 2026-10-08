@@ -1,0 +1,26 @@
+{
+  "name": "lotwise-mcp",
+  "version": "0.1.0",
+  "description": "Lotwise MCP server: check the tax impact of a trade (wash sales across accounts, short vs long term, Section 1256) before placing it. Local-only. Estimates, not tax advice.",
+  "license": "MIT",
+  "type": "module",
+  "bin": { "lotwise-mcp": "dist/lotwise-mcp.mjs" },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build.mjs",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "start": "node dist/lotwise-mcp.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "typescript": "^5.9.3",
+    "vitest": "^5.0.3",
+    "@types/node": "^26.6.4"
+  }
+}

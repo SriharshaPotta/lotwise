@@ -4,7 +4,7 @@ import { m, useInView } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import { ArrowUp, Check, Chevron, Copy, Plug, Plus, Retry, SPARK_ORANGE, Spark, Spinner, ThumbDown, ThumbUp } from "@/components/agents/ChatIcons";
 import { useReducedMotionSafe } from "@/components/effects/useReducedMotionSafe";
-import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { Lead } from "@/components/ui/Lead";
 import { Marker } from "@/components/ui/Marker";
 import { Surface } from "@/components/ui/Surface";
@@ -37,10 +37,17 @@ export function Agents() {
       </m.h2>
       <div className="mt-12 grid gap-12 lg:mt-16 lg:grid-cols-12 lg:gap-8">
         <m.div {...reveal} className="lg:col-span-4 lg:pt-4">
-          <Lead strong="An MCP server for your agents.">
-            Claude, Cursor or any agent will be able to check the tax impact of a trade before placing it.
+          <Lead strong="Lotwise ships an MCP server,">
+            so Claude, Cursor or any agent can check the tax impact of a trade before placing it.
           </Lead>
-          <Badge className="mt-6">MCP server · coming soon</Badge>
+          <ul className="num mt-6 space-y-1.5 text-meta text-muted">
+            <li>Runs locally, reads your trade file</li>
+            <li>Wash sales across every account</li>
+            <li>Rebuy-safe dates and alternatives</li>
+          </ul>
+          <Button href="/agents" variant="quiet" className="mt-6">
+            Set up the MCP server →
+          </Button>
         </m.div>
         <m.div {...reveal} className="min-w-0 lg:col-span-8">
           <Transcript />

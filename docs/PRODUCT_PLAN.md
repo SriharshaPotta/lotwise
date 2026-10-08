@@ -131,12 +131,12 @@ holding start, and coupons:
 - [x] responsive, keyboard, axe, reduced motion; screenshots review
 
 ### Phase 4 — MCP + /agents
-- [ ] mcp/ server: check_trade_tax_impact, list_lots, find_harvestable_losses, days_until_long_term, summarize_year
-- [ ] tests, bundle, README (Claude Code, Claude Desktop, Cursor)
-- [ ] /agents page; Agents section link
+- [x] mcp/ server: check_trade_tax_impact, list_lots, find_harvestable_losses, days_until_long_term, summarize_year
+- [x] tests, bundle, README (Claude Code, Claude Desktop, Cursor)
+- [x] /agents page; Agents section link
 
 ### Phase 5 — links, README, LICENSE, CI
-- [ ] SITE.github, copy updates, sitemap
+- [x] SITE.github, copy updates, sitemap
 - [ ] README, LICENSE, CONTRIBUTING
 - [ ] GitHub Actions
 
@@ -153,6 +153,8 @@ holding start, and coupons:
 - The demo's "today" is pinned to Oct 15 2026 for the demo portfolio (the story's date); imports use the real date. Editable on the Data tab.
 - `<Receipt>` takes a structural `ReceiptModel`; the demo adapts engine receipts to it (components/demo/receiptModel.ts). Stamps: WASH SALE, PERMANENT, LONG-TERM IN N DAYS.
 - Demo state = one localStorage key (`lotwise:v1`); the untouched demo is never written.
+
+- MCP server: `mcp/src` bundled by esbuild into one minified file (`mcp/dist/lotwise-mcp.mjs`, committed) next to the .wasm; zero runtime deps. Root `package.json` has `bin` so `npx -y github:SriharshaPotta/lotwise` works (installs the site's deps on first run: slow). Tools: check_trade_tax_impact, list_lots, find_harvestable_losses, days_until_long_term, summarize_tax_year. Data file re-read per call; `--demo` for the built-in portfolio.
 
 ## Known gaps / not great yet
 (filled in at the end)

@@ -7,7 +7,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: at("/"), changeFrequency: "monthly", priority: 1 },
     { url: at("/learn"), changeFrequency: "monthly", priority: 0.8 },
-    { url: at("/demo"), changeFrequency: "monthly", priority: 0.5 },
+    { url: at("/demo"), changeFrequency: "monthly", priority: 0.9 },
+    { url: at("/agents"), changeFrequency: "monthly", priority: 0.6 },
     ...EXPLAINERS.filter((e) => e.ready).map((e) => ({ url: at(`/learn/${e.slug}`), changeFrequency: "monthly" as const, priority: 0.7 })),
   ];
 }

@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/Slider";
 import { Surface } from "@/components/ui/Surface";
 import { Toggle } from "@/components/ui/Toggle";
 import { MoneyTween } from "@/components/viz/MoneyTween";
+import type { ReactNode } from "react";
 import { ACCOUNTS, type AccountId, type Position } from "@/lib/demo";
 import { money } from "@/lib/format";
 
@@ -26,8 +27,7 @@ interface TradeTicketProps {
 export function TradeTicket({ position: p, onAccount, shares, onShares, buyBack, onBuyBack }: TradeTicketProps) {
   const { lot } = p;
   return (
-    <Surface className="z-20">
-      <div className="space-y-5 p-5">
+    <TicketFrame>
         <Segmented label="Account" options={ACCOUNT_OPTIONS} value={p.account.id} onChange={onAccount} stretch />
 
         <div className="num grid grid-cols-[1fr_auto] text-meta leading-6 text-muted sm:grid-cols-[auto_1fr_auto]">
@@ -51,7 +51,15 @@ export function TradeTicket({ position: p, onAccount, shares, onShares, buyBack,
         />
 
         <Toggle checked={buyBack} onChange={onBuyBack} label="Buy back next week" />
-      </div>
+    </TicketFrame>
+  );
+}
+
+/** The ticket's body: a Surface with the controls, and the thin print slot along its bottom edge. */
+export function TicketFrame({ children, className }: { children: ReactNode; className?: string }) {
+  return (
+    <Surface className={className ?? "z-20"}>
+      <div className="space-y-5 p-5">{children}</div>
 
       {/* The print slot: a dark slit with a lit lower lip. */}
       <div aria-hidden className="relative h-3">

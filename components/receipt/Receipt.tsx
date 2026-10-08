@@ -5,7 +5,6 @@ import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { Marker } from "@/components/ui/Marker";
 import { MoneyTween, formatInt } from "@/components/viz/MoneyTween";
 import { cn } from "@/lib/cn";
-import type { TradeReceipt } from "@/lib/demo";
 import { receiptDate, shortDate } from "@/lib/format";
 import { print, printDuration } from "@/lib/motion";
 import { Barcode } from "./Barcode";
@@ -14,8 +13,29 @@ import { Stamp } from "./Stamp";
 /** Line items, top to bottom. Fixed so every variant prints at the same height (zero layout shift). */
 export const RECEIPT_LINES = 14;
 
+/**
+ * What the receipt prints. The landing page's `TradeReceipt` (lib/demo) and the demo app's adapter
+ * over the real engine (components/demo/receiptModel.ts) both fit it.
+ */
+export interface ReceiptModel {
+  position: { lot: { symbol: string }; price: number; account: { name: string } };
+  shares: number;
+  date: string;
+  proceeds: number;
+  basis: number;
+  realized: number;
+  term: string;
+  /** Sales inside an IRA/Roth: not taxed at all. */
+  taxFree: boolean;
+  deductible: number;
+  disallowed: number;
+  cause: { trade: { symbol: string; qty: number; date: string; option?: { type: string } }; account: { name: string }; more?: number } | null;
+  rebuy: { date: string; triggers: boolean } | null;
+  stamp: string | null;
+}
+
 interface ReceiptProps {
-  model: TradeReceipt;
+  model: ReceiptModel;
   serial: string;
   /** Animate the print on mount (feed + type-in). False renders the printed state. */
   printing: boolean;
@@ -190,17 +210,18 @@ function StampSlot({ label }: { label: string }) {
   );
 }
 
-function CauseText({ model }: { model: TradeReceipt }) {
+function CauseText({ model }: { model: ReceiptModel }) {
   const t = model.cause!.trade;
   const what = t.option ? `${t.option.type}${t.qty === 1 ? "" : "s"}` : t.qty === 1 ? "share" : "shares";
   return (
     <>
       {t.qty} {t.symbol} {what} bought {shortDate(t.date)} · {model.cause!.account.name}
+      {model.cause!.more ? ` · +${model.cause!.more} more` : ""}
     </>
   );
 }
 
-function RebuyText({ model }: { model: TradeReceipt }) {
+function RebuyText({ model }: { model: ReceiptModel }) {
   const r = model.rebuy!;
   if (!model.shares) return <>Rebuy {shortDate(r.date)}</>;
   if (!r.triggers) return <>Rebuy {shortDate(r.date)} · no wash sale</>;

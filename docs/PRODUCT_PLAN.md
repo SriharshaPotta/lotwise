@@ -125,10 +125,10 @@ holding start, and coupons:
 - [x] `npm run engine:check` verifies committed artifacts
 
 ### Phase 3 — /demo app
-- [ ] demo portfolio (3 accounts, ~30 trades) consistent with lib/demo
-- [ ] positions / lots, simulator (ticket + receipt), harvest, countdown, year summary
-- [ ] CSV import (Lotwise + Schwab), manual entry, export, reset, clear
-- [ ] responsive, keyboard, axe, reduced motion; screenshots review
+- [x] demo portfolio (3 accounts, ~30 trades) consistent with lib/demo
+- [x] positions / lots, simulator (ticket + receipt), harvest, countdown, year summary
+- [x] CSV import (Lotwise + Schwab), manual entry, export, reset, clear
+- [x] responsive, keyboard, axe, reduced motion; screenshots review
 
 ### Phase 4 — MCP + /agents
 - [ ] mcp/ server: check_trade_tax_impact, list_lots, find_harvestable_losses, days_until_long_term, summarize_year
@@ -149,6 +149,10 @@ holding start, and coupons:
 - Own tiny civil-date implementation instead of chrono (wasm size, exact anniversary rules).
 - JSON strings across the wasm boundary (no serde-wasm-bindgen): one format for browser, Node, MCP, fixtures.
 - No wasm-opt in the build (keeps artifacts reproducible between the container and CI).
+
+- The demo's "today" is pinned to Oct 15 2026 for the demo portfolio (the story's date); imports use the real date. Editable on the Data tab.
+- `<Receipt>` takes a structural `ReceiptModel`; the demo adapts engine receipts to it (components/demo/receiptModel.ts). Stamps: WASH SALE, PERMANENT, LONG-TERM IN N DAYS.
+- Demo state = one localStorage key (`lotwise:v1`); the untouched demo is never written.
 
 ## Known gaps / not great yet
 (filled in at the end)

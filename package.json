@@ -14,11 +14,12 @@
     "prebuild": "node scripts/annotations.mjs",
     "e2e": "playwright test",
     "engine:build": "bash scripts/build-engine.sh",
-    "engine:test": "cargo test --manifest-path engine/Cargo.toml",
+    "engine:test": "cd engine && cargo test",
     "engine:check": "bash scripts/build-engine.sh && git diff --exit-code --stat -- lib/engine/wasm mcp/dist",
     "mcp:build": "npm --prefix mcp run build",
     "mcp:test": "npm --prefix mcp test",
-    "mcp:check": "npm --prefix mcp run build && git diff --exit-code --stat -- mcp/dist"
+    "mcp:check": "npm --prefix mcp run build && git diff --exit-code --stat -- mcp/dist",
+    "lint": "eslint ."
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -39,6 +40,8 @@
     "@types/node": "^26.6.4",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^5.9.3",
     "vitest": "^5.0.3"

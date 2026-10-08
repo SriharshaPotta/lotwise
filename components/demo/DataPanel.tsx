@@ -29,7 +29,7 @@ const slug = (s: string) => s.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").r
 
 /** Import, export, manual entry, accounts, settings, reset and clear. All of it stays in this browser. */
 export function DataPanel({ state, actions }: { state: DemoState; actions: DemoActions }) {
-  const { portfolio, asOf } = state;
+  const { portfolio } = state;
   return (
     <Panel
       title={

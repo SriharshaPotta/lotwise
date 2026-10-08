@@ -14,7 +14,7 @@
     "prebuild": "node scripts/annotations.mjs",
     "e2e": "playwright test",
     "engine:build": "bash scripts/build-engine.sh",
-    "engine:test": "cargo test --manifest-path engine/Cargo.toml",
+    "engine:test": "cd engine && cargo test",
     "engine:check": "bash scripts/build-engine.sh && git diff --exit-code --stat -- lib/engine/wasm mcp/dist",
     "mcp:build": "npm --prefix mcp run build",
     "mcp:test": "npm --prefix mcp test",

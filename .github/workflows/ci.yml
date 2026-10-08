@@ -14,20 +14,25 @@ jobs:
     name: Rust engine · WASM artifacts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Rust toolchain (pinned in engine/rust-toolchain.toml)
-        run: rustup toolchain install 1.97.0 --profile minimal --component clippy,rustfmt --target wasm32-unknown-unknown
+        working-directory: engine
+        run: rustup toolchain install && rustup show active-toolchain
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: engine
       - name: fmt
-        run: cargo fmt --manifest-path engine/Cargo.toml --check
+        working-directory: engine
+        run: cargo fmt --check
       - name: clippy
-        run: cargo clippy --manifest-path engine/Cargo.toml --all-targets -- -D warnings
+        working-directory: engine
+        run: cargo clippy --all-targets -- -D warnings
       - name: clippy (wasm32)
-        run: cargo clippy --manifest-path engine/Cargo.toml --release --target wasm32-unknown-unknown -- -D warnings
+        working-directory: engine
+        run: cargo clippy --release --target wasm32-unknown-unknown -- -D warnings
       - name: test
-        run: cargo test --manifest-path engine/Cargo.toml
+        working-directory: engine
+        run: cargo test
       - name: wasm-bindgen-cli (version from Cargo.lock)
         run: |
           v=$(grep -A1 '^name = "wasm-bindgen"$' engine/Cargo.lock | sed -n 's/^version = "\(.*\)"/\1/p')
@@ -45,8 +50,8 @@ jobs:
     name: Site · typecheck, lint, unit, build, e2e
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
@@ -69,8 +74,8 @@ jobs:
     name: MCP server · typecheck, bundle up to date, tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm

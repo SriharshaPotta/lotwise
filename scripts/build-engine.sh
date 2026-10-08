@@ -17,7 +17,8 @@ fi
 
 # Strip machine-specific paths so the artifact is byte-identical on any machine.
 export RUSTFLAGS="--remap-path-prefix=$CARGO_HOME=/cargo --remap-path-prefix=$ROOT=/lotwise ${RUSTFLAGS:-}"
-cargo build --manifest-path "$ROOT/engine/Cargo.toml" --release --locked --target wasm32-unknown-unknown
+# Run inside engine/ so rustup applies engine/rust-toolchain.toml.
+(cd "$ROOT/engine" && cargo build --release --locked --target wasm32-unknown-unknown)
 rm -rf "$OUT"
 wasm-bindgen --target web --out-dir "$OUT" --out-name lotwise_engine \
   "$ROOT/engine/target/wasm32-unknown-unknown/release/lotwise_engine.wasm"

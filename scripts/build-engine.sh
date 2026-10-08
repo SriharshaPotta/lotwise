@@ -20,7 +20,9 @@ export RUSTFLAGS="--remap-path-prefix=$CARGO_HOME=/cargo --remap-path-prefix=$RO
 # Run inside engine/ so rustup applies engine/rust-toolchain.toml.
 (cd "$ROOT/engine" && cargo build --release --locked --target wasm32-unknown-unknown)
 rm -rf "$OUT"
-wasm-bindgen --target web --out-dir "$OUT" --out-name lotwise_engine \
+# No producers section: it records how wasm-bindgen was installed (prebuilt binaries add a git
+# hash), which would make the artifact differ between machines.
+wasm-bindgen --target web --remove-producers-section --out-dir "$OUT" --out-name lotwise_engine \
   "$ROOT/engine/target/wasm32-unknown-unknown/release/lotwise_engine.wasm"
 rm -f "$OUT/.gitignore"
 # The MCP server ships the same binary next to its bundle.

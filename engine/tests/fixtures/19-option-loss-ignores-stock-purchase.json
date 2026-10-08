@@ -1,0 +1,78 @@
+{
+ "name": "19-option-loss-ignores-stock-purchase",
+ "description": "Simplification: a loss on an NVDA call only washes against the same contract, not a later purchase of the stock.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "o",
+     "account": "b1",
+     "date": "2026-09-01",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "1",
+     "price": "6.40",
+     "option": {
+      "type": "call",
+      "multiplier": "100",
+      "strike": "150",
+      "expiry": "2026-12-18"
+     }
+    },
+    {
+     "id": "o-sell",
+     "account": "b1",
+     "date": "2026-09-20",
+     "side": "sell",
+     "symbol": "NVDA",
+     "qty": "1",
+     "price": "3",
+     "option": {
+      "type": "call",
+      "multiplier": "100",
+      "strike": "150",
+      "expiry": "2026-12-18"
+     }
+    },
+    {
+     "id": "s",
+     "account": "b1",
+     "date": "2026-09-25",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "100",
+     "price": "120"
+    }
+   ]
+  }
+ },
+ "expect": {
+  "realizations": [
+   {
+    "label": "NVDA 2026-12-18 150 C",
+    "realized": "-340.00",
+    "disallowed": "0.00",
+    "recognized": "-340.00"
+   }
+  ]
+ }
+}

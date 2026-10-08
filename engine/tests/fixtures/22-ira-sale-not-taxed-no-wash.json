@@ -1,0 +1,75 @@
+{
+ "name": "22-ira-sale-not-taxed-no-wash",
+ "description": "A loss inside the Roth isn't deductible and can't wash: realized -$200, recognized 0, even with a taxable purchase the same week.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "r-buy",
+     "account": "roth",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100"
+    },
+    {
+     "id": "r-sell",
+     "account": "roth",
+     "date": "2026-06-15",
+     "side": "sell",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "80"
+    },
+    {
+     "id": "t-buy",
+     "account": "b1",
+     "date": "2026-06-16",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "81"
+    }
+   ]
+  }
+ },
+ "expect": {
+  "realizations": [
+   {
+    "realized": "-200.00",
+    "recognized": "0.00",
+    "disallowed": "0.00",
+    "estTax": "0.00",
+    "taxExempt": true,
+    "wash": []
+   }
+  ],
+  "lots": [
+   {
+    "id": "t-buy",
+    "basis": "810.00",
+    "washReplacement": false
+   }
+  ]
+ }
+}

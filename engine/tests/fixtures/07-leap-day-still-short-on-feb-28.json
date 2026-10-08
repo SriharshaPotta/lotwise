@@ -1,0 +1,58 @@
+{
+ "name": "07-leap-day-still-short-on-feb-28",
+ "description": "Bought on leap day 2024. One-year anniversary is Feb 28 2025, so a sale that day is short-term ($500 gain x 24% = $120); waiting one day to Mar 1 makes it long-term and saves $45.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "abc-leap",
+     "account": "b1",
+     "date": "2024-02-29",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "ABC",
+   "qty": "10",
+   "price": "150",
+   "date": "2025-02-28"
+  }
+ },
+ "expect": {
+  "realized": "500.00",
+  "term": "short",
+  "estTax": "120.00",
+  "coupons": [
+   {
+    "kind": "longTerm",
+    "date": "2025-03-01",
+    "daysAway": 1,
+    "saves": "45.00"
+   }
+  ]
+ }
+}

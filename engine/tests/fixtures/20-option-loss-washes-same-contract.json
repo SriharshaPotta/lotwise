@@ -1,0 +1,88 @@
+{
+ "name": "20-option-loss-washes-same-contract",
+ "description": "Buying the same contract back within 30 days washes the $340.",
+ "call": "replay",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "o",
+     "account": "b1",
+     "date": "2026-09-01",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "1",
+     "price": "6.40",
+     "option": {
+      "type": "call",
+      "multiplier": "100",
+      "strike": "150",
+      "expiry": "2026-12-18"
+     }
+    },
+    {
+     "id": "o-sell",
+     "account": "b1",
+     "date": "2026-09-20",
+     "side": "sell",
+     "symbol": "NVDA",
+     "qty": "1",
+     "price": "3",
+     "option": {
+      "type": "call",
+      "multiplier": "100",
+      "strike": "150",
+      "expiry": "2026-12-18"
+     }
+    },
+    {
+     "id": "o2",
+     "account": "b1",
+     "date": "2026-09-25",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "1",
+     "price": "3.10",
+     "option": {
+      "type": "call",
+      "multiplier": "100",
+      "strike": "150",
+      "expiry": "2026-12-18"
+     }
+    }
+   ]
+  }
+ },
+ "expect": {
+  "realizations": [
+   {
+    "disallowed": "340.00"
+   }
+  ],
+  "lots": [
+   {
+    "tradeId": "o2",
+    "basis": "650.00",
+    "holdingStart": "2026-09-06"
+   }
+  ]
+ }
+}

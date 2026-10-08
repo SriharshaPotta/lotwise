@@ -1,0 +1,35 @@
+{
+ "name": "35-legacy-ira-rebuy",
+ "description": "Single-lot interface, rebuy in an IRA: permanent, no basis adjustment.",
+ "call": "simulateLotSale",
+ "input": {
+  "lot": {
+   "id": "b1-intc-1",
+   "account": "brokerage-one",
+   "symbol": "INTC",
+   "qty": 100,
+   "costPerShare": 27.4,
+   "acquired": "2026-01-15"
+  },
+  "qty": 100,
+  "price": 21.2,
+  "date": "2026-09-28",
+  "rebuy": {
+   "date": "2026-10-06",
+   "qty": 100,
+   "price": 21.9,
+   "account": "roth-ira",
+   "isIra": true
+  }
+ },
+ "expect": {
+  "realized": "-620.00",
+  "estTax": "0.00",
+  "wash": {
+   "disallowed": "620.00",
+   "replacementBasis": "2190.00",
+   "holdingStart": "2026-10-06",
+   "permanent": true
+  }
+ }
+}

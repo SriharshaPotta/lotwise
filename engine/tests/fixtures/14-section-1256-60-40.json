@@ -1,0 +1,61 @@
+{
+ "name": "14-section-1256-60-40",
+ "description": "An XSP call held 19 days with a $500 gain: Section 1256, 60% long ($300 x 15%) + 40% short ($200 x 24%) = $93, not $120.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "xsp-buy",
+     "account": "b1",
+     "date": "2026-09-01",
+     "side": "buy",
+     "symbol": "XSP",
+     "qty": "1",
+     "price": "10",
+     "option": {
+      "type": "call",
+      "multiplier": "100"
+     }
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "XSP",
+   "qty": "1",
+   "price": "15",
+   "date": "2026-09-20",
+   "option": {
+    "type": "call",
+    "multiplier": "100"
+   }
+  }
+ },
+ "expect": {
+  "realized": "500.00",
+  "term": "1256",
+  "shortTerm": "200.00",
+  "longTerm": "300.00",
+  "estTax": "93.00",
+  "coupons": []
+ }
+}

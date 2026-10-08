@@ -1,0 +1,65 @@
+{
+ "name": "15-section-1256-no-wash",
+ "description": "An XSP call sold at a $400 loss and bought back 2 days later: Section 1256 contracts aren't subject to wash sales.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "xsp-buy",
+     "account": "b1",
+     "date": "2026-09-01",
+     "side": "buy",
+     "symbol": "XSP",
+     "qty": "1",
+     "price": "10",
+     "option": {
+      "type": "call",
+      "multiplier": "100"
+     }
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "XSP",
+   "qty": "1",
+   "price": "6",
+   "date": "2026-09-10",
+   "option": {
+    "type": "call",
+    "multiplier": "100"
+   },
+   "rebuy": {
+    "date": "2026-09-12"
+   }
+  }
+ },
+ "expect": {
+  "realized": "-400.00",
+  "disallowed": "0.00",
+  "recognized": "-400.00",
+  "term": "1256",
+  "rebuy": {
+   "triggers": false
+  }
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "name": "01-hero-wash-sale-from-calls-in-another-account",
+ "description": "The hero receipt: 100 NVDA sold at a $1,840 loss in Brokerage One; 2 NVDA calls bought 12 days earlier in Brokerage Two (200 share-equivalents) disallow all of it. Selling on/after Nov 3 (Oct 3 + 31) keeps it.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "nvda-buy",
+     "account": "b1",
+     "date": "2026-03-12",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "100",
+     "price": "148.20"
+    },
+    {
+     "id": "nvda-calls",
+     "account": "b2",
+     "date": "2026-10-03",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "2",
+     "price": "6.40",
+     "option": {
+      "type": "call",
+      "multiplier": "100"
+     }
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "NVDA",
+   "qty": "100",
+   "price": "129.80",
+   "date": "2026-10-15"
+  }
+ },
+ "expect": {
+  "proceeds": "12980.00",
+  "basis": "14820.00",
+  "realized": "-1840.00",
+  "term": "short",
+  "disallowed": "1840.00",
+  "disallowedPermanent": "0.00",
+  "recognized": "0.00",
+  "deductible": "0.00",
+  "estTax": "0.00",
+  "causes": [
+   {
+    "tradeId": "nvda-calls",
+    "account": "b2",
+    "date": "2026-10-03",
+    "qty": "2",
+    "shares": "100",
+    "disallowed": "1840.00",
+    "permanent": false,
+    "beforeSale": true
+   }
+  ],
+  "coupons": [
+   {
+    "kind": "avoidWash",
+    "date": "2026-11-03",
+    "keeps": "1840.00"
+   }
+  ],
+  "rebuy": null
+ }
+}

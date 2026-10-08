@@ -1,0 +1,35 @@
+{
+ "name": "34-legacy-hero-calls",
+ "description": "The site's single-lot interface: hero lot against 200 share-equivalents of calls bought Oct 3: all $1,840 disallowed, replacement basis 1,280 + 1,840.",
+ "call": "simulateLotSale",
+ "input": {
+  "lot": {
+   "id": "b1-nvda-1",
+   "account": "brokerage-one",
+   "symbol": "NVDA",
+   "qty": 100,
+   "costPerShare": 148.2,
+   "acquired": "2026-03-12"
+  },
+  "qty": 100,
+  "price": 129.8,
+  "date": "2026-10-15",
+  "rebuy": {
+   "date": "2026-10-03",
+   "qty": 200,
+   "price": 6.4,
+   "account": "brokerage-two"
+  }
+ },
+ "expect": {
+  "realized": "-1840.00",
+  "term": "short",
+  "estTax": "0.00",
+  "wash": {
+   "disallowed": "1840.00",
+   "replacementBasis": "3120.00",
+   "holdingStart": "2026-02-28",
+   "permanent": false
+  }
+ }
+}

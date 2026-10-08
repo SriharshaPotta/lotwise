@@ -1,0 +1,74 @@
+{
+ "name": "33-year-summary-netting-and-cap",
+ "description": "$5,000 short-term loss and $1,000 long-term gain net to -$4,000: $3,000 deducted (x 24% = -$720), $1,000 carried forward.",
+ "call": "yearSummary",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "s1",
+     "account": "b1",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "AAA",
+     "qty": "100",
+     "price": "100"
+    },
+    {
+     "id": "s1x",
+     "account": "b1",
+     "date": "2026-03-05",
+     "side": "sell",
+     "symbol": "AAA",
+     "qty": "100",
+     "price": "50"
+    },
+    {
+     "id": "l1",
+     "account": "b1",
+     "date": "2024-01-05",
+     "side": "buy",
+     "symbol": "BBB",
+     "qty": "10",
+     "price": "100"
+    },
+    {
+     "id": "l1x",
+     "account": "b1",
+     "date": "2026-03-05",
+     "side": "sell",
+     "symbol": "BBB",
+     "qty": "10",
+     "price": "200"
+    }
+   ]
+  },
+  "year": 2026
+ },
+ "expect": {
+  "netShort": "-5000.00",
+  "netLong": "1000.00",
+  "net": "-4000.00",
+  "deductibleLoss": "3000.00",
+  "carryforward": "1000.00",
+  "estTax": "-720.00"
+ }
+}

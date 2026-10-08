@@ -1,0 +1,120 @@
+{
+ "name": "32-long-term-countdown",
+ "description": "AAPL bought Oct 23 2025 goes long-term Oct 24 2026: 9 days after Oct 15. Waiting saves (231.40 - 117.51) x 40 x 9% = $410.",
+ "call": "countdown",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "nvda-buy",
+     "account": "b1",
+     "date": "2026-03-12",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "100",
+     "price": "148.20"
+    },
+    {
+     "id": "nvda-calls",
+     "account": "b2",
+     "date": "2026-10-03",
+     "side": "buy",
+     "symbol": "NVDA",
+     "qty": "2",
+     "price": "6.40",
+     "option": {
+      "type": "call",
+      "multiplier": "100"
+     }
+    },
+    {
+     "id": "xyz-buy",
+     "account": "b2",
+     "date": "2026-05-19",
+     "side": "buy",
+     "symbol": "XYZ",
+     "qty": "100",
+     "price": "50"
+    },
+    {
+     "id": "amd",
+     "account": "b2",
+     "date": "2026-02-04",
+     "side": "buy",
+     "symbol": "AMD",
+     "qty": "80",
+     "price": "172.00"
+    },
+    {
+     "id": "aapl",
+     "account": "b1",
+     "date": "2025-10-23",
+     "side": "buy",
+     "symbol": "AAPL",
+     "qty": "40",
+     "price": "117.51"
+    },
+    {
+     "id": "msft",
+     "account": "roth",
+     "date": "2024-06-03",
+     "side": "buy",
+     "symbol": "MSFT",
+     "qty": "15",
+     "price": "380.10"
+    },
+    {
+     "id": "xyz-add",
+     "account": "b2",
+     "date": "2026-10-01",
+     "side": "buy",
+     "symbol": "XYZ",
+     "qty": "10",
+     "price": "42"
+    }
+   ]
+  },
+  "prices": {
+   "NVDA": "129.80",
+   "XYZ": "40",
+   "AMD": "158.00",
+   "AAPL": "231.40",
+   "MSFT": "300"
+  },
+  "date": "2026-10-15"
+ },
+ "expect": {
+  "$contains": [
+   {
+    "lotId": "aapl",
+    "longTermFrom": "2026-10-24",
+    "daysAway": 9,
+    "unrealized": "4555.60",
+    "taxSavedByWaiting": "410.00"
+   },
+   {
+    "lotId": "amd",
+    "longTermFrom": "2027-02-05",
+    "taxSavedByWaiting": "0.00"
+   }
+  ]
+ }
+}

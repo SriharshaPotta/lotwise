@@ -1,0 +1,52 @@
+{
+ "name": "27-fees",
+ "description": "Fees add to basis on buys and come off proceeds on sells: (1,100 - 5) - (1,000 + 5) = $90.",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "f",
+     "account": "b1",
+     "date": "2026-01-05",
+     "side": "buy",
+     "symbol": "ABC",
+     "qty": "10",
+     "price": "100",
+     "fees": "5"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "ABC",
+   "qty": "10",
+   "price": "110",
+   "date": "2026-02-05",
+   "fees": "5"
+  }
+ },
+ "expect": {
+  "proceeds": "1095.00",
+  "basis": "1005.00",
+  "realized": "90.00"
+ }
+}

@@ -1,0 +1,59 @@
+{
+ "name": "12-fifo-partial-spans-lots",
+ "description": "FIFO 15 shares: all of January ($422) + 5 of October ($13).",
+ "call": "simulate",
+ "input": {
+  "portfolio": {
+   "version": 1,
+   "accounts": [
+    {
+     "id": "b1",
+     "name": "Brokerage One",
+     "kind": "taxable"
+    },
+    {
+     "id": "b2",
+     "name": "Brokerage Two",
+     "kind": "taxable"
+    },
+    {
+     "id": "roth",
+     "name": "Roth IRA",
+     "kind": "roth"
+    }
+   ],
+   "trades": [
+    {
+     "id": "vti-jan",
+     "account": "b1",
+     "date": "2026-01-12",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "248.00"
+    },
+    {
+     "id": "vti-oct",
+     "account": "b1",
+     "date": "2026-10-09",
+     "side": "buy",
+     "symbol": "VTI",
+     "qty": "10",
+     "price": "287.60"
+    }
+   ]
+  },
+  "proposal": {
+   "account": "b1",
+   "symbol": "VTI",
+   "qty": "15",
+   "price": "290.20",
+   "date": "2026-10-15"
+  }
+ },
+ "expect": {
+  "realized": "435.00",
+  "basis": "3918.00",
+  "proceeds": "4353.00"
+ }
+}

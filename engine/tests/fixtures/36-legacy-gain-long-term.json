@@ -1,0 +1,28 @@
+{
+ "name": "36-legacy-gain-long-term",
+ "description": "Single-lot gain held more than a year, custom rates.",
+ "call": "simulateLotSale",
+ "input": {
+  "lot": {
+   "id": "x",
+   "account": "b",
+   "symbol": "AAPL",
+   "qty": 40,
+   "costPerShare": 117.51,
+   "acquired": "2025-10-23"
+  },
+  "qty": 40,
+  "price": 231.4,
+  "date": "2026-10-24",
+  "taxRates": {
+   "st": 0.32,
+   "lt": 0.2
+  }
+ },
+ "expect": {
+  "realized": "4555.60",
+  "term": "long",
+  "estTax": "911.12",
+  "wash": null
+ }
+}
